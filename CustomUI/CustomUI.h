@@ -31,7 +31,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin ,public SettingsWindow
 
 	void Render(CanvasWrapper canvas);
 
-	std::shared_ptr<ImageWrapper> myImageTest;
+	std::shared_ptr<ImageWrapper> imageBoostLeftJoucaz;
+	std::shared_ptr<ImageWrapper> imageBoostTopJoucaz;
 
 	void positionBoostBar(int selected);
 	void positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y, bool isVertical);
@@ -58,9 +59,6 @@ private:
 	Vector2 boostEnd;
 	Vector2 boostMax;
 
-	Vector2 boostBoxSize;
-	Vector2 boostBoxSizeMax;
-	Vector2 boostBoxPosition;
 	Vector2F boostTextSize;
 	Vector2 boostTextPosition;
 };

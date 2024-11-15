@@ -57,9 +57,11 @@ void CustomUI::onLoad()
 		Render(canvas);
 		});
 
-	std::string imageLoc = gameWrapper->GetDataFolder().string();
-	LOG("TestData" + imageLoc);
-	myImageTest = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "degrade.png", true, true);
+	/*std::string imageLoc = gameWrapper->GetDataFolder().string();
+	LOG("TestData" + imageLoc);*/
+	imageBoostLeftJoucaz = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "BoostLeftJoucaz.png", true, true);
+	imageBoostTopJoucaz = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "BoostTopJoucaz.png", true, true);
+
 	
 }
 
@@ -111,16 +113,16 @@ void CustomUI::positionBoostBar(int selected) {
 
 	switch (selected) {
 		case 0:
-			positionBoostBarLRTB(0.8333, 0.9259, 0.8594, 0.6481, true);
+			positionBoostBarLRTB(1580, 1020, 1630, 780, true);
 			break;
 		case 1:
-			positionBoostBarLRTB(0.9375, 0.9259, 0.9635, 0.6481, true);
+			positionBoostBarLRTB(1800, 1000, 1650, 700, true);
 			break;
 		case 2:
-			positionBoostBarLRTB(0.8073, 0.7870, 0.9635, 0.7407, false);
+			positionBoostBarLRTB(1630, 770, 1870, 720, false);
 			break;
 		case 3:
-			positionBoostBarLRTB(0.8333, 0.9722, 0.9896, 0.9259, false);
+			positionBoostBarLRTB(1600, 1050, 1920, 1000, false);
 			break;
 		default:
 			break;
@@ -128,8 +130,8 @@ void CustomUI::positionBoostBar(int selected) {
 }
 
 void CustomUI::positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y, bool isVertical) {
-	boostBegin = { (int)(v1x * screenSize.X), (int)(v1y * screenSize.Y) };
-	boostMax = { (int)(v2x * screenSize.X), (int)(v2y * screenSize.Y) };
+	boostBegin = { (int)(screenSize.X * (v1x / 1920.0)), (int)(screenSize.Y * (v1y / 1080.0)) };
+	boostMax = { (int)(screenSize.X * (v2x / 1920.0)), (int)(screenSize.Y * (v2y / 1080.0)) };
 	
 	if (isVertical) {
 		boostEnd = { boostMax.X, (int)(boostBegin.Y + (boostMax.Y - boostBegin.Y) * boost / 100.0f) };
@@ -161,12 +163,7 @@ void CustomUI::Render(CanvasWrapper canvas) {
 	// draws from the last set position
 	// the two floats are text x and y scale
 	// the false turns off the drop shadow
-	canvas.DrawString("Version " + std::string(plugin_version), 2.0, 2.0, false);
-
-	//if (myImageTest->IsLoadedForCanvas()) {
-	//	canvas.DrawTexture(myImageTest.get(), 1);
-	//	// there are multiple functions in the canvaswrapper that accept ImageWrapper*
-	//}
+	
 
 	screenSize = canvas.GetSize();
 
@@ -174,18 +171,10 @@ void CustomUI::Render(CanvasWrapper canvas) {
 
 		int position = cvarManager->getCvar("CustomUI_positionBoostBar").getIntValue();
 		positionBoostBar(position);
-		if (position == 0 || position == 1) {
-			
-		}
-		else {
-			
-		}	
 
 		canvas.DrawRect(boostBegin, boostEnd);
 
-		canvas.SetColor(200, 55, 55, 235);
-
-		boostTextSize = canvas.GetStringSize(std::to_string(boost), (float)((int)((boostBoxSize.X / 24) * 10) / 10), (float)((int)((boostBoxSize.Y / 24) * 10) / 10));
+		/*boostTextSize = canvas.GetStringSize(std::to_string(boost), (float)((int)((boostBoxSize.X / 24) * 10) / 10), (float)((int)((boostBoxSize.Y / 24) * 10) / 10));
 		boostTextPosition.X = ((screenSize.X - (boostBoxSize.X / 2)) - (int)((screenSize.X * 3) / 100)) - (boostTextSize.X / 2);
 		boostTextPosition.Y = ((screenSize.Y - (boostBoxSize.Y / 2)) - (int)((screenSize.X * 3) / 100)) - (boostTextSize.Y / 2);
 
@@ -194,9 +183,13 @@ void CustomUI::Render(CanvasWrapper canvas) {
 			canvas.SetColor(255, 215, 180, 255);
 		else
 			canvas.SetColor(255, 235, 130, 255);
-		canvas.DrawString(std::to_string(boost), (float)((int)((boostBoxSize.X / 24) * 10) / 10), (float)((int)((boostBoxSize.Y / 24) * 10) / 10));
+		canvas.DrawString(std::to_string(boost), (float)((int)((boostBoxSize.X / 24) * 10) / 10), (float)((int)((boostBoxSize.Y / 24) * 10) / 10));*/
 	}
-	
+	canvas.SetPosition(Vector2F{ 0.0, 0.0 });
+	canvas.DrawString("Version " + std::string(plugin_version), 2.0, 2.0, false);
+	if (imageBoostLeftJoucaz->IsLoadedForCanvas()) {
+		canvas.DrawTexture(imageBoostLeftJoucaz.get(), 1);
+	}
 }
 
 
