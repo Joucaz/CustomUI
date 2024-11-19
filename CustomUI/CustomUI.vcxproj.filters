@@ -84,6 +84,9 @@
     <ClCompile Include="CustomUISettings.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
+    <ClCompile Include="CustomUIWindow.cpp">
+      <Filter>Plugin\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imgui_rangeslider.h">
@@ -141,9 +144,6 @@
       <Filter>Plugin\header</Filter>
     </ClInclude>
     <ClInclude Include="GuiBase.h">
-      <Filter>Plugin\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.h">
       <Filter>Plugin\header</Filter>
     </ClInclude>
   </ItemGroup>

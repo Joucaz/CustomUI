@@ -33,7 +33,7 @@ bool PluginWindowBase::ShouldBlockInput()
 
 bool PluginWindowBase::IsActiveOverlay()
 {
-	return true;
+	return false;
 }
 
 void PluginWindowBase::OnOpen()
@@ -48,19 +48,8 @@ void PluginWindowBase::OnClose()
 
 void PluginWindowBase::Render()
 {
-	if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, ImGuiWindowFlags_None))
-	{
-		// Early out if the window is collapsed, as an optimization.
-		ImGui::End();
-		return;
-	}
+	
 
 	RenderWindow();
 
-	ImGui::End();
-
-	if (!isWindowOpen_)
-	{
-		_globalCvarManager->executeCommand("togglemenu " + GetMenuName());
-	}
 }

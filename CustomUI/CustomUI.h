@@ -16,13 +16,16 @@ using namespace std;
 
 struct Preset {
 	//string name;
-	string boostImage;
+	string boostDisplayImage;
+	string boostTextureImage;
 	string scoreImage;
-	array<int, 4> color; // RGBA	
+	array<int, 4> color; // RGBA
+	string boostForm;
 };
 
-class CustomUI: public BakkesMod::Plugin::BakkesModPlugin ,public SettingsWindowBase // Uncomment if you wanna render your own tab in the settings menu
-	//,public PluginWindowBase // Uncomment if you want to render your own plugin window
+class CustomUI: public BakkesMod::Plugin::BakkesModPlugin 
+	,public SettingsWindowBase // Uncomment if you wanna render your own tab in the settings menu
+	,public PluginWindowBase // Uncomment if you want to render your own plugin window
 {
 
 	//std::shared_ptr<bool> enabled;
@@ -30,8 +33,6 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin ,public SettingsWindow
 	//Boilerplate
 	void onLoad() override;
 	void onUnload() override;
-
-	ImFont* myFont;
 
 	void initValues();
 	void writeCvar();
@@ -46,20 +47,33 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin ,public SettingsWindow
 	bool zeroBoost(int boost);
 	int getBoostAmount();
 
-	void Render(CanvasWrapper canvas);
+	//void Render(CanvasWrapper canvas);
 
-	void drawBoost();
+	void drawBoost(ImDrawList* drawList);
+	void drawBoostDisplay(ImDrawList* drawList);
+	void drawBoostTexture(ImDrawList* drawList);
+	void drawBoostCircle(ImDrawList* drawList);
+	void drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y);
 
-	void positionBoostBar(int selected);
+	void changeBoostDisplay(string texture);
+
+	/*void positionBoostBar(int selected);
 	void positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y);
+	void positionTextBoost(float v1x, float v1y);*/
+
+	ImFont* myFont;
+
+	string getCvarString(string cVarName);
+	void setCvarString(CVarWrapper cVarName, string cVarValue);
 
 public:
 	void RenderSettings() override; // Uncomment if you wanna render your own tab in the settings menu
-	//void RenderWindow() override; // Uncomment if you want to render your own plugin window
+	void RenderWindow() override; // Uncomment if you want to render your own plugin window
+	void SetImGuiContext(uintptr_t ctx) override;
+	
 
 private:
 	int boost;
-
 	string gameTime;
 
 	string presetPath;
@@ -68,21 +82,25 @@ private:
 	LinearColor opposingTeamColor;
 
 	Vector2 screenSize;
+	float xPercent;
+	float yPercent;
 
 	Vector2 boostBegin;
 	Vector2 boostEnd;
 	Vector2 boostMax;
+	Vector2 boostTextPosition;
 
 
 
-	bool isVertical = true;
+	bool isTexture;
 
 	Vector2F boostTextSize;
-	Vector2 boostTextPosition;
+	
 
 	map<string, Preset> allPresets;
 
-	map<string, shared_ptr<ImageWrapper>> imageBoost;
+	map<string, shared_ptr<ImageWrapper>> imageDisplayBoost;
+	map<string, shared_ptr<ImageWrapper>> imageTextureBoost;
 	map<string, shared_ptr<ImageWrapper>> imageScore;
 	map<string, shared_ptr<ImageWrapper>> imageReplay;
 	map<string, shared_ptr<ImageWrapper>> imageEnd;

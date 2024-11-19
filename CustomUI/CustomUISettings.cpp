@@ -5,24 +5,24 @@ using namespace std;
 void CustomUI::RenderSettings() {
     ImGui::TextUnformatted("CustomUI");
 
-    CVarWrapper boostBarCvar = cvarManager->getCvar("CustomUI_positionBoostBar");
-    if (!boostBarCvar) { return; }
+    CVarWrapper boostFormCvar = cvarManager->getCvar("CustomUI_boostForm");
+    if (!boostFormCvar) { return; }
     //string boostBarCvarValue = boostBarCvar.getStringValue();
 
     CVarWrapper presetChoosenCvar = cvarManager->getCvar("CustomUI_choosenPresets");
     if (!presetChoosenCvar) { return; }
-    
-    const char* itemsPositionBoost[] = { "left", "right", "top", "bottom" };
-    static int currentPositionBoost = 0;
+    //
+    //const char* itemsPositionBoost[] = { "left", "right", "top", "bottom" };
+    //static int currentPositionBoost = 0;
 
-    if (ImGui::Combo("Boost Bar Position", &currentPositionBoost, itemsPositionBoost, IM_ARRAYSIZE(itemsPositionBoost))) {
-        // Mise à jour du CVar avec la chaîne de caractères sélectionnée
-        boostBarCvar.setValue(currentPositionBoost);
-        writeCvar();
-    }
-    if (ImGui::IsItemHovered()) {
-        ImGui::SetTooltip("Choose the position of the progress bar for the boost");
-    }
+    //if (ImGui::Combo("Boost Bar Position", &currentPositionBoost, itemsPositionBoost, IM_ARRAYSIZE(itemsPositionBoost))) {
+    //    // Mise à jour du CVar avec la chaîne de caractères sélectionnée
+    //    boostBarCvar.setValue(currentPositionBoost);
+    //    writeCvar();
+    //}
+    //if (ImGui::IsItemHovered()) {
+    //    ImGui::SetTooltip("Choose the position of the progress bar for the boost");
+    //}
 
     static vector<const char*> itemsPreset;
     static int currentPreset = 0;
@@ -48,9 +48,8 @@ void CustomUI::RenderSettings() {
         auto selectedPreset = allPresets.begin();
         std::advance(selectedPreset, currentPreset);  // Aller au preset correspondant
 
-        //changePreset(selectedPreset->second, selectedPreset->first);
-        presetChoosenCvar.setValue(selectedPreset->first);
-        writeCvar();
+        setCvarString(presetChoosenCvar, selectedPreset->first);
+        setCvarString(boostFormCvar, selectedPreset->second.boostForm);
     }
 
     if (ImGui::IsItemHovered()) {

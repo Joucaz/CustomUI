@@ -92,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CustomUISettings.cpp" />
+    <ClCompile Include="CustomUIWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imguivariouscontrols.cpp" />
     <ClCompile Include="imgui\imgui_additions.cpp" />
@@ -130,7 +131,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="GuiBase.h" />
     <ClInclude Include="CustomUI.h" />
-    <ClInclude Include="Settings.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
