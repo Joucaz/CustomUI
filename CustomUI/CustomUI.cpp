@@ -41,6 +41,24 @@ void CustomUI::onLoad()
 
 	initValues();
 
+	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
+	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&CustomUI::onGameEnd, this));
+
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", bind(&CustomUI::onReplayEnd, this));
+
+
+
+	//gameWrapper->HookEvent("Function TAGame.NetworkInputBuffer_TA.ClientAckFrame", bind(&CustomUI::onBoostStart, this));
+	//gameWrapper->HookEvent("Function VehiclePickup_Boost_TA.Idle.EndState", bind(&CustomUI::onBoostEnd, this));
+	//Function TAGame.FXActor_Boost_TA.InitializeBoostMesh  //marche a moitie
+	//Function TAGame.FXActor_Boost_TA.CreateBoostMeshMaterials //
+	//Function TAGame.BoostMesh_TA.Initialize //
+	//Function TAGame.NetworkInputBuffer_TA.ClientAckFrame
+	//Function TAGame.EngineShare_TA.UpdateReplicatedPhysicsFrame
+	//Function TAGame.InputBufferGraph_TA.AddSample
+
+
 	//cvar.addOnValueChanged(std::bind(&CustomUI::positionBoostBar, this));
 
 	// enabled decleared in the header
@@ -106,12 +124,55 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 
 void CustomUI::UpdateVars()
 {
+	if (isInGame()) {
+		gameTime = (getGameTime() != -1) ? (std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2)) : std::to_string(-1);
+	}
+	/*else if (isInFreeplay()) {
+		boost = getBoostAmount();
+	}*/
+
 	boost = getBoostAmount();
 
-	/*gameTime = (getGameTime() != -1) ? (std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2)) : std::to_string(-1);
+}
 
-	myTeamColor = getTeamColor(getMyTeam());
-	opposingTeamColor = getTeamColor(getOpposingTeam());*/
+bool CustomUI::isInGame() {
+	if (gameWrapper->IsInOnlineGame()) {
+		return true;
+	}
+	return false;
+}
+
+bool CustomUI::isInFreeplay() {
+	if (gameWrapper->IsInFreeplay()) {
+		return true;
+	}
+	return false;
+}
+
+void CustomUI::onGameStart() {
+	LOG("onGameStart");
+	gameDisplay = true;
+}
+
+void CustomUI::onGameEnd() {
+	LOG("onGameEnd");
+	gameDisplay = false;
+}
+
+void CustomUI::onReplayStart() {
+	LOG("onReplayStart");
+	replayDisplay = true;
+	if (!isInFreeplay()) {
+		gameDisplay = false;
+	}
+}
+
+void CustomUI::onReplayEnd() {
+	LOG("onReplayEnd");
+	replayDisplay = false;
+	if (!isInFreeplay()) {
+		gameDisplay = true;
+	}
 }
 
 map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
@@ -121,6 +182,7 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 	if (!file.is_open()) {
 		LOG("Impossible d'ouvrir le fichier JSON !");
 	}
+	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
 
 	json data;
 	file >> data;
@@ -143,38 +205,29 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 		};
 		preset.boostForm = value["boostForm"];
 
-		auto boostDisplayImagePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets" / preset.boostDisplayImage;
-		if (std::filesystem::exists(boostDisplayImagePath)) {
-			imageDisplayBoost[key] = std::make_shared<ImageWrapper>(boostDisplayImagePath, false, true);
-			LOG("Boost image chargée : " + boostDisplayImagePath.string());
-		}
-		else {
-			LOG("Boost image introuvable : " + boostDisplayImagePath.string());
-		}
-
-		auto boostTextureImagePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets" / preset.boostTextureImage;
-		if (std::filesystem::exists(boostTextureImagePath)) {
-			imageTextureBoost[key] = std::make_shared<ImageWrapper>(boostTextureImagePath, false, true);
-			LOG("Boost image chargée : " + boostTextureImagePath.string());
-		}
-		else {
-			LOG("Boost image introuvable : " + boostTextureImagePath.string());
-		}
-
-		auto scoreImagePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets" / preset.scoreImage;
-		if (std::filesystem::exists(scoreImagePath)) {
-			imageScore[key] = std::make_shared<ImageWrapper>(scoreImagePath, false, true);
-			LOG("Score image chargée : " + scoreImagePath.string());
-		}
-		else {
-			LOG("Score image introuvable : " + scoreImagePath.string());
-		}
+		// Charger les images avec la fonction utilitaire
+		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
+		loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
+		loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
 
 		// Ajout du preset à la map
 		presets[key] = preset;
 	}
 
 	return presets;
+}
+
+void CustomUI::loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath,
+	map<string, shared_ptr<ImageWrapper>>& imageMap, const string& imageType) {
+
+	auto imagePath = basePath / relativePath;
+	if (filesystem::exists(imagePath)) {
+		imageMap[key] = make_shared<ImageWrapper>(imagePath, false, true);
+		LOG(imageType + " image chargée : " + imagePath.string());
+	}
+	else {
+		LOG(imageType + " image introuvable : " + imagePath.string());
+	}
 }
 
 void CustomUI::changeBoostDisplay(string texture) {
@@ -184,10 +237,6 @@ void CustomUI::changeBoostDisplay(string texture) {
 	else {
 		isTexture = false;
 	}
-}
-
-void CustomUI::startGame() {
-	LOG("starttttt");
 }
 
 int CustomUI::getBoostAmount()
@@ -211,6 +260,167 @@ bool CustomUI::zeroBoost(int boost) {
 		return false;
 	}
 }
+
+bool CustomUI::zeroGameTime(string gameTime) {
+	if (gameTime == "-1") {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+int CustomUI::getGameTime()
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (!gameWrapper->IsInGame())
+	{
+		if (!gameWrapper->IsInOnlineGame())
+			return -1;
+		else if (onlineServer.IsNull())
+			return -1;
+
+		return onlineServer.GetSecondsRemaining();
+	}
+	else if (localServer.IsNull())
+		return -1;
+
+	return localServer.GetSecondsRemaining();
+}
+
+
+int CustomUI::getMyTeamScore()
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
+
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : localServerTeams)
+				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+					return team.GetScore();
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
+
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : onlineServerTeams)
+				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+					return team.GetScore();
+	}
+	else {
+		return -1;
+	}
+}
+
+int CustomUI::getOpposingTeamScore()
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
+
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : localServerTeams)
+				if (localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+					return team.GetScore();
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
+
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : onlineServerTeams)
+				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+					return team.GetScore();
+	}
+	else {
+		return -1;
+	}
+
+}
+
+TeamWrapper CustomUI::getMyTeam()
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
+
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : localServerTeams)
+				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+					return team;
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
+
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : onlineServerTeams)
+				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+					return team;
+	}
+}
+
+TeamWrapper CustomUI::getOpposingTeam()
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
+
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : localServerTeams)
+				if (localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+					return team;
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
+
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
+			for (TeamWrapper team : onlineServerTeams)
+				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+					return team;
+	}
+
+}
+
+inline std::string CustomUI::lead_zeros(int n, int len)
+{
+	std::string result(len--, '0');
+
+	for (int val = (n < 0) ? -n : n; len >= 0 && val != 0; --len, val /= 10)
+		result[len] = '0' + val % 10;
+
+	if (len >= 0 && n < 0)
+		result[0] = '-';
+
+	return result;
+}
+
 //
 //void CustomUI::positionBoostBar(int selected) {
 //

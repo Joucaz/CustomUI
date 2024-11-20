@@ -24,9 +24,9 @@ void CustomUI::RenderWindow()
 	static bool no_move = false;
 	static bool no_resize = false;
 	static bool no_collapse = true;
-	static bool no_nav = true;
+	static bool no_nav = false;
 	static bool no_background = true;
-	static bool no_bring_to_front = true;
+	static bool no_bring_to_front = false;
 
 	ImGuiWindowFlags window_flags = 0;
 	if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -38,8 +38,9 @@ void CustomUI::RenderWindow()
 	if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
 	if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
 	if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-	if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, window_flags))
-	{
+	//if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_)) {
+	if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, window_flags)) {
+
 		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
 		return;
@@ -56,12 +57,17 @@ void CustomUI::RenderWindow()
 		ImGui::PushFont(myFont);
 		//ImGui::Text("Custom UI Overlay");
 	}
-
-	if (!zeroBoost(boost)) {
+	if (isInGame() && gameDisplay) {
+		drawScore(drawList);
 		drawBoost(drawList);
 	}
-	
-
+	else if (isInGame() && replayDisplay && !gameDisplay) {
+		LOG("replay lol");
+	}
+	else if (isInFreeplay() && !zeroBoost(boost)) {
+		drawBoost(drawList);
+	}
+		
 	if (myFont) {
 		ImGui::PopFont();
 		//ImGui::Text("The custom font haven't been loaded yet");
@@ -74,6 +80,15 @@ void CustomUI::RenderWindow()
 		_globalCvarManager->executeCommand("togglemenu " + GetMenuName());
 	}
 
+}
+
+void CustomUI::drawScore(ImDrawList* drawList) {
+	/*drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 0 * yPercent),
+		IM_COL32(255, 255, 255, 255), std::to_string(getMyTeamScore()).c_str());*/
+	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 100 * yPercent),
+		IM_COL32(255, 255, 255, 255), (gameTime).c_str());
+	/*drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 200 * yPercent),
+		IM_COL32(255,255,255,255), std::to_string(getOpposingTeamScore()).c_str());*/
 }
 
 void CustomUI::drawBoost(ImDrawList* drawList) {

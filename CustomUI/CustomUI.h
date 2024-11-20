@@ -37,15 +37,27 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	void initValues();
 	void writeCvar();
 	map<string, Preset> loadPresets(const string& jsonFilePath);
-	//void changePreset(Preset preset, string namePreset);
-
-	//shared_ptr<ImageWrapper> imageBoost;
-
-	void startGame();
+	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
 
 	void UpdateVars();
-	bool zeroBoost(int boost);
 	int getBoostAmount();
+	bool zeroBoost(int boost);
+	int getGameTime();
+	bool zeroGameTime(string gameTime);
+
+	TeamWrapper getMyTeam();
+	TeamWrapper getOpposingTeam();
+
+	int getMyTeamScore();
+	int getOpposingTeamScore();
+
+	bool isInFreeplay();
+	bool isInGame();
+	void onGameStart();
+	void onGameEnd();
+
+	void onReplayStart();
+	void onReplayEnd();
 
 	//void Render(CanvasWrapper canvas);
 
@@ -54,6 +66,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	void drawBoostTexture(ImDrawList* drawList);
 	void drawBoostCircle(ImDrawList* drawList);
 	void drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y);
+	void drawScore(ImDrawList* drawList);
 
 	void changeBoostDisplay(string texture);
 
@@ -74,7 +87,11 @@ public:
 
 private:
 	int boost;
-	string gameTime;
+	string gameTime = "";
+	inline string lead_zeros(int n, int len);
+
+	bool gameDisplay = false;
+	bool replayDisplay = false;
 
 	string presetPath;
 
@@ -89,8 +106,6 @@ private:
 	Vector2 boostEnd;
 	Vector2 boostMax;
 	Vector2 boostTextPosition;
-
-
 
 	bool isTexture;
 
