@@ -62,7 +62,7 @@ void CustomUI::RenderWindow()
 		drawBoost(drawList);
 	}
 	else if (isInGame() && replayDisplay && !gameDisplay) {
-		LOG("replay lol");
+		drawScore(drawList);
 	}
 	else if (isInFreeplay() && !zeroBoost(boost)) {
 		drawBoost(drawList);
@@ -83,12 +83,46 @@ void CustomUI::RenderWindow()
 }
 
 void CustomUI::drawScore(ImDrawList* drawList) {
-	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 0 * yPercent),
-		IM_COL32(255, 255, 255, 255), to_string(scoreA).c_str());
-	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 100 * yPercent),
-		IM_COL32(255, 255, 255, 255), (gameTime).c_str());
-	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 200 * yPercent),
-		IM_COL32(255,255,255,255), to_string(scoreB).c_str());
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	if (imageScore[keyPreset]->IsLoadedForImGui()) {
+		if (auto renderImageScore = imageScore[keyPreset]->GetImGuiTex()) {
+			auto size = imageScore[keyPreset]->GetSizeF();
+			ImGui::SetCursorPos(ImVec2(0, 0));
+			drawList->AddImage(renderImageScore, ImVec2(0, 0),
+				ImVec2(size.X * xPercent, size.Y * yPercent),
+				ImVec2{ 0, 0 }, ImVec2{ 1, 1 },
+				ImU32(0xFFFFFFFF));
+		}
+
+	}
+
+	Vector2 PositionScoreA = { 800, -8 };
+	Vector2 PositionGametime = { 897, -10 };
+	Vector2 PositionScoreB = { 1080, -8 };
+
+	if (isOvertime)
+	{
+		PositionGametime = { PositionGametime.X - 12 , PositionGametime.Y };
+	}
+	if (scoreA >= 10)
+	{
+		PositionScoreA = { PositionScoreA.X - 8 , PositionScoreA.Y };
+	}
+	if (scoreB >= 10)
+	{
+		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
+	}
+
+	ImU32 colorScoreMyTeam = IM_COL32(allPresets[keyPreset].colorScoreMyTeam[0], allPresets[keyPreset].colorScoreMyTeam[1], allPresets[keyPreset].colorScoreMyTeam[2], allPresets[keyPreset].colorScoreMyTeam[3]);
+	ImU32 colorScoreOppositeTeam = IM_COL32(allPresets[keyPreset].colorScoreOppositeTeam[0], allPresets[keyPreset].colorScoreOppositeTeam[1], allPresets[keyPreset].colorScoreOppositeTeam[2], allPresets[keyPreset].colorScoreOppositeTeam[3]);
+	ImU32 colorGameTime = IM_COL32(allPresets[keyPreset].colorGameTime[0], allPresets[keyPreset].colorGameTime[1], allPresets[keyPreset].colorGameTime[2], allPresets[keyPreset].colorGameTime[3]);
+
+	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreA.X * xPercent, PositionScoreA.Y * yPercent),
+		colorScoreMyTeam, to_string(scoreA).c_str());
+	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionGametime.X * xPercent, PositionGametime.Y * yPercent),
+		colorGameTime, (gameTime).c_str());
+	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreB.X * xPercent, PositionScoreB.Y * yPercent),
+		colorScoreOppositeTeam, to_string(scoreB).c_str());
 }
 
 void CustomUI::drawBoost(ImDrawList* drawList) {
@@ -162,7 +196,7 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 
 
 	// Définir la couleur du contour du cercle
-	ImU32 color = IM_COL32(allPresets[keyPreset].color[0], allPresets[keyPreset].color[1], allPresets[keyPreset].color[2], allPresets[keyPreset].color[3]);
+	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
 
 	// Commencer à dessiner le path (cercle)
 	drawList->PathClear();
@@ -173,21 +207,19 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
 
 	if (boost == 100) {
 		drawList->AddText(myFont, 160 * xPercent, ImVec2(v1x * xPercent, v1y * yPercent),
-			IM_COL32(allPresets[keyPreset].color[0], allPresets[keyPreset].color[1], allPresets[keyPreset].color[2], allPresets[keyPreset].color[3]),
-			std::to_string(boost).c_str());
+			color, std::to_string(boost).c_str());
 	}
 	else if (boost < 10) {
 		drawList->AddText(myFont, 160 * xPercent, ImVec2(v2x * xPercent, v2y * yPercent),
-			IM_COL32(allPresets[keyPreset].color[0], allPresets[keyPreset].color[1], allPresets[keyPreset].color[2], allPresets[keyPreset].color[3]),
-			std::to_string(boost).c_str());
+			color, std::to_string(boost).c_str());
 	}
 	else {
 		drawList->AddText(myFont, 160 * xPercent, ImVec2(v3x * xPercent, v3y * yPercent),
-			IM_COL32(allPresets[keyPreset].color[0], allPresets[keyPreset].color[1], allPresets[keyPreset].color[2], allPresets[keyPreset].color[3]),
-			std::to_string(boost).c_str());
+			color, std::to_string(boost).c_str());
 	}
 }
 

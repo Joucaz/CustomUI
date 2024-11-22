@@ -43,6 +43,8 @@ void CustomUI::onLoad()
 
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
 
+	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnOvertimeUpdated", std::bind(&CustomUI::onOvertime, this));
+
 	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&CustomUI::onGameEnd, this));
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", std::bind(&CustomUI::onGameEnd, this));
 
@@ -127,7 +129,10 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 void CustomUI::UpdateVars()
 {
 	if (isInGame()) {
-		gameTime = (getGameTime() != -1) ? (std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2)) : std::to_string(-1);
+		gameTime = (getGameTime() != -1)
+			? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
+			: std::to_string(-1);
+
 		scoreA = getMyTeamScore();
 		scoreB = getOpposingTeamScore();
 	}
@@ -180,6 +185,7 @@ void CustomUI::onGameStart() {
 void CustomUI::onGameEnd() {
 	LOG("onGameEnd");
 	gameDisplay = false;
+	isOvertime = false;
 }
 
 void CustomUI::onReplayStart() {
@@ -196,6 +202,10 @@ void CustomUI::onReplayEnd() {
 	if (!isInFreeplay()) {
 		gameDisplay = true;
 	}
+}
+
+void CustomUI::onOvertime() {
+	isOvertime = true;
 }
 
 map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
@@ -219,14 +229,32 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 		Preset preset;
 		preset.boostDisplayImage = value["boostDisplayImage"];
 		preset.boostTextureImage = value["boostTextureImage"];
-		preset.scoreImage = value["scoreImage"];
-		preset.color = {
-			value["color"][0],
-			value["color"][1],
-			value["color"][2],
-			value["color"][3]
+		preset.colorBoost = {
+			value["colorBoost"][0],
+			value["colorBoost"][1],
+			value["colorBoost"][2],
+			value["colorBoost"][3]
 		};
 		preset.boostForm = value["boostForm"];
+		preset.scoreImage = value["scoreImage"];
+		preset.colorScoreMyTeam = {
+			value["colorScoreMyTeam"][0],
+			value["colorScoreMyTeam"][1],
+			value["colorScoreMyTeam"][2],
+			value["colorScoreMyTeam"][3]
+		};
+		preset.colorScoreOppositeTeam = {
+			value["colorScoreOppositeTeam"][0],
+			value["colorScoreOppositeTeam"][1],
+			value["colorScoreOppositeTeam"][2],
+			value["colorScoreOppositeTeam"][3]
+		};
+		preset.colorGameTime = {
+			value["colorGameTime"][0],
+			value["colorGameTime"][1],
+			value["colorGameTime"][2],
+			value["colorGameTime"][3]
+		};
 
 		// Charger les images avec la fonction utilitaire
 		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");

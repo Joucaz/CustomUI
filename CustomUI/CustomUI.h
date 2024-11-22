@@ -18,9 +18,12 @@ struct Preset {
 	//string name;
 	string boostDisplayImage;
 	string boostTextureImage;
-	string scoreImage;
-	array<int, 4> color; // RGBA
+	array<int, 4> colorBoost; // RGBA
 	string boostForm;
+	string scoreImage;
+	array<int, 4> colorScoreMyTeam; // RGBA
+	array<int, 4> colorScoreOppositeTeam; // RGBA
+	array<int, 4> colorGameTime; // RGBA
 };
 
 class CustomUI: public BakkesMod::Plugin::BakkesModPlugin 
@@ -55,6 +58,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	bool isInGame();
 	void onGameStart();
 	void onGameEnd();
+	void onOvertime();
 
 	void onReplayStart();
 	void onReplayEnd();
@@ -110,6 +114,7 @@ private:
 	Vector2 boostTextPosition;
 
 	bool isTexture;
+	bool isOvertime;
 
 	Vector2F boostTextSize;
 	
