@@ -96,13 +96,13 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 
 	}
 
-	Vector2 PositionScoreA = { 800, -8 };
+	Vector2 PositionScoreA = { 802, -8 };
 	Vector2 PositionGametime = { 897, -10 };
-	Vector2 PositionScoreB = { 1080, -8 };
+	Vector2 PositionScoreB = { 1082, -8 };
 
 	if (isOvertime)
 	{
-		PositionGametime = { PositionGametime.X - 12 , PositionGametime.Y };
+		PositionGametime = { PositionGametime.X - 13 , PositionGametime.Y };
 	}
 	if (scoreA >= 10)
 	{
