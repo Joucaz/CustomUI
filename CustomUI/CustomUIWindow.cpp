@@ -153,6 +153,33 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 
 	}
 }
+//
+//void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
+//	string keyPreset = getCvarString("CustomUI_choosenPresets");
+//	if (imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
+//		if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
+//			// Taille native de l'image
+//			auto size = imageDisplayBoost[keyPreset]->GetSizeF();
+//
+//			// Calcul basé sur la résolution 1920x1080
+//			float screenScaleX = screenSize.X / 1920.0f;
+//			float screenScaleY = screenSize.Y / 1080.0f;
+//
+//			// Fixer la taille en fonction de la résolution 1920x1080
+//			float fixedWidth = size.X * screenScaleX;
+//			float fixedHeight = size.Y * screenScaleY;
+//
+//			// Positionner et dessiner l'image
+//			ImVec2 position = ImVec2(0, 0); // Position souhaitée
+//			drawList->AddImage(renderImageBoost,
+//				position,
+//				ImVec2(position.x + fixedWidth, position.y + fixedHeight),
+//				ImVec2{ 0, 0 }, ImVec2{ 1, 1 }, // UV mapping
+//				IM_COL32(255, 255, 255, 255));
+//		}
+//	}
+//}
+
 
 void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
