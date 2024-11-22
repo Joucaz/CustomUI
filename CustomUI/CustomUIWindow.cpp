@@ -83,12 +83,12 @@ void CustomUI::RenderWindow()
 }
 
 void CustomUI::drawScore(ImDrawList* drawList) {
-	/*drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 0 * yPercent),
-		IM_COL32(255, 255, 255, 255), std::to_string(getMyTeamScore()).c_str());*/
+	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 0 * yPercent),
+		IM_COL32(255, 255, 255, 255), to_string(scoreA).c_str());
 	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 100 * yPercent),
 		IM_COL32(255, 255, 255, 255), (gameTime).c_str());
-	/*drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 200 * yPercent),
-		IM_COL32(255,255,255,255), std::to_string(getOpposingTeamScore()).c_str());*/
+	drawList->AddText(myFont, 160 * xPercent, ImVec2(0 * xPercent, 200 * yPercent),
+		IM_COL32(255,255,255,255), to_string(scoreB).c_str());
 }
 
 void CustomUI::drawBoost(ImDrawList* drawList) {

@@ -88,6 +88,8 @@ public:
 private:
 	int boost;
 	string gameTime = "";
+	int scoreA;
+	int scoreB;
 	inline string lead_zeros(int n, int len);
 
 	bool gameDisplay = false;

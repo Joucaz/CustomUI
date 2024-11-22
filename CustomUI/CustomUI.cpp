@@ -42,7 +42,9 @@ void CustomUI::onLoad()
 	initValues();
 
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
+
 	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&CustomUI::onGameEnd, this));
+	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", std::bind(&CustomUI::onGameEnd, this));
 
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", bind(&CustomUI::onReplayEnd, this));
@@ -126,7 +128,10 @@ void CustomUI::UpdateVars()
 {
 	if (isInGame()) {
 		gameTime = (getGameTime() != -1) ? (std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2)) : std::to_string(-1);
+		scoreA = getMyTeamScore();
+		scoreB = getOpposingTeamScore();
 	}
+	
 	/*else if (isInFreeplay()) {
 		boost = getBoostAmount();
 	}*/
@@ -150,8 +155,26 @@ bool CustomUI::isInFreeplay() {
 }
 
 void CustomUI::onGameStart() {
+	if (isInFreeplay()) {
+		return;
+	}
+	ServerWrapper sw = gameWrapper->GetCurrentGameState();
+	if (!sw) return;
+	GameSettingPlaylistWrapper playlist = sw.GetPlaylist();
+	if (!playlist) return;
+	int playlistID = playlist.GetPlaylistId();
+	/*if (playlistID == 6) {
+		LOG("onGameStart");
+		gameDisplay = true;
+	}
+	else {
+		gameWrapper->SetTimeout([&](GameWrapper* gameWrapper) { LOG("onGameStart");
+																gameDisplay = true; },
+																1.0F);
+	}*/
 	LOG("onGameStart");
 	gameDisplay = true;
+	
 }
 
 void CustomUI::onGameEnd() {
@@ -320,6 +343,7 @@ int CustomUI::getMyTeamScore()
 	else {
 		return -1;
 	}
+	
 }
 
 int CustomUI::getOpposingTeamScore()
