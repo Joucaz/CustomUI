@@ -13,17 +13,28 @@ constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_M
 #include <array>  // Ajoute cette ligne pour utiliser std::array
 using namespace std;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 
 struct Preset {
 	//string name;
+	string format;
 	string boostDisplayImage;
 	string boostTextureImage;
+	array<int, 4> settingsBoostDisplay;
+	array<int, 4> settingsBoostTexture;
+	array<int, 4> settingsBoostText;
 	array<int, 4> colorBoost; // RGBA
 	string boostForm;
 	string scoreImage;
 	array<int, 4> colorScoreMyTeam; // RGBA
 	array<int, 4> colorScoreOppositeTeam; // RGBA
 	array<int, 4> colorGameTime; // RGBA
+	array<int, 4> settingsScoreDisplay; 
+	array<int, 4> settingsScoreMyTeam;
+	array<int, 4> settingsScoreOppositeTeam;
+	array<int, 4> settingsGameTime;
 };
 
 class CustomUI: public BakkesMod::Plugin::BakkesModPlugin 
@@ -41,6 +52,12 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	void writeCvar();
 	map<string, Preset> loadPresets(const string& jsonFilePath);
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
+	void updateJsonField(string presetKey, const string& field, int positionScale, int newValue);
+	void saveJsonToFile(const string jsonFilePath);
+	array<int, 4>& getSettings(Preset& preset, const std::string& fieldName);
+
+	int intChangePositionX(array<int, 4> settings, string settingsName);
+	int intChangePositionY(array<int, 4> settings, string settingsName);
 
 	void UpdateVars();
 	int getBoostAmount();
@@ -74,6 +91,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 
 	void changeBoostDisplay(string texture);
 
+	Vector2 calculatePosition(string keyPreset, string which);
+
 	/*void positionBoostBar(int selected);
 	void positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y);
 	void positionTextBoost(float v1x, float v1y);*/
@@ -87,14 +106,30 @@ public:
 	void RenderSettings() override; // Uncomment if you wanna render your own tab in the settings menu
 	void RenderWindow() override; // Uncomment if you want to render your own plugin window
 	void SetImGuiContext(uintptr_t ctx) override;
+	void showRenderEditPosition();
+	void showRenderEditSize();
 	
 
 private:
+	json jsonData;
+
+	int changePositionX = 0;
+	int changePositionY = 0;
+	float changeSizeX = 1;
+	float changeSizeY = 1;
+
 	int boost;
 	string gameTime = "";
 	int scoreA;
 	int scoreB;
 	inline string lead_zeros(int n, int len);
+
+	bool showPositionEditor = false;
+	bool showSizeEditor = false;
+
+	string fontNameLoad;
+
+	bool isCustom;
 
 	bool gameDisplay = false;
 	bool replayDisplay = false;

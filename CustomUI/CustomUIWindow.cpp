@@ -9,6 +9,30 @@ using namespace std;
 #endif
 
 
+int CustomUI::intChangePositionX(array<int, 4> settings, string settingsName) {
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	if (settingsName == settingsItems) {
+		if (showPositionEditor) {
+			return changePositionX;
+		}
+		else {
+			return settings[0];
+		}
+	}
+	
+}
+int CustomUI::intChangePositionY(array<int, 4> settings, string settingsName) {
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	if (settingsName == settingsItems) {
+		if (showPositionEditor) {
+			return changePositionY;
+		}
+		else {
+			return settings[1];
+		}
+	}
+}
+
 // Do ImGui rendering here
 void CustomUI::RenderWindow()
 {
@@ -50,6 +74,7 @@ void CustomUI::RenderWindow()
 		auto gui = gameWrapper->GetGUIManager();
 		myFont = gui.GetFont("Oswald200");
 	}
+	//LOG("font size " + to_string(gameWrapper->GetGUIManager().GetFont("Oswald200")->FontSize));
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
@@ -57,6 +82,7 @@ void CustomUI::RenderWindow()
 		ImGui::PushFont(myFont);
 		//ImGui::Text("Custom UI Overlay");
 	}
+
 	if (isInGame() && gameDisplay) {
 		drawScore(drawList);
 		drawBoost(drawList);
@@ -80,6 +106,59 @@ void CustomUI::RenderWindow()
 		_globalCvarManager->executeCommand("togglemenu " + GetMenuName());
 	}
 
+}
+
+Vector2 CustomUI::calculatePosition(string keyPreset, string which) {
+	if (allPresets[keyPreset].format == "default") {
+		return Vector2(
+			allPresets[keyPreset].settingsBoostDisplay[0], 
+			allPresets[keyPreset].settingsBoostDisplay[1]
+		);
+	}
+	else {
+		if (which == "displayBoost") {
+			return Vector2(
+				allPresets[keyPreset].settingsBoostDisplay[0],
+				allPresets[keyPreset].settingsBoostDisplay[1]
+			);
+		}
+		else if (which == "displayBoostTexture") {
+			return Vector2(
+				allPresets[keyPreset].settingsBoostTexture[0],
+				allPresets[keyPreset].settingsBoostTexture[1]
+			);
+		}
+		else if (which == "textBoost") {
+			return Vector2(
+				allPresets[keyPreset].settingsBoostText[0],
+				allPresets[keyPreset].settingsBoostText[1]
+			);
+		}
+		else if (which == "textScoreMyTeam") {
+			return Vector2(
+				allPresets[keyPreset].settingsScoreMyTeam[0],
+				allPresets[keyPreset].settingsScoreMyTeam[1]
+			);
+		}
+		else if (which == "textScoreOppositeTeam") {
+			return Vector2(
+				allPresets[keyPreset].settingsScoreOppositeTeam[0],
+				allPresets[keyPreset].settingsScoreOppositeTeam[1]
+			);
+		}
+		else if (which == "textGametime") {
+			return Vector2(
+				allPresets[keyPreset].settingsGameTime[0],
+				allPresets[keyPreset].settingsGameTime[1]
+			);
+		}
+		else if (which == "displayScore") {
+			return Vector2(
+				allPresets[keyPreset].settingsScoreDisplay[0],
+				allPresets[keyPreset].settingsScoreDisplay[1]
+			);
+		}
+	}
 }
 
 void CustomUI::drawScore(ImDrawList* drawList) {
@@ -130,11 +209,13 @@ void CustomUI::drawBoost(ImDrawList* drawList) {
 	drawBoostDisplay(drawList);
 	if (isTexture) {
 		drawBoostTexture(drawList);
-		drawBoostText(drawList, 1660, 825, 1700, 825, 1680, 825);
+		//drawBoostText(drawList, 1660, 825, 1700, 825, 1680, 825);
+		drawBoostText(drawList, 140, 120, 180, 120, 160, 120);
 	}
 	else {
 		drawBoostCircle(drawList);
-		drawBoostText(drawList, 1690, 825, 1730, 825, 1710, 825);
+		//drawBoostText(drawList, 1690, 825, 1730, 825, 1710, 825);
+		drawBoostText(drawList, 125, 120, 170, 120, 150, 120);
 	}
 
 }
@@ -145,82 +226,61 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 		if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
 			auto size = imageDisplayBoost[keyPreset]->GetSizeF();
 			ImGui::SetCursorPos(ImVec2(0, 0));
-			drawList->AddImage(renderImageBoost, ImVec2(0, 0),
-				ImVec2(size.X * xPercent, size.Y * yPercent),
+			//drawList->AddImage(renderImageBoost, ImVec2(0 + intChangePositionX(allPresets[keyPreset].settingsBoostDisplay), 
+			//											0 + intChangePositionY(allPresets[keyPreset].settingsBoostDisplay)),
+			drawList->AddImage(renderImageBoost, ImVec2(0 + intChangePositionX(allPresets[keyPreset].settingsBoostDisplay, "settingsBoostDisplay"),
+														0 + intChangePositionY(allPresets[keyPreset].settingsBoostDisplay, "settingsBoostDisplay")),
+				ImVec2((size.X * changeSizeX + intChangePositionX(allPresets[keyPreset].settingsBoostDisplay, "settingsBoostDisplay")) * xPercent,
+						(size.Y * changeSizeY + intChangePositionY(allPresets[keyPreset].settingsBoostDisplay, "settingsBoostDisplay")) * yPercent),
 				ImVec2{ 0, 0 }, ImVec2{ 1, 1 },
 				ImU32(0xFFFFFFFF));
 		}
-
 	}
 }
-//
-//void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
-//	string keyPreset = getCvarString("CustomUI_choosenPresets");
-//	if (imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
-//		if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
-//			// Taille native de l'image
-//			auto size = imageDisplayBoost[keyPreset]->GetSizeF();
-//
-//			// Calcul basé sur la résolution 1920x1080
-//			float screenScaleX = screenSize.X / 1920.0f;
-//			float screenScaleY = screenSize.Y / 1080.0f;
-//
-//			// Fixer la taille en fonction de la résolution 1920x1080
-//			float fixedWidth = size.X * screenScaleX;
-//			float fixedHeight = size.Y * screenScaleY;
-//
-//			// Positionner et dessiner l'image
-//			ImVec2 position = ImVec2(0, 0); // Position souhaitée
-//			drawList->AddImage(renderImageBoost,
-//				position,
-//				ImVec2(position.x + fixedWidth, position.y + fixedHeight),
-//				ImVec2{ 0, 0 }, ImVec2{ 1, 1 }, // UV mapping
-//				IM_COL32(255, 255, 255, 255));
-//		}
-//	}
-//}
-
 
 void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	if (imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
 		if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
 			auto size = imageTextureBoost[keyPreset]->GetSizeF();
-			
 
-			float boostRatio = boost / 100.0f;
+			float boostRatio = boost / 100.0f; // Ratio du boost (entre 0 et 1)
 
-			// Position et taille de la texture
-			ImVec2 position = ImVec2(1598, 1015);
-			ImVec2 fullSize = ImVec2(size.X * xPercent, size.Y * yPercent); 
+			// Position initiale et taille complète adaptées à l'écran
+			ImVec2 position = ImVec2(80 * xPercent, 92 * yPercent); // Origine (coin supérieur gauche)
+			ImVec2 fullSize = ImVec2(size.X * xPercent, size.Y * yPercent);
 
-			// Hauteur visible en fonction du boost
+			// Calcul de la hauteur visible selon le boost (du bas vers le haut)
 			float visibleHeight = fullSize.y * boostRatio;
 
 			// Ajuster les UVs pour ne montrer que la hauteur visible
-			ImVec2 uv_min = ImVec2(1.0f, 1.0f);
-			ImVec2 uv_max = ImVec2(0.0f, 1-boostRatio);
+			ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
+			ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
 
-			// Dessiner la texture rognée
-			drawList->AddImage(renderImageBoost, position,
-				ImVec2(position.x + fullSize.x, position.y - visibleHeight),
-				uv_min, uv_max, IM_COL32(255, 255, 255, 255));
-		
+			// Ajuster les coordonnées de l'image rognée
+			drawList->AddImage(
+				renderImageBoost,
+				ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
+				ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
+				uv_min,
+				uv_max,
+				IM_COL32(255, 255, 255, 255)
+			);
 		}
-
 	}
 }
+
 
 void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 
 	// Paramètres pour le cercle
-	ImVec2 center = ImVec2(1760 * xPercent, 905 * yPercent); // Centre du cercle
-	float radius = 140.0f; // Rayon du cercle
+	ImVec2 center = ImVec2(200 * xPercent, 198 * yPercent); // Centre du cercle
+	float radius = 140.0f * xPercent; // Rayon du cercle
 	float startAngle = IM_PI / 2.0f; // Début de l'arc (à 3h sur un cadran)
 	float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
 	float endAngle = startAngle + (maxAngle * (boost / 100.0f)); // Calculer l'angle final en fonction du boost
-
+	float strokeThickness = 26.0f * xPercent; // Échelle de l'épaisseur du trait
 
 	// Définir la couleur du contour du cercle
 	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
@@ -228,7 +288,7 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	// Commencer à dessiner le path (cercle)
 	drawList->PathClear();
 	drawList->PathArcTo(center, radius, startAngle, endAngle, 100); // 100 segments pour le contour lisse
-	drawList->PathStroke(color, false, 26.0f);
+	drawList->PathStroke(color, false, strokeThickness);
 }
 
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
@@ -260,6 +320,7 @@ void CustomUI::SetImGuiContext(uintptr_t ctx)
 {
 	ImGui::SetCurrentContext(reinterpret_cast<ImGuiContext*>(ctx));
 	auto gui = gameWrapper->GetGUIManager();
+
 
 	// This syntax requires c++17
 	auto [res, font] = gui.LoadFont("Oswald200", "Oswald-VariableFont_wght.ttf", 200);

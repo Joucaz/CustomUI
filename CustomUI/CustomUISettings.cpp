@@ -11,6 +11,11 @@ void CustomUI::RenderSettings() {
 
     CVarWrapper presetChoosenCvar = cvarManager->getCvar("CustomUI_choosenPresets");
     if (!presetChoosenCvar) { return; }
+
+    CVarWrapper itemsPositionSelected = cvarManager->getCvar("CustomUI_itemsNamePosition");
+    if (!itemsPositionSelected) { return; }
+
+    string keyPreset = getCvarString("CustomUI_choosenPresets");
     //
     //const char* itemsPositionBoost[] = { "left", "right", "top", "bottom" };
     //static int currentPositionBoost = 0;
@@ -56,10 +61,73 @@ void CustomUI::RenderSettings() {
         ImGui::SetTooltip("Choose the preset to apply");
     }
 
+    // Configuration des options en fonction du format du preset
+    std::vector<const char*> itemsPositionCombo;
+    std::vector<const char*> itemsPosition;
 
+    if (allPresets[keyPreset].format == "default") {
+        itemsPositionCombo = { "Boost All Items", "Score All Items" };
+        itemsPosition = { "settingsBoostAllItems", "settingsScoreAllItems" };
+    }
+    else {
+        itemsPositionCombo = {
+            "Boost All Items",
+            "Background Image Boost",
+            "Texture Image Boost",
+            "Text Boost",
+            "Score All Items",
+            "Background Image Score",
+            "Text Score My Team",
+            "Text Score Opposite Team",
+            "Text Gametime"
+        };
+        itemsPosition = {
+            "settingsBoostAllItems",
+            "settingsBoostDisplay",
+            "settingsBoostTexture",
+            "settingsBoostText",
+            "settingsScoreAllItems",
+            "settingsScoreDisplay",
+            "settingsScoreMyTeam",
+            "settingsScoreOppositeTeam",
+            "settingsGameTime"
+        };
+    }
 
+    static int currentPosition = 0;
 
+    // Conversion du vector en tableau pour ImGui
+    std::vector<std::string> stringItems(itemsPositionCombo.begin(), itemsPositionCombo.end());
+    std::vector<const char*> cStringItems;
+    for (const auto& str : stringItems) {
+        cStringItems.push_back(str.c_str());
+    }
 
+    if (ImGui::Combo("Choose Items to move and resize", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
+        setCvarString(itemsPositionSelected, itemsPosition[currentPosition]);
+        writeCvar();
+    }
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("Select which item you want to move or resize");
+    }
+
+    if (ImGui::Button("Edit position"))
+    {
+        showPositionEditor = true;   // Active l'éditeur de position
+        showSizeEditor = false;
+    }
+    if (ImGui::Button("Edit size"))
+    {
+        showPositionEditor = false;   // Active l'éditeur de position
+        showSizeEditor = true;
+    }
+
+    if (showPositionEditor) {
+        showRenderEditPosition();
+    }
+    if (showSizeEditor) {
+        showRenderEditSize();
+    }
 
     
     /*if (ImGui::ArrowButton("##themes_left", ImGuiDir_Left) && rs_theme > 0)
@@ -86,4 +154,64 @@ void CustomUI::RenderSettings() {
         std::string hoverText = "distance is " + std::to_string(distance);
         ImGui::SetTooltip(hoverText.c_str());
     }*/
+}
+
+void CustomUI::showRenderEditPosition() {
+    string keyPreset = getCvarString("CustomUI_choosenPresets");
+    string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+    static int slider_x = 0;
+    static int slider_y = 0;
+    if (ImGui::SliderInt("Position X", &slider_x, -screenSize.X, screenSize.X, "%d")) {
+        changePositionX = slider_x;
+    }
+    if (ImGui::SliderInt("Position Y", &slider_y, -screenSize.X, screenSize.X, "%d")) {
+        changePositionY = slider_y;
+        /*updateJsonField(keyPreset, "settingsBoostDisplay", 0, slider_i);*/
+    }
+    if (ImGui::Button("Save Position"))
+    {
+        updateJsonField(keyPreset, settingsItems, 0, changePositionX);
+        updateJsonField(keyPreset, settingsItems, 1, changePositionY);
+        changePositionX = 0;
+        changePositionY = 0;
+        showPositionEditor = false;
+    }
+    if (ImGui::Button("Cancel")) {
+        showPositionEditor = false;
+        changePositionX = 0;
+        changePositionY = 0;
+    }
+}
+
+void CustomUI::showRenderEditSize() {
+
+    static float slider_x = 1;
+    static float slider_y = 1;
+
+    float aspectRatio = static_cast<float>(screenSize.X) / static_cast<float>(screenSize.Y);
+    bool isAspectRatio16_9 = fabs(aspectRatio - (16.0f / 9.0f)) < 0.01f;
+
+    if (ImGui::SliderFloat("Size X", &slider_x, 0, 5, "%.2f")) {
+        LOG("Size X modifiée !");
+        changeSizeX = slider_x;
+        if (isAspectRatio16_9) {
+            changeSizeY = slider_x;
+        }
+        // updateJsonField(keyPreset, "settingsBoostDisplay", 0, slider_x);
+    }
+
+    if (!isAspectRatio16_9) {
+        if (ImGui::SliderFloat("Size Y", &slider_y, -screenSize.Y, screenSize.Y, "%d")) {
+            LOG("Size Y modifiée !");
+            changeSizeY = slider_y;
+            // updateJsonField(keyPreset, "settingsBoostDisplay", 1, slider_y);
+        }
+    }
+
+    if (ImGui::Button("Save Position")) {
+        showSizeEditor = false;
+    }
+    if (ImGui::Button("Cancel")) {
+        showSizeEditor = false;
+    }
 }
