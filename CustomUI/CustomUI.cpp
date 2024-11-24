@@ -231,12 +231,6 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 		preset.format = value["format"];
 		preset.boostDisplayImage = value["boostDisplayImage"];
 		preset.boostTextureImage = value["boostTextureImage"];
-		preset.settingsBoostDisplay = {
-			value["settingsBoostDisplay"][0],
-			value["settingsBoostDisplay"][1],
-			value["settingsBoostDisplay"][2],
-			value["settingsBoostDisplay"][3]
-		};
 		preset.colorBoost = {
 			value["colorBoost"][0],
 			value["colorBoost"][1],
@@ -263,55 +257,16 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 			value["colorGameTime"][2],
 			value["colorGameTime"][3]
 		};
-		preset.settingsScoreDisplay = {
-			value["settingsScoreDisplay"][0],
-			value["settingsScoreDisplay"][1],
-			value["settingsScoreDisplay"][2],
-			value["settingsScoreDisplay"][3]
-		};
+		preset.settingsBoostDisplay = loadSettingsBoostDisplay(value["settingsBoostDisplay"]);
+		preset.settingsScoreDisplay = loadSettingsBoostDisplay(value["settingsScoreDisplay"]);
+		preset.settingsBoostAllItems = loadSettingsBoostDisplay(value["settingsBoostAllItems"]);
+		preset.settingsScoreAllItems = loadSettingsBoostDisplay(value["settingsScoreAllItems"]);
+		preset.settingsBoostTexture = loadSettingsBoostDisplay(value["settingsBoostTexture"]);
+		preset.settingsBoostText = loadSettingsBoostDisplay(value["settingsBoostText"]);
+		preset.settingsScoreMyTeam = loadSettingsBoostDisplay(value["settingsScoreMyTeam"]);
+		preset.settingsScoreOppositeTeam = loadSettingsBoostDisplay(value["settingsScoreOppositeTeam"]);
+		preset.settingsGameTime = loadSettingsBoostDisplay(value["settingsGameTime"]);
 
-
-		// Charger les settings uniquement si le format est "custom"
-		if (preset.format == "custom") {
-			preset.settingsBoostTexture = {
-				value["settingsBoostTexture"][0],
-				value["settingsBoostTexture"][1],
-				value["settingsBoostTexture"][2],
-				value["settingsBoostTexture"][3]
-			};
-			preset.settingsBoostText = {
-				value["settingsBoostText"][0],
-				value["settingsBoostText"][1],
-				value["settingsBoostText"][2],
-				value["settingsBoostText"][3]
-			};
-			preset.settingsScoreMyTeam = {
-				value["settingsScoreMyTeam"][0],
-				value["settingsScoreMyTeam"][1],
-				value["settingsScoreMyTeam"][2],
-				value["settingsScoreMyTeam"][3]
-			};
-			preset.settingsScoreOppositeTeam = {
-				value["settingsScoreOppositeTeam"][0],
-				value["settingsScoreOppositeTeam"][1],
-				value["settingsScoreOppositeTeam"][2],
-				value["settingsScoreOppositeTeam"][3]
-			};
-			preset.settingsGameTime = {
-				value["settingsGameTime"][0],
-				value["settingsGameTime"][1],
-				value["settingsGameTime"][2],
-				value["settingsGameTime"][3]
-			};
-		}
-		else {
-			// Si le format n'est pas "custom", tout est à zéro
-			preset.settingsBoostTexture = { 0, 0, 0, 0 };
-			preset.settingsBoostText = { 0, 0, 0, 0 };
-			preset.settingsScoreMyTeam = { 0, 0, 0, 0 };
-			preset.settingsScoreOppositeTeam = { 0, 0, 0, 0 };
-			preset.settingsGameTime = { 0, 0, 0, 0 };
-		}
 
 		// Charger les images avec la fonction utilitaire
 		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
@@ -324,9 +279,22 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 
 	return presets;
 }
-
-array<int, 4>& CustomUI::getSettings(Preset& preset, const std::string& fieldName) {
-	if (fieldName == "settingsBoostDisplay") {
+SettingsItems CustomUI::loadSettingsBoostDisplay(const json& value) {
+	return {
+		value["int1"].get<int>(),   // Premier entier
+		value["int2"].get<int>(),   // Deuxième entier
+		value["float1"].get<float>(), // Premier flottant
+		value["float2"].get<float>()  // Deuxième flottant
+	};
+}
+SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldName) {
+	if (fieldName == "settingsBoostAllItems") {
+		return preset.settingsBoostAllItems;
+	}
+	else if (fieldName == "settingsScoreAllItems") {
+		return preset.settingsScoreAllItems;
+	}
+	else if (fieldName == "settingsBoostDisplay") {
 		return preset.settingsBoostDisplay;
 	}
 	else if (fieldName == "settingsBoostTexture") {
@@ -352,7 +320,7 @@ array<int, 4>& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 	}
 }
 
-void CustomUI::updateJsonField(string presetKey, const string& field, int positionScale, int newValue) {
+void CustomUI::updateJsonFieldInt(string presetKey, const string& field, int& positionScale, int newValue) {
 	if (jsonData["presets"].contains(presetKey)) {
 		// Mise à jour du JSON
 		jsonData["presets"][presetKey][field][positionScale] = newValue;
@@ -362,8 +330,9 @@ void CustomUI::updateJsonField(string presetKey, const string& field, int positi
 		if (allPresets.contains(presetKey)) {
 			try {
 				// Obtenez la référence au champ et mettez à jour la valeur
-				array<int, 4>& settings = getSettings(allPresets[presetKey], field);
-				settings[positionScale] = newValue;
+				/*SettingsItems& settings = getSettings(allPresets[presetKey], field);
+				settings.int1 = newValue;*/
+				positionScale = newValue;
 			}
 			catch (const std::invalid_argument& e) {
 				LOG(e.what());
@@ -387,22 +356,41 @@ void CustomUI::updateJsonField(string presetKey, const string& field, int positi
 }
 
 
-//
-//void CustomUI::updateJsonField(string presetKey, string field, int positionScale,int newValue) {
-//	if (jsonData["presets"].contains(presetKey)) {
-//		jsonData["presets"][presetKey][field][positionScale] = newValue;
-//		LOG("Mise a jour de " + field + " dans " + presetKey + " a " + std::to_string(newValue));
-//	}
-//	else {
-//		LOG("Preset " + presetKey + " introuvable !");
-//	}
-//	if (jsonData.is_discarded()) {
-//		LOG("Erreur: jsonData est corrompu !");
-//		return;
-//	}
-//	saveJsonToFile(presetPath);
-//	//allPresets = loadPresets(presetPath);
-//}
+void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, float& positionScale, float newValue) {
+	if (jsonData["presets"].contains(presetKey)) {
+		// Mise à jour du JSON
+		jsonData["presets"][presetKey][field][positionScale] = newValue;
+		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
+
+		// Mise à jour de allPresets
+		if (allPresets.contains(presetKey)) {
+			try {
+				// Obtenez la référence au champ et mettez à jour la valeur
+				/*SettingsItems& settings = getSettings(allPresets[presetKey], field);
+				settings[positionScale] = newValue;*/
+				positionScale = newValue;
+			}
+			catch (const std::invalid_argument& e) {
+				LOG(e.what());
+			}
+		}
+		else {
+			LOG("Erreur : clé " + presetKey + " absente dans allPresets.");
+		}
+
+		saveJsonToFile(presetPath);
+	}
+	else {
+		LOG("Preset " + presetKey + " introuvable !");
+	}
+
+	// Vérification de corruption
+	if (jsonData.is_discarded()) {
+		LOG("Erreur : jsonData est corrompu !");
+		return;
+	}
+}
+
 void CustomUI::saveJsonToFile(const string jsonFilePath) {
 	try {
 		// Ouvrir le fichier en mode écriture

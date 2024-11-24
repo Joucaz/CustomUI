@@ -105,6 +105,7 @@ void CustomUI::RenderSettings() {
 
     if (ImGui::Combo("Choose Items to move and resize", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
         setCvarString(itemsPositionSelected, itemsPosition[currentPosition]);
+        LOG(itemsPosition[currentPosition]);
         writeCvar();
     }
     if (ImGui::IsItemHovered()) {
@@ -159,59 +160,85 @@ void CustomUI::RenderSettings() {
 void CustomUI::showRenderEditPosition() {
     string keyPreset = getCvarString("CustomUI_choosenPresets");
     string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-    static int slider_x = 0;
-    static int slider_y = 0;
+
+    SettingsItems& settings = getSettings(allPresets[keyPreset], settingsItems);
+    if (!changingBeginPosition) {
+        changePositionX = settings.int1;
+        changePositionY = settings.int2;
+        changingBeginPosition = true;
+    }
+    static int slider_x = settings.int1;
+    static int slider_y = settings.int2;
     if (ImGui::SliderInt("Position X", &slider_x, -screenSize.X, screenSize.X, "%d")) {
         changePositionX = slider_x;
     }
     if (ImGui::SliderInt("Position Y", &slider_y, -screenSize.X, screenSize.X, "%d")) {
         changePositionY = slider_y;
-        /*updateJsonField(keyPreset, "settingsBoostDisplay", 0, slider_i);*/
     }
     if (ImGui::Button("Save Position"))
     {
-        updateJsonField(keyPreset, settingsItems, 0, changePositionX);
-        updateJsonField(keyPreset, settingsItems, 1, changePositionY);
+        updateJsonFieldInt(keyPreset, settingsItems, settings.int1, changePositionX);
+        updateJsonFieldInt(keyPreset, settingsItems, settings.int2, changePositionY);
         changePositionX = 0;
         changePositionY = 0;
         showPositionEditor = false;
+        showSizeEditor = false;
+        changingBeginPosition = false;
     }
     if (ImGui::Button("Cancel")) {
-        showPositionEditor = false;
         changePositionX = 0;
         changePositionY = 0;
+        showPositionEditor = false;
+        showSizeEditor = false;
+        changingBeginPosition = false;
     }
 }
 
 void CustomUI::showRenderEditSize() {
+    string keyPreset = getCvarString("CustomUI_choosenPresets");
+    string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-    static float slider_x = 1;
-    static float slider_y = 1;
+    SettingsItems& settings = getSettings(allPresets[keyPreset], settingsItems);
+    if (!changingBeginSize) {
+        changeSizeX = settings.float1;
+        changeSizeY = settings.float2;
+        changingBeginSize = true;
+    }
+    static float slider_x = settings.float1;
+    static float slider_y = settings.float2;
 
     float aspectRatio = static_cast<float>(screenSize.X) / static_cast<float>(screenSize.Y);
     bool isAspectRatio16_9 = fabs(aspectRatio - (16.0f / 9.0f)) < 0.01f;
 
     if (ImGui::SliderFloat("Size X", &slider_x, 0, 5, "%.2f")) {
-        LOG("Size X modifiée !");
         changeSizeX = slider_x;
         if (isAspectRatio16_9) {
             changeSizeY = slider_x;
         }
-        // updateJsonField(keyPreset, "settingsBoostDisplay", 0, slider_x);
     }
 
     if (!isAspectRatio16_9) {
         if (ImGui::SliderFloat("Size Y", &slider_y, -screenSize.Y, screenSize.Y, "%d")) {
-            LOG("Size Y modifiée !");
             changeSizeY = slider_y;
-            // updateJsonField(keyPreset, "settingsBoostDisplay", 1, slider_y);
         }
     }
 
     if (ImGui::Button("Save Position")) {
+        LOG("X : " + to_string(changeSizeX) + " Y : " + to_string(changeSizeY));
+        updateJsonFieldFloat(keyPreset, settingsItems, settings.float1, changeSizeX);
+        updateJsonFieldFloat(keyPreset, settingsItems, settings.float2, changeSizeY);
+        changeSizeX = 0;
+        changeSizeY = 0;
+        showPositionEditor = false;
         showSizeEditor = false;
+        changingBeginSize = false;
     }
     if (ImGui::Button("Cancel")) {
+
+        changeSizeX = 0;
+        changeSizeY = 0;
+        showPositionEditor = false;
         showSizeEditor = false;
+        changingBeginSize = false;
     }
 }
