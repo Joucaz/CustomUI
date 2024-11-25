@@ -17,10 +17,10 @@ using namespace std;
 using json = nlohmann::json;
 
 struct SettingsItems {
-	int int1;       // Premier entier
-	int int2;       // Deuxième entier
-	float float1;   // Premier flottant
-	float float2;   // Deuxième flottant
+	int int1; 
+	int int2; 
+	float float1; 
+	float float2;
 };
 struct Preset {
 	//string name;
@@ -59,8 +59,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	void writeCvar();
 	map<string, Preset> loadPresets(const string& jsonFilePath);
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
-	void updateJsonFieldInt(string presetKey, const string& field, int& positionScale, int newValue);
-	void updateJsonFieldFloat(string presetKey, const string& field, float& positionScale, float newValue);
+	void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
+	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
 	void saveJsonToFile(const string jsonFilePath);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	SettingsItems loadSettingsBoostDisplay(const json& value);

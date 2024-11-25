@@ -186,37 +186,70 @@ void CustomUI::drawBoost(ImDrawList* drawList) {
 
 }
 
+
 void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	SettingsItems settingsBoostDisplayArray = allPresets[keyPreset].settingsBoostDisplay;
-	SettingsItems settingsBoostAllItemsArray = allPresets[keyPreset].settingsBoostAllItems;
+	auto& preset = allPresets[keyPreset];
+	auto& settingsBoostDisplayArray = preset.settingsBoostDisplay;
+	auto& settingsBoostAllItemsArray = preset.settingsBoostAllItems;
 
-	if (imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
-		if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
-			auto size = imageDisplayBoost[keyPreset]->GetSizeF();
-			ImGui::SetCursorPos(ImVec2(0, 0));
+	if (!imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
+		return;
+	}
 
+	if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
+		auto size = imageDisplayBoost[keyPreset]->GetSizeF();
 
-			if (settingsItems != "settingsBoostAllItems") {
-				drawList->AddImage(renderImageBoost, ImVec2(0 + intChangePositionX(settingsBoostDisplayArray, "settingsBoostDisplay"),
-					0 + intChangePositionY(settingsBoostDisplayArray, "settingsBoostDisplay")),
-					ImVec2((size.X * floatChangeSizeX(settingsBoostDisplayArray, "settingsBoostDisplay") + intChangePositionX(settingsBoostDisplayArray, "settingsBoostDisplay")) * xPercent,
-						(size.Y * floatChangeSizeY(settingsBoostDisplayArray, "settingsBoostDisplay") + intChangePositionY(settingsBoostDisplayArray, "settingsBoostDisplay")) * yPercent),
-					ImVec2{ 0, 0 }, ImVec2{ 1, 1 },
-					ImU32(0xFFFFFFFF));
-			}
-			else {
-				drawList->AddImage(renderImageBoost, ImVec2(0 + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
-					0 + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")),
-					ImVec2((size.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-						(size.Y * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-					ImVec2{ 0, 0 }, ImVec2{ 1, 1 },
-					ImU32(0xFFFFFFFF));
-			}
+		const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
+			? settingsBoostAllItemsArray
+			: settingsBoostDisplayArray;
+		const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
+			? settingsBoostDisplayArray
+			: settingsBoostAllItemsArray;
 
-			
+		const string& stringSettings = (settingsItems == "settingsBoostAllItems")
+			? "settingsBoostAllItems"
+			: "settingsBoostDisplay";
+
+		ImVec2 position = ImVec2(
+			0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings),
+			0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)
+		);
+
+		ImVec2 fullSize = ImVec2(
+			size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+			size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings) * yPercent
+		);
+
+		if (preset.format == "custom") {
+			drawList->AddImage(
+				renderImageBoost,
+				ImVec2(position.x, position.y),
+				ImVec2(position.x + fullSize.x, position.y + fullSize.y),
+				ImVec2(0, 0),
+				ImVec2(1, 1),
+				IM_COL32(255, 255, 255, 255)
+			);
+		}
+		else {
+			drawList->AddImage(
+				renderImageBoost,
+				ImVec2(
+					0 + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
+					0 + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")
+				),
+				ImVec2(
+					(size.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") +
+						intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+					(size.Y * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems") +
+						intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent
+				),
+				ImVec2(0, 0),
+				ImVec2(1, 1),
+				IM_COL32(255, 255, 255, 255)
+			);
 		}
 	}
 }
@@ -225,55 +258,71 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	SettingsItems settingsBoostTextureArray = allPresets[keyPreset].settingsBoostTexture;
-	SettingsItems settingsBoostAllItemsArray = allPresets[keyPreset].settingsBoostAllItems;
+	auto& preset = allPresets[keyPreset];
+	auto& settingsBoostTexture = preset.settingsBoostTexture;
+	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
 
-	if (imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
-		if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
-			auto size = imageTextureBoost[keyPreset]->GetSizeF();
+	if (!imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
+		return;
+	}
 
-			float boostRatio = boost / 100.0f; // Ratio du boost (entre 0 et 1)
+	if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
+		auto size = imageTextureBoost[keyPreset]->GetSizeF();
 
-			array<int, 4> settingsBoost;
+		// Calcul des ratios et paramètres
+		float boostRatio = boost / 100.0f;
+		ImVec2 position = { 0, 0 };
+		ImVec2 fullSize = { 0, 0 };
 
-			ImVec2 position = { 0,0 };
-			ImVec2 fullSize = { 0,0 };
+		// Récupération des paramètres selon le format
+		if (preset.format == "custom") {
+			const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
+				? settingsBoostAllItems
+				: settingsBoostTexture;
+			const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
+				? settingsBoostTexture
+				: settingsBoostAllItems;
 
+			const string& stringSettings = (settingsItems == "settingsBoostAllItems")
+				? "settingsBoostAllItems"
+				: "settingsBoostTexture";
 
-			if (settingsItems != "settingsBoostAllItems") {
-				position = ImVec2((0 + intChangePositionX(settingsBoostTextureArray, "settingsBoostTexture")) * xPercent,
-					(0 + intChangePositionY(settingsBoostTextureArray, "settingsBoostTexture")) * yPercent);
-				fullSize = ImVec2(size.X * floatChangeSizeX(settingsBoostTextureArray, "settingsBoostTexture") * xPercent,
-					size.Y * floatChangeSizeY(settingsBoostTextureArray, "settingsBoostTexture") * yPercent);
-			}
-			else {
-				position = ImVec2((0 + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-					(0 + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent);
-				fullSize = ImVec2(size.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-					size.Y * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems") * yPercent);
-			}
-
-			//Old Value : X = 80, Y = 92;
-			
-
-			// Calcul de la hauteur visible selon le boost (du bas vers le haut)
-			float visibleHeight = fullSize.y * boostRatio;
-
-			// Ajuster les UVs pour ne montrer que la hauteur visible
-			ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
-			ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
-
-
-			// Ajuster les coordonnées de l'image rognée
-			drawList->AddImage(
-				renderImageBoost,
-				ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
-				ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
-				uv_min,
-				uv_max,
-				IM_COL32(255, 255, 255, 255)
+			position = ImVec2(
+				(0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+				(0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent
+			);
+			fullSize = ImVec2(
+				size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+				size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings) * yPercent
 			);
 		}
+		else {
+			position = ImVec2(
+				0 + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
+				0 + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems") * yPercent
+			);
+			fullSize = ImVec2(
+				size.X * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
+				size.Y * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") * yPercent
+			);
+		}
+
+		// Calcul de la hauteur visible selon le boost (du bas vers le haut)
+		float visibleHeight = fullSize.y * boostRatio;
+
+		// Ajuster les UVs pour ne montrer que la hauteur visible
+		ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
+		ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
+
+		// Dessiner l'image
+		drawList->AddImage(
+			renderImageBoost,
+			ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
+			ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
+			uv_min,
+			uv_max,
+			IM_COL32(255, 255, 255, 255)
+		);
 	}
 }
 
@@ -299,6 +348,90 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	drawList->PathArcTo(center, radius, startAngle, endAngle, 100); // 100 segments pour le contour lisse
 	drawList->PathStroke(color, false, strokeThickness);
 }
+//
+//void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
+//
+//	string keyPreset = getCvarString("CustomUI_choosenPresets");
+//	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+//	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
+//
+//	SettingsItems settingsBoostTextArray = allPresets[keyPreset].settingsBoostText;
+//	SettingsItems settingsBoostAllItemsArray = allPresets[keyPreset].settingsBoostAllItems;
+//
+//	Vector2 positionBoostText = { allPresets[keyPreset].settingsBoostText.int1 , allPresets[keyPreset].settingsBoostText.int2 };
+//	Vector2F sizeBoostText = { allPresets[keyPreset].settingsBoostText.float1 , allPresets[keyPreset].settingsBoostText.float2 };
+//	Vector2 positionBoostAllItems = { allPresets[keyPreset].settingsBoostAllItems.int1 , allPresets[keyPreset].settingsBoostAllItems.int2 };
+//	Vector2F sizeBoostAllItems = { allPresets[keyPreset].settingsBoostAllItems.float1 , allPresets[keyPreset].settingsBoostAllItems.float2 };
+//
+//	if (allPresets[keyPreset].format == "custom") {
+//		if (settingsItems != "settingsBoostAllItems") {
+//
+//			if (boost == 100) {
+//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
+//					ImVec2((v1x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
+//						(v1y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//			else if (boost < 10) {
+//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
+//					ImVec2((v2x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
+//						(v2y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//			else {
+//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
+//					ImVec2((v3x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
+//						(v3y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//		}
+//		else {
+//
+//			if (boost == 100) {
+//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//					ImVec2((v1x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//						(v1y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//			else if (boost < 10) {
+//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//					ImVec2((v2x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//						(v2y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//			else {
+//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//					ImVec2((v3x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//						(v3y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//					color, to_string(boost).c_str());
+//			}
+//		}
+//	}
+//	else {
+//		if (boost == 100) {
+//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//				ImVec2((v1x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//					(v1y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//				color, to_string(boost).c_str());
+//		}
+//		else if (boost < 10) {
+//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//				ImVec2((v2x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//					(v2y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//				color, to_string(boost).c_str());
+//		}
+//		else {
+//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
+//				ImVec2((v3x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
+//					(v3y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
+//				color, to_string(boost).c_str());
+//		}
+//	}
+//	
+//
+//}
+
+
 
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
 
@@ -306,51 +439,59 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
 
-	SettingsItems settingsBoostTextArray = allPresets[keyPreset].settingsBoostText;
-	SettingsItems settingsBoostAllItemsArray = allPresets[keyPreset].settingsBoostAllItems;
+	auto& preset = allPresets[keyPreset];
+	auto& settingsBoostText = preset.settingsBoostText;
+	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
 
-	if (settingsItems != "settingsBoostAllItems") {
+	const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
+		? settingsBoostAllItems
+		: settingsBoostText;
+	const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
+		? settingsBoostText
+		: settingsBoostAllItems;
 
-		if (boost == 100) {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-				ImVec2((v1x * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-					(v1y * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
-				color, to_string(boost).c_str());
-		}
-		else if (boost < 10) {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-				ImVec2((v2x * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-					(v2y * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
+	const string& stringSettings = (settingsItems == "settingsBoostAllItems")
+		? "settingsBoostAllItems"
+		: "settingsBoostText";
+
+
+	int vx = 0, vy = 0;
+
+	if (boost == 100) {
+		vx = v1x;
+		vy = v1y;
+	}
+	else if (boost < 10) {
+		vx = v2x;
+		vy = v2y;
+	}
+	else {
+		vx = v3x;
+		vy = v3y;
+	}
+
+	if (allPresets[keyPreset].format == "custom") {
+		if (settingsItems != "settingsBoostAllItems") {
+
+			drawList->AddText(myFont, 160 * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
 				color, to_string(boost).c_str());
 		}
 		else {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-				ImVec2((v3x * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-					(v3y * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
+			drawList->AddText(myFont, 160 * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
 				color, to_string(boost).c_str());
 		}
 	}
 	else {
-
-		if (boost == 100) {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-				ImVec2((v1x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-					(v1y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-				color, to_string(boost).c_str());
-		}
-		else if (boost < 10) {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-				ImVec2((v2x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-					(v2y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-				color, to_string(boost).c_str());
-		}
-		else {
-			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-				ImVec2((v3x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-					(v3y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-				color, to_string(boost).c_str());
-		}
+		drawList->AddText(myFont, 160 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+			ImVec2((vx * floatChangeSizeX(sourceSettings, stringSettings) + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+				(vy * floatChangeSizeX(sourceSettings, stringSettings) + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
+			color, to_string(boost).c_str());
 	}
+
 
 }
 

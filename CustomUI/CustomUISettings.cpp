@@ -177,8 +177,8 @@ void CustomUI::showRenderEditPosition() {
     }
     if (ImGui::Button("Save Position"))
     {
-        updateJsonFieldInt(keyPreset, settingsItems, settings.int1, changePositionX);
-        updateJsonFieldInt(keyPreset, settingsItems, settings.int2, changePositionY);
+        updateJsonFieldInt(keyPreset, settingsItems, "int1", changePositionX);
+        updateJsonFieldInt(keyPreset, settingsItems, "int2", changePositionY);
         changePositionX = 0;
         changePositionY = 0;
         showPositionEditor = false;
@@ -223,10 +223,10 @@ void CustomUI::showRenderEditSize() {
         }
     }
 
-    if (ImGui::Button("Save Position")) {
+    if (ImGui::Button("Save Size")) {
         LOG("X : " + to_string(changeSizeX) + " Y : " + to_string(changeSizeY));
-        updateJsonFieldFloat(keyPreset, settingsItems, settings.float1, changeSizeX);
-        updateJsonFieldFloat(keyPreset, settingsItems, settings.float2, changeSizeY);
+        updateJsonFieldFloat(keyPreset, settingsItems, "float1", changeSizeX);
+        updateJsonFieldFloat(keyPreset, settingsItems, "float2", changeSizeY);
         changeSizeX = 0;
         changeSizeY = 0;
         showPositionEditor = false;

@@ -320,7 +320,7 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 	}
 }
 
-void CustomUI::updateJsonFieldInt(string presetKey, const string& field, int& positionScale, int newValue) {
+void CustomUI::updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue) {
 	if (jsonData["presets"].contains(presetKey)) {
 		// Mise à jour du JSON
 		jsonData["presets"][presetKey][field][positionScale] = newValue;
@@ -330,9 +330,13 @@ void CustomUI::updateJsonFieldInt(string presetKey, const string& field, int& po
 		if (allPresets.contains(presetKey)) {
 			try {
 				// Obtenez la référence au champ et mettez à jour la valeur
-				/*SettingsItems& settings = getSettings(allPresets[presetKey], field);
-				settings.int1 = newValue;*/
-				positionScale = newValue;
+				SettingsItems& settings = getSettings(allPresets[presetKey], field);
+				if (positionScale == "int1") {
+					settings.int1 = newValue;
+				}
+				else {
+					settings.int2 = newValue;
+				}
 			}
 			catch (const std::invalid_argument& e) {
 				LOG(e.what());
@@ -356,7 +360,7 @@ void CustomUI::updateJsonFieldInt(string presetKey, const string& field, int& po
 }
 
 
-void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, float& positionScale, float newValue) {
+void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
 	if (jsonData["presets"].contains(presetKey)) {
 		// Mise à jour du JSON
 		jsonData["presets"][presetKey][field][positionScale] = newValue;
@@ -365,10 +369,13 @@ void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, float
 		// Mise à jour de allPresets
 		if (allPresets.contains(presetKey)) {
 			try {
-				// Obtenez la référence au champ et mettez à jour la valeur
-				/*SettingsItems& settings = getSettings(allPresets[presetKey], field);
-				settings[positionScale] = newValue;*/
-				positionScale = newValue;
+				SettingsItems& settings = getSettings(allPresets[presetKey], field);				
+				if (positionScale == "float1") {
+					settings.float1 = newValue;
+				}
+				else {
+					settings.float2 = newValue;
+				}
 			}
 			catch (const std::invalid_argument& e) {
 				LOG(e.what());
