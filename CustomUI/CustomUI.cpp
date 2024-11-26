@@ -111,10 +111,10 @@ void CustomUI::initValues() {
 	screenSize.Y = 2160;*/
 
 	// Percentages for converting to a non-1080p screen
-	xPercent = ((float)screenSize.X / 1920);
-	yPercent = ((float)screenSize.Y / 1080);
-	/*xPercent = ((float)1);
-	yPercent = ((float)1);*/
+	/*xPercent = ((float)screenSize.X / 1920);
+	yPercent = ((float)screenSize.Y / 1080);*/
+	xPercent = ((float)1);
+	yPercent = ((float)1);
 
 
 	presetPath = gameWrapper->GetDataFolder().string() + "\\CustomUI" + "\\Presets" + "\\presets.json";

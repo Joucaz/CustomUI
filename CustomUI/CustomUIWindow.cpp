@@ -245,7 +245,7 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 
 	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
-	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsScoreOppositeTeam", to_string(scoreA).c_str());
+	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsScoreOppositeTeam", gameTime);
 
 	/*drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreA.X * xPercent, PositionScoreA.Y * yPercent),
 		colorScoreMyTeam, to_string(scoreA).c_str());
@@ -280,20 +280,20 @@ void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSiz
 			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
 				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
 					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
-				color, to_string(scoreA).c_str());
+				color, text.c_str());
 		}
 		else {
 			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
 				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
 					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
-				color, to_string(scoreA).c_str());
+				color, text.c_str());
 		}
 	}
 	else {
 		drawList->AddText(myFont, fontSize * floatChangeSizeX(settingsAll, "settingsScoreAllItems") * xPercent,
 			ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionX(settingsAll, "settingsScoreAllItems")) * xPercent,
 				(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionY(settingsAll, "settingsScoreAllItems")) * yPercent),
-			color, to_string(scoreA).c_str());
+			color, text.c_str());
 	}
 }
 
@@ -566,7 +566,7 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 	else {
 		drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
 			ImVec2((vx * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
-				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "")) * yPercent),
+				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * yPercent),
 			color, to_string(boost).c_str());
 	}
 
