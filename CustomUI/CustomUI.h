@@ -92,6 +92,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onReplayStart();
 	void onReplayEnd();
 
+	void onPauseOpen();
+	void onPauseClose();
+
 	//void Render(CanvasWrapper canvas);
 
 	void drawBoost(ImDrawList* drawList);
@@ -102,6 +105,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void drawScore(ImDrawList* drawList);
 
 	void changeBoostDisplay(string texture);
+
+	void drawTextScore(ImDrawList* drawList, Vector2 PositionScoreA, int fontSize, ImU32 color, SettingsItems settingsAll, SettingsItems settingsItem, string textSettings ,string text);
 
 	/*void positionBoostBar(int selected);
 	void positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y);
@@ -139,6 +144,8 @@ private:
 	json jsonData;
 
 	bool isMenuOpened = false;
+	bool isOnPause = false;
+	int numberPause = 0;
 
 	int changePositionX = 0;
 	int changePositionY = 0;

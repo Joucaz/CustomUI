@@ -55,6 +55,12 @@ void CustomUI::onLoad()
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", bind(&CustomUI::onReplayEnd, this));
 
+	/*gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));*/
+	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", bind(&CustomUI::onPauseOpen, this));
+	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", bind(&CustomUI::onPauseClose, this));
+
+	
 
 
 	//gameWrapper->HookEvent("Function TAGame.NetworkInputBuffer_TA.ClientAckFrame", bind(&CustomUI::onBoostStart, this));
@@ -134,7 +140,7 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 
 void CustomUI::UpdateVars()
 {
-	//LOG(" test + " + isActiveSettings);
+	//LOG(" test + " + to_string(isSettingsOpen));
 	if (isInGame()) {
 		gameTime = (getGameTime() != -1)
 			? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
@@ -196,6 +202,7 @@ void CustomUI::onGameEnd() {
 }
 
 void CustomUI::onReplayStart() {
+	isOnPause = false;
 	LOG("onReplayStart");
 	replayDisplay = true;
 	if (!isInFreeplay()) {
@@ -214,6 +221,21 @@ void CustomUI::onReplayEnd() {
 void CustomUI::onOvertime() {
 	isOvertime = true;
 }
+
+void CustomUI::onPauseOpen() {
+	isOnPause = true;
+	numberPause += 1;
+}
+void CustomUI::onPauseClose() {
+	if (numberPause == 1) {
+		isOnPause = false;
+		numberPause = 0;
+	}
+	else {
+		numberPause -= 1;
+	}
+}
+
 map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 	map<string, Preset> presets;
 

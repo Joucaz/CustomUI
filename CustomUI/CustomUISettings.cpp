@@ -33,8 +33,6 @@ void CustomUI::RenderMenu() {
 	}
 	ImGui::TextUnformatted("CustomUI");
 
-
-
 	CVarWrapper boostFormCvar = cvarManager->getCvar("CustomUI_boostForm");
 	if (!boostFormCvar) { return; }
 	//string boostBarCvarValue = boostBarCvar.getStringValue();
@@ -46,18 +44,6 @@ void CustomUI::RenderMenu() {
 	if (!itemsPositionSelected) { return; }
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
-	//
-	//const char* itemsPositionBoost[] = { "left", "right", "top", "bottom" };
-	//static int currentPositionBoost = 0;
-
-	//if (ImGui::Combo("Boost Bar Position", &currentPositionBoost, itemsPositionBoost, IM_ARRAYSIZE(itemsPositionBoost))) {
-	//    // Mise à jour du CVar avec la chaîne de caractères sélectionnée
-	//    boostBarCvar.setValue(currentPositionBoost);
-	//    writeCvar();
-	//}
-	//if (ImGui::IsItemHovered()) {
-	//    ImGui::SetTooltip("Choose the position of the progress bar for the boost");
-	//}
 
 	static vector<const char*> itemsPreset;
 	static int currentPreset = 0;
@@ -156,6 +142,7 @@ void CustomUI::RenderMenu() {
 		}
 		
 	}
+	ImGui::SameLine();
 	if (ImGui::Button("Edit size"))
 	{
 		if (currentPosition != 0) {
@@ -163,6 +150,17 @@ void CustomUI::RenderMenu() {
 			showSizeEditor = true;
 		}
 	}
+
+	if (ImGui::Button("Reset ALL"))
+	{
+		for (size_t i = 1; i < itemsPosition.size(); ++i) {
+			updateJsonFieldInt(keyPreset, itemsPosition[i], "int1", 0);
+			updateJsonFieldInt(keyPreset, itemsPosition[i], "int2", 0);
+			updateJsonFieldFloat(keyPreset, itemsPosition[i], "float1", 1.0f);
+			updateJsonFieldFloat(keyPreset, itemsPosition[i], "float2", 1.0f);
+		}
+	}
+
 
 	if (showPositionEditor) {
 		showRenderEditPosition();
@@ -211,6 +209,8 @@ void CustomUI::RenderSettings() {
     {
         isSettingsOpen = true;
     }
+
+	ImGui::Text("test + %s", std::to_string(isSettingsOpen).c_str());
 
     ImGui::Separator();
 
@@ -293,9 +293,31 @@ void CustomUI::showRenderEditPosition() {
     if (ImGui::SliderInt("Position X", &slider_x, -screenSize.X, screenSize.X, "%d")) {
         changePositionX = slider_x;
     }
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Position X"))
+	{
+		updateJsonFieldInt(keyPreset, settingsItems, "int1", 0);
+		changePositionX = 0;
+		changePositionY = 0;
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginPosition = false;
+	}
+
     if (ImGui::SliderInt("Position Y", &slider_y, -screenSize.X, screenSize.X, "%d")) {
         changePositionY = slider_y;
     }
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Position Y"))
+	{
+		updateJsonFieldInt(keyPreset, settingsItems, "int2", 0);
+		changePositionX = 0;
+		changePositionY = 0;
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginPosition = false;
+	}
+
     if (ImGui::Button("Save Position"))
     {
         updateJsonFieldInt(keyPreset, settingsItems, "int1", changePositionX);
@@ -306,6 +328,7 @@ void CustomUI::showRenderEditPosition() {
         showSizeEditor = false;
         changingBeginPosition = false;
     }
+	ImGui::SameLine();
     if (ImGui::Button("Cancel")) {
         changePositionX = 0;
         changePositionY = 0;
@@ -333,19 +356,29 @@ void CustomUI::showRenderEditSize() {
 
     if (ImGui::SliderFloat("Size X", &slider_x, 0, 5, "%.2f")) {
         changeSizeX = slider_x;
-        if (isAspectRatio16_9) {
+        //if (isAspectRatio16_9) {
             changeSizeY = slider_x;
-        }
+        //}
     }
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Scale X"))
+	{
+		updateJsonFieldInt(keyPreset, settingsItems, "float1", 0);
+		changeSizeX = 0;
+		changeSizeY = 0;
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginSize = false;
+	}
 
-    if (!isAspectRatio16_9) {
+    /*if (!isAspectRatio16_9) {
         if (ImGui::SliderFloat("Size Y", &slider_y, -screenSize.Y, screenSize.Y, "%d")) {
             changeSizeY = slider_y;
         }
-    }
+    }*/
 
     if (ImGui::Button("Save Size")) {
-        LOG("X : " + to_string(changeSizeX) + " Y : " + to_string(changeSizeY));
+
         updateJsonFieldFloat(keyPreset, settingsItems, "float1", changeSizeX);
         updateJsonFieldFloat(keyPreset, settingsItems, "float2", changeSizeY);
         changeSizeX = 0;
@@ -354,6 +387,7 @@ void CustomUI::showRenderEditSize() {
         showSizeEditor = false;
         changingBeginSize = false;
     }
+	ImGui::SameLine();
     if (ImGui::Button("Cancel")) {
 
         changeSizeX = 0;

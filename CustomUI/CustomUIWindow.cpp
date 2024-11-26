@@ -63,6 +63,10 @@ void CustomUI::Render() {
 	if (isSettingsOpen) {
 		RenderMenu();
 	}
+	else {
+		showPositionEditor = false;
+		showSizeEditor = false;
+	}
 	//LOG(" " + to_string(isSettingsOpen));
 }
 
@@ -128,6 +132,8 @@ void CustomUI::RenderWindow()
 	}
 	else if (isInFreeplay() && !zeroBoost(boost)) {
 		drawBoost(drawList);
+		//drawScore(drawList);
+
 	}
 		
 	if (myFont) {
@@ -146,22 +152,79 @@ void CustomUI::RenderWindow()
 
 
 void CustomUI::drawScore(ImDrawList* drawList) {
-	string keyPreset = getCvarString("CustomUI_choosenPresets");
-	if (imageScore[keyPreset]->IsLoadedForImGui()) {
-		if (auto renderImageScore = imageScore[keyPreset]->GetImGuiTex()) {
-			auto size = imageScore[keyPreset]->GetSizeF();
-			ImGui::SetCursorPos(ImVec2(0, 0));
-			drawList->AddImage(renderImageScore, ImVec2(0, 0),
-				ImVec2(size.X * xPercent, size.Y * yPercent),
-				ImVec2{ 0, 0 }, ImVec2{ 1, 1 },
-				ImU32(0xFFFFFFFF));
-		}
 
+
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+
+	auto& preset = allPresets[keyPreset];
+	auto& settingsScoreAllItems = preset.settingsScoreAllItems;
+	auto& settingsScoreDisplay = preset.settingsScoreDisplay;
+	auto& settingsScoreMyTeam = preset.settingsScoreMyTeam;
+	auto& settingsScoreOppositeTeam = preset.settingsScoreOppositeTeam;
+	auto& settingsGameTime = preset.settingsGameTime;
+
+	if (!imageScore[keyPreset]->IsLoadedForImGui()) {
+		return;
 	}
 
-	Vector2 PositionScoreA = { 802, -8 };
-	Vector2 PositionGametime = { 897, -10 };
-	Vector2 PositionScoreB = { 1082, -8 };
+	if (auto renderImageScore = imageScore[keyPreset]->GetImGuiTex()) {
+		auto size = imageScore[keyPreset]->GetSizeF();
+
+		const auto& sourceSettings = (settingsItems == "settingsScoreAllItems")
+			? settingsScoreAllItems
+			: settingsScoreDisplay;
+		const auto& baseSettings = (settingsItems == "settingsScoreAllItems")
+			? settingsScoreDisplay
+			: settingsScoreAllItems;
+
+		const string& stringSettings = (settingsItems == "settingsScoreAllItems")
+			? "settingsScoreAllItems"
+			: "settingsScoreDisplay";
+
+		ImVec2 position = ImVec2(
+			0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings),
+			0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)
+		);
+
+		ImVec2 fullSize = ImVec2(
+			size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+			size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings) * yPercent
+		);
+
+		if (preset.format == "custom") {
+			drawList->AddImage(
+				renderImageScore,
+				ImVec2(position.x, position.y),
+				ImVec2(position.x + fullSize.x, position.y + fullSize.y),
+				ImVec2(0, 0),
+				ImVec2(1, 1),
+				IM_COL32(255, 255, 255, 255)
+			);
+		}
+		else {
+			drawList->AddImage(
+				renderImageScore,
+				ImVec2(
+					0 + intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems"),
+					0 + intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")
+				),
+				ImVec2(
+					(size.X * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems") +
+						intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems")) * xPercent,
+					(size.Y * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems") +
+						intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")) * yPercent
+				),
+				ImVec2(0, 0),
+				ImVec2(1, 1),
+				IM_COL32(255, 255, 255, 255)
+			);
+		}
+	}
+
+	Vector2 PositionScoreA = { 188, -8 };
+	Vector2 PositionGametime = { 283, -10 };
+	Vector2 PositionScoreB = { 468, -8 };
 
 	if (isOvertime)
 	{
@@ -180,12 +243,58 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	ImU32 colorScoreOppositeTeam = IM_COL32(allPresets[keyPreset].colorScoreOppositeTeam[0], allPresets[keyPreset].colorScoreOppositeTeam[1], allPresets[keyPreset].colorScoreOppositeTeam[2], allPresets[keyPreset].colorScoreOppositeTeam[3]);
 	ImU32 colorGameTime = IM_COL32(allPresets[keyPreset].colorGameTime[0], allPresets[keyPreset].colorGameTime[1], allPresets[keyPreset].colorGameTime[2], allPresets[keyPreset].colorGameTime[3]);
 
-	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreA.X * xPercent, PositionScoreA.Y * yPercent),
+	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
+	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
+	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsScoreOppositeTeam", to_string(scoreA).c_str());
+
+	/*drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreA.X * xPercent, PositionScoreA.Y * yPercent),
 		colorScoreMyTeam, to_string(scoreA).c_str());
 	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionGametime.X * xPercent, PositionGametime.Y * yPercent),
 		colorGameTime, (gameTime).c_str());
 	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreB.X * xPercent, PositionScoreB.Y * yPercent),
-		colorScoreOppositeTeam, to_string(scoreB).c_str());
+		colorScoreOppositeTeam, to_string(scoreB).c_str());*/
+}
+
+void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSize, ImU32 color, SettingsItems settingsAll, SettingsItems settingsItem, string textSettings, string text) {
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+
+	const auto& sourceSettings = (settingsItems == "settingsScoreAllItems")
+		? settingsAll
+		: settingsItem;
+	const auto& baseSettings = (settingsItems == "settingsScoreAllItems")
+		? settingsItem
+		: settingsAll;
+
+	const string& stringSettings = (settingsItems == "settingsScoreAllItems")
+		? "settingsScoreAllItems"
+		: textSettings;
+
+
+	int vx = Position.X;
+	int vy = Position.Y;
+
+	if (allPresets[keyPreset].format == "custom") {
+		if (settingsItems != "settingsScoreAllItems") {
+
+			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
+				color, to_string(scoreA).c_str());
+		}
+		else {
+			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
+				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
+				color, to_string(scoreA).c_str());
+		}
+	}
+	else {
+		drawList->AddText(myFont, fontSize * floatChangeSizeX(settingsAll, "settingsScoreAllItems") * xPercent,
+			ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionX(settingsAll, "settingsScoreAllItems")) * xPercent,
+				(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionY(settingsAll, "settingsScoreAllItems")) * yPercent),
+			color, to_string(scoreA).c_str());
+	}
 }
 
 void CustomUI::drawBoost(ImDrawList* drawList) {
@@ -455,9 +564,9 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 		}
 	}
 	else {
-		drawList->AddText(myFont, 160 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
-			ImVec2((vx * floatChangeSizeX(sourceSettings, stringSettings) + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
-				(vy * floatChangeSizeX(sourceSettings, stringSettings) + intChangePositionY(sourceSettings, stringSettings)) * yPercent),
+		drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
+			ImVec2((vx * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
+				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "")) * yPercent),
 			color, to_string(boost).c_str());
 	}
 
@@ -513,6 +622,6 @@ void CustomUI::OnClose(){
 		isSettingsOpen = false;
 		gameWrapper->SetTimeout([&](GameWrapper* gameWrapper) {
 			cvarManager->executeCommand("togglemenu " + GetMenuName());
-			}, 0.02f);
+			}, 0.001f);
 	}
 }
