@@ -79,12 +79,12 @@ void CustomUI::RenderWindow()
 	static bool no_titlebar = true;
 	static bool no_scrollbar = true;
 	static bool no_menu = true;
-	static bool no_move = false;
-	static bool no_resize = false;
+	static bool no_move = true;
+	static bool no_resize = true;
 	static bool no_collapse = true;
 	static bool no_nav = false;
 	static bool no_background = true;
-	static bool no_bring_to_front = false;
+	static bool no_bring_to_front = true;
 
 	bool opened = true;
 
@@ -306,8 +306,8 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 				: "settingsBoostTexture";
 
 			position = ImVec2(
-				((80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
-				((92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent
+				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent
 			);
 			fullSize = ImVec2(
 				size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
@@ -316,8 +316,8 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		}
 		else {
 			position = ImVec2(
-				((80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
-				((92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * yPercent
+				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
+				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * yPercent
 			);
 			fullSize = ImVec2(
 				size.X * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
@@ -343,56 +343,56 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		);
 	}
 }
-//
-//
-//void CustomUI::drawBoostTexture(ImDrawList* drawList) {
-//	string keyPreset = getCvarString("CustomUI_choosenPresets");
-//	if (imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
-//		if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
-//			auto size = imageTextureBoost[keyPreset]->GetSizeF();
-//
-//			float boostRatio = boost / 100.0f; // Ratio du boost (entre 0 et 1)
-//
-//			// Position initiale et taille complète adaptées à l'écran
-//			ImVec2 position = ImVec2(80 * xPercent, 92 * yPercent); // Origine (coin supérieur gauche)
-//			ImVec2 fullSize = ImVec2(size.X * xPercent, size.Y * yPercent);
-//
-//			// Calcul de la hauteur visible selon le boost (du bas vers le haut)
-//			float visibleHeight = fullSize.y * boostRatio;
-//
-//			// Ajuster les UVs pour ne montrer que la hauteur visible
-//			ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
-//			ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
-//
-//			// Ajuster les coordonnées de l'image rognée
-//			drawList->AddImage(
-//				renderImageBoost,
-//				ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
-//				ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
-//				uv_min,
-//				uv_max,
-//				IM_COL32(255, 255, 255, 255)
-//			);
-//		}
-//	}
-//}
-
-
 
 
 void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
+
+	ImVec2 center = { 0,0 };
+	float radius;
+	float strokeThickness;
+
+	auto& preset = allPresets[keyPreset];
+	auto& settingsBoostTexture = preset.settingsBoostTexture;
+	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
+
+	const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
+		? settingsBoostAllItems
+		: settingsBoostTexture;
+	const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
+		? settingsBoostTexture
+		: settingsBoostAllItems;
+
+	const string& stringSettings = (settingsItems == "settingsBoostAllItems")
+		? "settingsBoostAllItems"
+		: "settingsBoostTexture";
+
+	//center = ImVec2(200 * xPercent, 198 * yPercent); // Centre du cercle
+	//radius = 140.0f * xPercent; // Rayon du cercle
+	//strokeThickness = 26.0f * xPercent; // Échelle de l'épaisseur du trait
+
+	if (preset.format == "custom") {
+
+		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent);
+		radius = 140.0f * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent;
+		strokeThickness = 26.0f * baseSettings.float2 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent;
+
+	}
+	else {
+		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
+			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * yPercent);
+		radius = 140.0f * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent;
+		strokeThickness = 26.0f * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent;
+	}
 
 	// Paramètres pour le cercle
-	ImVec2 center = ImVec2(200 * xPercent, 198 * yPercent); // Centre du cercle
-	float radius = 140.0f * xPercent; // Rayon du cercle
+
 	float startAngle = IM_PI / 2.0f; // Début de l'arc (à 3h sur un cadran)
 	float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
 	float endAngle = startAngle + (maxAngle * (boost / 100.0f)); // Calculer l'angle final en fonction du boost
-	float strokeThickness = 26.0f * xPercent; // Échelle de l'épaisseur du trait
-
-	// Définir la couleur du contour du cercle
-	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
 
 	// Commencer à dessiner le path (cercle)
 	drawList->PathClear();

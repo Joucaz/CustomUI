@@ -31,10 +31,14 @@ void CustomUI::onLoad()
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
 
+	auto cvarCustomizationWindow = cvarManager->registerCvar("CustomUI_enableCustomizationWindow", "0", "enable the window to edit items", true, true, 0, true, 1);
+
+	cvarManager->registerNotifier("CustomUI_openSettings", [this](std::vector<std::string> args) {
+		isSettingsOpen = true;
+		}, "", PERMISSION_ALL);
+
 	auto cvarBoostForm = cvarManager->registerCvar("CustomUI_boostForm", "Texture", "boost form (texture/circle)", true, false, 0, false);
 	cvarBoostForm.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
-		LOG("the cvar with name: {} changed", cvarName);
-		LOG("the new value is: {}", newCvar.getStringValue());
 		changeBoostDisplay(newCvar.getStringValue());
 		});
 

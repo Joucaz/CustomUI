@@ -6,14 +6,14 @@ using namespace std;
 
 void CustomUI::RenderMenu() {
 
-	static bool no_titlebar = true;
-	static bool no_scrollbar = true;
+	static bool no_titlebar = false;
+	static bool no_scrollbar = false;
 	static bool no_menu = true;
 	static bool no_move = false;
 	static bool no_resize = false;
-	static bool no_collapse = true;
+	static bool no_collapse = false;
 	static bool no_nav = false;
-	static bool no_background = true;
+	static bool no_background = false;
 	static bool no_bring_to_front = false;
 
 	ImGuiWindowFlags window_flags = 0;
@@ -27,7 +27,7 @@ void CustomUI::RenderMenu() {
 	if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
 	if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 	//if (!ImGui::Begin(menuTitle_.c_str(), nullptr)) {
-	if (!ImGui::Begin("TestMenu", nullptr, window_flags)) {
+	if (!ImGui::Begin("TestMenu", &isSettingsOpen, window_flags)) {
 		ImGui::End();
 		return;
 	}
@@ -77,11 +77,14 @@ void CustomUI::RenderMenu() {
 			index++;
 		}
 	}
+	static int currentPosition = 0;
+
 
 	if (!itemsPreset.empty() && ImGui::Combo("Choose Preset", &currentPreset, itemsPreset.data(), itemsPreset.size())) {
 		// Appliquer le preset sélectionné
 		auto selectedPreset = allPresets.begin();
 		std::advance(selectedPreset, currentPreset);  // Aller au preset correspondant
+		currentPosition = 0;
 
 		setCvarString(presetChoosenCvar, selectedPreset->first);
 		setCvarString(boostFormCvar, selectedPreset->second.boostForm);
@@ -96,11 +99,12 @@ void CustomUI::RenderMenu() {
 	std::vector<const char*> itemsPosition;
 
 	if (allPresets[keyPreset].format == "default") {
-		itemsPositionCombo = { "Boost All Items", "Score All Items" };
-		itemsPosition = { "settingsBoostAllItems", "settingsScoreAllItems" };
+		itemsPositionCombo = { "", "Boost All Items", "Score All Items" };
+		itemsPosition = { "", "settingsBoostAllItems", "settingsScoreAllItems" };
 	}
 	else {
 		itemsPositionCombo = {
+			"",
 			"Boost All Items",
 			"Background Image Boost",
 			"Texture Image Boost",
@@ -112,6 +116,7 @@ void CustomUI::RenderMenu() {
 			"Text Gametime"
 		};
 		itemsPosition = {
+			"",
 			"settingsBoostAllItems",
 			"settingsBoostDisplay",
 			"settingsBoostTexture",
@@ -123,8 +128,6 @@ void CustomUI::RenderMenu() {
 			"settingsGameTime"
 		};
 	}
-
-	static int currentPosition = 0;
 
 	// Conversion du vector en tableau pour ImGui
 	std::vector<std::string> stringItems(itemsPositionCombo.begin(), itemsPositionCombo.end());
@@ -147,13 +150,18 @@ void CustomUI::RenderMenu() {
 
 	if (ImGui::Button("Edit position"))
 	{
-		showPositionEditor = true;   // Active l'éditeur de position
-		showSizeEditor = false;
+		if (currentPosition != 0) {
+			showPositionEditor = true;
+			showSizeEditor = false;
+		}
+		
 	}
 	if (ImGui::Button("Edit size"))
 	{
-		showPositionEditor = false;   // Active l'éditeur de position
-		showSizeEditor = true;
+		if (currentPosition != 0) {
+			showPositionEditor = false;
+			showSizeEditor = true;
+		}
 	}
 
 	if (showPositionEditor) {
@@ -206,30 +214,37 @@ void CustomUI::RenderSettings() {
 
     ImGui::Separator();
 
-    ImGui::Text("Set A Bind To Open The Window");
-    static char KeyBindInputBuf[200] = "F5";
+    ImGui::Text("Set A Bind To Open The Customizable Window");
+    static char KeyBindInputBuf[200] = "F3";
     ImGui::InputText("##KeyBindInput", KeyBindInputBuf, IM_ARRAYSIZE(KeyBindInputBuf));
 
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowWidth() / 2, ImGui::GetWindowHeight() / 2), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("BindSet", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text("Open plugin window : %s", std::string(KeyBindInputBuf));
+        ImGui::Text("To open the window, you can now press : %s", std::string(KeyBindInputBuf));
         ImGui::NewLine();
 
-        if (ImGui::Button("OK", ImVec2(100.f, 25.f))) { ImGui::CloseCurrentPopup(); }
+        if (ImGui::Button("OK", ImVec2(100.f, 25.f))) { 
+			ImGui::CloseCurrentPopup(); 
+		}
         ImGui::EndPopup();
     }
 
 
     if (ImGui::Button("Set Bind"))
     {
-        gameWrapper->Execute([&](GameWrapper* gw) {
-            cvarManager->setBind(KeyBindInputBuf, "togglemenu CanvasToolMenu");
-            cvarManager->log("New key bind set : " + std::string(KeyBindInputBuf) + " -> togglemenu CanvasToolMenu");
-            });
+		//isSettingsOpen = true;
+		gameWrapper->Execute([&](GameWrapper* gw) {
+			cvarManager->setBind(KeyBindInputBuf, "CustomUI_openSettings");
+			cvarManager->log("New key bind set : " + std::string(KeyBindInputBuf) + " -> CustomUI_openSettings");
+			});
 
         ImGui::OpenPopup("BindSet");
     }
+
+
+
+
     ImGui::Separator();
     ImGui::Text("Plugin made by Vync");
     // Commence l'affichage de la fenêtre ImGui
