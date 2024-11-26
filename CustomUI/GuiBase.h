@@ -5,26 +5,11 @@
 class SettingsWindowBase : public BakkesMod::Plugin::PluginSettingsWindow
 {
 public:
-	std::string GetPluginName() override;
-	void SetImGuiContext(uintptr_t ctx) override;
-};
+	std::string GetPluginName() override {
+		return "CustomUI";
+	};
+	void SetImGuiContext(uintptr_t ctx) override {
+		ImGui::SetCurrentContext(reinterpret_cast<ImGuiContext*>(ctx));
+	};
 
-class PluginWindowBase : public BakkesMod::Plugin::PluginWindow
-{
-public:
-	virtual ~PluginWindowBase() = default;
-
-	bool isWindowOpen_ = false;
-	std::string menuTitle_ = "CustomUI";
-
-	std::string GetMenuName() override;
-	std::string GetMenuTitle() override;
-	void SetImGuiContext(uintptr_t ctx) override;
-	bool ShouldBlockInput() override;
-	bool IsActiveOverlay() override;
-	void OnOpen() override;
-	void OnClose() override;
-	void Render() override;
-
-	virtual void RenderWindow() = 0;
 };

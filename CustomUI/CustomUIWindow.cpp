@@ -51,6 +51,22 @@ float CustomUI::floatChangeSizeY(SettingsItems settings, string settingsName) {
 
 }
 
+void CustomUI::Render() {
+	int idx = ImGui::GetKeyIndex(ImGuiKey_Escape);
+	if (ImGui::IsKeyDown(idx))
+		escape_state = true;
+	else if (ImGui::IsKeyReleased(idx))
+		escape_state = false;
+	if (isInFreeplay() || isInGame()) {
+		RenderWindow();
+	}
+	if (isSettingsOpen) {
+		RenderMenu();
+	}
+	//LOG(" " + to_string(isSettingsOpen));
+}
+
+
 // Do ImGui rendering here
 void CustomUI::RenderWindow()
 {
@@ -70,6 +86,8 @@ void CustomUI::RenderWindow()
 	static bool no_background = true;
 	static bool no_bring_to_front = false;
 
+	bool opened = true;
+
 	ImGuiWindowFlags window_flags = 0;
 	if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
 	if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
@@ -81,7 +99,7 @@ void CustomUI::RenderWindow()
 	if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
 	if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 	//if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_)) {
-	if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, window_flags)) {
+	if (!ImGui::Begin(menuTitle_.c_str(), &opened, window_flags)) {
 
 		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
@@ -119,10 +137,10 @@ void CustomUI::RenderWindow()
 
 	ImGui::End();
 
-	if (!isWindowOpen_)
-	{
-		_globalCvarManager->executeCommand("togglemenu " + GetMenuName());
-	}
+	//if (!isWindowOpen_)
+	//{
+	//	_globalCvarManager->executeCommand("togglemenu " + GetMenuName());
+	//}
 
 }
 
@@ -288,8 +306,8 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 				: "settingsBoostTexture";
 
 			position = ImVec2(
-				(0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
-				(0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent
+				((80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)) * xPercent,
+				((92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)) * yPercent
 			);
 			fullSize = ImVec2(
 				size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) * xPercent,
@@ -298,8 +316,8 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		}
 		else {
 			position = ImVec2(
-				0 + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
-				0 + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems") * yPercent
+				((80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * xPercent,
+				((92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * yPercent
 			);
 			fullSize = ImVec2(
 				size.X * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") * xPercent,
@@ -325,6 +343,39 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		);
 	}
 }
+//
+//
+//void CustomUI::drawBoostTexture(ImDrawList* drawList) {
+//	string keyPreset = getCvarString("CustomUI_choosenPresets");
+//	if (imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
+//		if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
+//			auto size = imageTextureBoost[keyPreset]->GetSizeF();
+//
+//			float boostRatio = boost / 100.0f; // Ratio du boost (entre 0 et 1)
+//
+//			// Position initiale et taille complète adaptées à l'écran
+//			ImVec2 position = ImVec2(80 * xPercent, 92 * yPercent); // Origine (coin supérieur gauche)
+//			ImVec2 fullSize = ImVec2(size.X * xPercent, size.Y * yPercent);
+//
+//			// Calcul de la hauteur visible selon le boost (du bas vers le haut)
+//			float visibleHeight = fullSize.y * boostRatio;
+//
+//			// Ajuster les UVs pour ne montrer que la hauteur visible
+//			ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
+//			ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
+//
+//			// Ajuster les coordonnées de l'image rognée
+//			drawList->AddImage(
+//				renderImageBoost,
+//				ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
+//				ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
+//				uv_min,
+//				uv_max,
+//				IM_COL32(255, 255, 255, 255)
+//			);
+//		}
+//	}
+//}
 
 
 
@@ -348,88 +399,6 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	drawList->PathArcTo(center, radius, startAngle, endAngle, 100); // 100 segments pour le contour lisse
 	drawList->PathStroke(color, false, strokeThickness);
 }
-//
-//void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
-//
-//	string keyPreset = getCvarString("CustomUI_choosenPresets");
-//	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-//	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
-//
-//	SettingsItems settingsBoostTextArray = allPresets[keyPreset].settingsBoostText;
-//	SettingsItems settingsBoostAllItemsArray = allPresets[keyPreset].settingsBoostAllItems;
-//
-//	Vector2 positionBoostText = { allPresets[keyPreset].settingsBoostText.int1 , allPresets[keyPreset].settingsBoostText.int2 };
-//	Vector2F sizeBoostText = { allPresets[keyPreset].settingsBoostText.float1 , allPresets[keyPreset].settingsBoostText.float2 };
-//	Vector2 positionBoostAllItems = { allPresets[keyPreset].settingsBoostAllItems.int1 , allPresets[keyPreset].settingsBoostAllItems.int2 };
-//	Vector2F sizeBoostAllItems = { allPresets[keyPreset].settingsBoostAllItems.float1 , allPresets[keyPreset].settingsBoostAllItems.float2 };
-//
-//	if (allPresets[keyPreset].format == "custom") {
-//		if (settingsItems != "settingsBoostAllItems") {
-//
-//			if (boost == 100) {
-//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-//					ImVec2((v1x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-//						(v1y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//			else if (boost < 10) {
-//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-//					ImVec2((v2x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-//						(v2y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//			else {
-//				drawList->AddText(myFont, 160 * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") * xPercent,
-//					ImVec2((v3x * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.X + intChangePositionX(settingsBoostTextArray, "settingsBoostText")) * xPercent,
-//						(v3y * sizeBoostAllItems.X * floatChangeSizeX(settingsBoostTextArray, "settingsBoostText") + positionBoostAllItems.Y + intChangePositionY(settingsBoostTextArray, "settingsBoostText")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//		}
-//		else {
-//
-//			if (boost == 100) {
-//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//					ImVec2((v1x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//						(v1y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//			else if (boost < 10) {
-//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//					ImVec2((v2x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//						(v2y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//			else {
-//				drawList->AddText(myFont, 160 * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//					ImVec2((v3x * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.X + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//						(v3y * sizeBoostText.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + positionBoostText.Y + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//					color, to_string(boost).c_str());
-//			}
-//		}
-//	}
-//	else {
-//		if (boost == 100) {
-//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//				ImVec2((v1x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//					(v1y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//				color, to_string(boost).c_str());
-//		}
-//		else if (boost < 10) {
-//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//				ImVec2((v2x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//					(v2y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//				color, to_string(boost).c_str());
-//		}
-//		else {
-//			drawList->AddText(myFont, 160 * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") * xPercent,
-//				ImVec2((v3x * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * xPercent,
-//					(v3y * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * yPercent),
-//				color, to_string(boost).c_str());
-//		}
-//	}
-//	
-//
-//}
 
 
 
@@ -518,5 +487,32 @@ void CustomUI::SetImGuiContext(uintptr_t ctx)
 	}
 	else if (res == 2 && font) {
 		myFont = font;
+	}
+}
+
+string CustomUI::GetMenuName(){
+	return menuName_;
+}
+
+string CustomUI::GetMenuTitle(){
+	return menuTitle_;
+}
+bool CustomUI::ShouldBlockInput(){
+	return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
+}
+bool CustomUI::IsActiveOverlay(){
+	return isSettingsOpen;
+}	
+void CustomUI::OnOpen(){
+	
+}
+void CustomUI::OnClose(){
+	if (escape_state)
+	{
+		escape_state = false;
+		isSettingsOpen = false;
+		gameWrapper->SetTimeout([&](GameWrapper* gameWrapper) {
+			cvarManager->executeCommand("togglemenu " + GetMenuName());
+			}, 0.02f);
 	}
 }

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "GuiBase.h"
 #include "bakkesmod/plugin/bakkesmodplugin.h"
 #include "bakkesmod/plugin/pluginwindow.h"
@@ -44,9 +43,11 @@ struct Preset {
 	SettingsItems settingsGameTime;
 };
 
-class CustomUI: public BakkesMod::Plugin::BakkesModPlugin 
+class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
+	//public BakkesMod::Plugin::PluginSettingsWindow,
+	public BakkesMod::Plugin::PluginWindow
 	,public SettingsWindowBase // Uncomment if you wanna render your own tab in the settings menu
-	,public PluginWindowBase // Uncomment if you want to render your own plugin window
+	//,public PluginWindowBase // Uncomment if you want to render your own plugin window
 {
 
 	//std::shared_ptr<bool> enabled;
@@ -112,15 +113,32 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin
 	void setCvarString(CVarWrapper cVarName, string cVarValue);
 
 public:
+	virtual void Render() override;
+
+	virtual string GetMenuName() override;
+	virtual string GetMenuTitle() override;
+	virtual void SetImGuiContext(uintptr_t ctx) override;
+	virtual bool ShouldBlockInput() override;
+	virtual bool IsActiveOverlay() override;
+	virtual void OnOpen() override;
+	virtual void OnClose() override;
+
 	void RenderSettings() override; // Uncomment if you wanna render your own tab in the settings menu
-	void RenderWindow() override; // Uncomment if you want to render your own plugin window
-	void SetImGuiContext(uintptr_t ctx) override;
+	void RenderWindow(); // Uncomment if you want to render your own plugin window
+	void RenderMenu();
+
 	void showRenderEditPosition();
 	void showRenderEditSize();
+	bool escape_state = false;
+	bool isSettingsOpen = false;
+	string menuName_ = "customui";
+	string menuTitle_ = "CustomUI Settings Menu";
 	
 
 private:
 	json jsonData;
+
+	bool isMenuOpened = false;
 
 	int changePositionX = 0;
 	int changePositionY = 0;

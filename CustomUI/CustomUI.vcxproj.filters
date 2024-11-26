@@ -78,9 +78,6 @@
     <ClCompile Include="CustomUI.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>
-    <ClCompile Include="GuiBase.cpp">
-      <Filter>Plugin\src</Filter>
-    </ClCompile>
     <ClCompile Include="CustomUISettings.cpp">
       <Filter>Plugin\src</Filter>
     </ClCompile>

@@ -8,7 +8,6 @@ using namespace std;
 
 using json = nlohmann::json;
 
-
 BAKKESMOD_PLUGIN(CustomUI, "Custom UI", plugin_version, PLUGINTYPE_FREEPLAY)
 
 shared_ptr<CVarManagerWrapper> _globalCvarManager;
@@ -37,8 +36,8 @@ void CustomUI::onLoad()
 		LOG("the cvar with name: {} changed", cvarName);
 		LOG("the new value is: {}", newCvar.getStringValue());
 		changeBoostDisplay(newCvar.getStringValue());
-	});
-	
+		});
+
 
 	initValues();
 
@@ -87,9 +86,8 @@ void CustomUI::onLoad()
 	gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
 		cvarManager->executeCommand("togglemenu " + GetMenuName());
 		}, 1);
-	
-
 }
+
 
 void CustomUI::onUnload(){
 	LOG("Plugin unloaded!");
@@ -132,6 +130,7 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 
 void CustomUI::UpdateVars()
 {
+	//LOG(" test + " + isActiveSettings);
 	if (isInGame()) {
 		gameTime = (getGameTime() != -1)
 			? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
