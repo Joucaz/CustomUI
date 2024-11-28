@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CustomUI.h"
+#include "bakkesmod/wrappers/GuiManagerWrapper.h"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -111,9 +112,9 @@ void CustomUI::onUnload(){
 void CustomUI::initValues() {
 
 	// Screen resolution
-	//screenSize = gameWrapper->GetScreenSize();
-	screenSize.X = 3840;
-	screenSize.Y = 2160;
+	screenSize = gameWrapper->GetScreenSize();
+	/*screenSize.X = 3840;
+	screenSize.Y = 2160;*/
 
 	// Percentages for converting to a non-1080p screen
 	xPercent = ((float)screenSize.X / 1920);
@@ -130,6 +131,65 @@ void CustomUI::initValues() {
 	string boostFormCvar = getCvarString("CustomUI_boostForm");
 	changeBoostDisplay(boostFormCvar);
 
+
+	string font_prefix = "CustomUI_";
+	string font_path = "Presets/Original/fonts/Oswald.ttf";
+	string font_dest = ("../CustomUI/" + font_path);
+	auto gui = gameWrapper->GetGUIManager();
+	// This syntax requires c++17
+	auto [res, font] = gui.LoadFont("Oswald", font_dest, 200 * xPercent);
+
+	if (res == 0) {
+		LOG("Failed to load the font!");
+	}
+	else if (res == 1) {
+		LOG("The font will be loaded");
+	}
+	else if (res == 2 && font) {
+		//ImGui::SetWindowFontScale(50);
+		LOG("Font loaded with size : " + to_string(font->FontSize));
+		basicFont = font;
+		loadThemeFont();
+	}
+
+
+}
+
+void CustomUI::loadThemeFont() {
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+
+	if (allPresets[keyPreset].font.nameFont.empty()) {
+		myFont = basicFont;
+		LOG("basicFont");
+		return;
+	}
+
+	int font_size = allPresets[keyPreset].font.sizeFont;
+	string font_file = allPresets[keyPreset].font.nameFont;
+
+	string font_prefix = "CustomUI_";
+	string font_path = ("Presets/" + keyPreset + "/fonts/" + font_file);
+	string font_dest = ("../CustomUI/" + font_path);
+
+	if (!font_file.empty() && font_size > 0)
+	{
+		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(font_size);
+
+		GuiManagerWrapper gui = gameWrapper->GetGUIManager();
+		auto [res, font] = gui.LoadFont(font_name, font_dest, font_size * xPercent);
+		if (res == 0) {
+			LOG("Failed to load the font!");
+		}
+		else if (res == 1) {
+			LOG("The font will be loaded");
+		}
+		else if (res == 2 && font) {
+			//ImGui::SetWindowFontScale(50);
+			LOG("Font loaded with size : " + to_string(font->FontSize));
+			myFont = font;
+		}
+		
+	}
 }
 
 void CustomUI::writeCvar() {
@@ -261,6 +321,10 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 	for (auto& [key, value] : jsonData["presets"].items()) {
 		Preset preset;
 		preset.format = value["format"];
+		preset.font.nameFont = value["font"]["nameFont"].is_null()
+			? ""
+			: value["font"]["nameFont"].get<string>();
+		preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
 		preset.boostDisplayImage = value["boostDisplayImage"];
 		preset.boostTextureImage = value["boostTextureImage"];
 		preset.colorBoost = {
@@ -308,6 +372,7 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 		// Ajout du preset à la map
 		presets[key] = preset;
 	}
+
 
 	return presets;
 }

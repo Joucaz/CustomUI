@@ -73,6 +73,7 @@ void CustomUI::RenderMenu() {
 
 		setCvarString(presetChoosenCvar, selectedPreset->first);
 		setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+		loadThemeFont();
 	}
 
 	if (ImGui::IsItemHovered()) {
@@ -173,8 +174,11 @@ void CustomUI::RenderMenu() {
 		}
 	}
 
-	if (ImGui::Button("Reset the preset position & size"))
-	{
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Couleur rouge
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 1.0f)); // Rouge légèrement plus sombre au survol
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f)); // Rouge encore plus sombre en clic
+
+	if (ImGui::Button("Reset the preset")) {
 		for (size_t i = 1; i < itemsPosition.size(); ++i) {
 			updateJsonFieldInt(keyPreset, itemsPosition[i], "int1", 0);
 			updateJsonFieldInt(keyPreset, itemsPosition[i], "int2", 0);
@@ -182,6 +186,9 @@ void CustomUI::RenderMenu() {
 			updateJsonFieldFloat(keyPreset, itemsPosition[i], "float2", 1.0f);
 		}
 	}
+
+	ImGui::PopStyleColor(3);
+
 
 
 	if (showPositionEditor) {
@@ -329,42 +336,42 @@ void CustomUI::showRenderEditSize() {
 	/*float aspectRatio = static_cast<float>(screenSize.X) / static_cast<float>(screenSize.Y);
 	bool isAspectRatio16_9 = fabs(aspectRatio - (16.0f / 9.0f)) < 0.01f;*/
 
-	static bool isCheckedAspectRatio= false; // Variable pour suivre l'état de la case
+	//static bool isCheckedAspectRatio= false; // Variable pour suivre l'état de la case
 
-	ImGui::Checkbox("Unlink X & Y size", &isCheckedAspectRatio);
+	//ImGui::Checkbox("Unlink X & Y size", &isCheckedAspectRatio);
 
 	ImGui::SetNextItemWidth(200.0f);
 	if (ImGui::SliderFloat("Size X", &slider_x, 0, 5, "%.2f")) {
 		changeSizeX = slider_x;
-		if (!isCheckedAspectRatio) {
+		//if (!isCheckedAspectRatio) {
 			changeSizeY = slider_x;
-		}
+		//}
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("-"))
 	{
-		changeSizeX -= 1;
-		if (!isCheckedAspectRatio) {
-			changeSizeY -= 1;
-		}
-		slider_x -= 1;
+		changeSizeX -= .01f;
+		//if (!isCheckedAspectRatio) {
+			changeSizeY -= .01f;
+		//}
+		slider_x -= .01f;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("+"))
 	{
-		changeSizeX += 1;
-		if (!isCheckedAspectRatio) {
-			changeSizeY += 1;
-		}
-		slider_x += 1;
+		changeSizeX += .01f;
+		//if (!isCheckedAspectRatio) {
+			changeSizeY += .01f;
+		//}
+		slider_x += .01f;
 	}
-	std::string buttonTextSizeX = isCheckedAspectRatio ? "Reset Scale X" : "Reset Scale";
+	//std::string buttonTextSizeX = isCheckedAspectRatio ? "Reset Scale X" : "Reset Scale";
 	ImGui::SameLine();
-	if (ImGui::Button(buttonTextSizeX.c_str()))
+	if (ImGui::Button("Reset Scale"))
 	{
-		if (!isCheckedAspectRatio) {
+		//if (!isCheckedAspectRatio) {
 			updateJsonFieldInt(keyPreset, settingsItems, "float2", 0);
-		}
+		//}
 		updateJsonFieldInt(keyPreset, settingsItems, "float1", 0);
 		changeSizeX = 0;
 		changeSizeY = 0;
@@ -373,33 +380,33 @@ void CustomUI::showRenderEditSize() {
 		changingBeginSize = false;
 	}
 
-	if (isCheckedAspectRatio) {
-		ImGui::SetNextItemWidth(200.0f);
-		if (ImGui::SliderFloat("Size Y", &slider_y, 0, 5, "%.2f")) {
-			changeSizeY = slider_y;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("-"))
-		{
-			changeSizeY -= 1;
-			slider_y -= 1;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("+"))
-		{
-			changeSizeY += 1;
-			slider_y += 1;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Reset Scale Y"))
-		{
-			updateJsonFieldInt(keyPreset, settingsItems, "float2", 0);
-			changeSizeY = 0;
-			showPositionEditor = false;
-			showSizeEditor = false;
-			changingBeginSize = false;
-		}
-	}
+	//if (isCheckedAspectRatio) {
+	//	ImGui::SetNextItemWidth(200.0f);
+	//	if (ImGui::SliderFloat("Size Y", &slider_y, 0, 5, "%.2f")) {
+	//		changeSizeY = slider_y;
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("-"))
+	//	{
+	//		changeSizeY -= 1;
+	//		slider_y -= 1;
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("+"))
+	//	{
+	//		changeSizeY += 1;
+	//		slider_y += 1;
+	//	}
+	//	ImGui::SameLine();
+	//	if (ImGui::Button("Reset Scale Y"))
+	//	{
+	//		updateJsonFieldInt(keyPreset, settingsItems, "float2", 0);
+	//		changeSizeY = 0;
+	//		showPositionEditor = false;
+	//		showSizeEditor = false;
+	//		changingBeginSize = false;
+	//	}
+	//}
 
 	if (ImGui::Button("Save Size")) {
 

@@ -21,9 +21,14 @@ struct SettingsItems {
 	float float1; 
 	float float2;
 };
+struct Font {
+	string nameFont;
+	int sizeFont;
+};
 struct Preset {
 	//string name;
 	string format;
+	Font font;
 	string boostDisplayImage;
 	string boostTextureImage;
 	SettingsItems settingsBoostAllItems;
@@ -65,6 +70,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void saveJsonToFile(const string jsonFilePath);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	SettingsItems loadSettingsBoostDisplay(const json& value);
+
+	void loadThemeFont();
 
 	int intChangePositionX(SettingsItems settings, string settingsName);
 	int intChangePositionY(SettingsItems settings, string settingsName);
@@ -114,6 +121,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void positionTextBoost(float v1x, float v1y);*/
 
 	ImFont* myFont;
+	ImFont* basicFont;
 
 	string getCvarString(string cVarName);
 	void setCvarString(CVarWrapper cVarName, string cVarValue);
