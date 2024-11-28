@@ -52,6 +52,24 @@ float CustomUI::floatChangeSizeY(SettingsItems settings, string settingsName) {
 }
 
 void CustomUI::Render() {
+	auto gui = gameWrapper->GetGUIManager();
+
+
+	// This syntax requires c++17
+	auto [res, font] = gui.LoadFont("Oswald", "Oswald-VariableFont_wght.ttf", 200 * xPercent);
+
+	if (res == 0) {
+		LOG("Failed to load the font!");
+	}
+	else if (res == 1) {
+		LOG("The font will be loaded");
+	}
+	else if (res == 2 && font) {
+		//ImGui::SetWindowFontScale(50);
+		LOG("Font loaded with size : " + to_string(font->FontSize));
+		myFont = font;
+	}
+
 	int idx = ImGui::GetKeyIndex(ImGuiKey_Escape);
 	if (ImGui::IsKeyDown(idx))
 		escape_state = true;
@@ -112,7 +130,7 @@ void CustomUI::RenderWindow()
 
 	if (!myFont) {
 		auto gui = gameWrapper->GetGUIManager();
-		myFont = gui.GetFont("Oswald200");
+		myFont = gui.GetFont("Oswald");
 	}
 	//LOG("font size " + to_string(gameWrapper->GetGUIManager().GetFont("Oswald200")->FontSize));
 
@@ -124,13 +142,15 @@ void CustomUI::RenderWindow()
 	}
 
 	if (isInGame() && gameDisplay) {
+		if (!isOnPause && !zeroBoost(boost)) {
+			drawBoost(drawList);
+		}
 		drawScore(drawList);
-		drawBoost(drawList);
 	}
 	else if (isInGame() && replayDisplay && !gameDisplay) {
 		drawScore(drawList);
 	}
-	else if (isInFreeplay() && !zeroBoost(boost)) {
+	else if (isInFreeplay() && !zeroBoost(boost) && !isOnPause) {
 		drawBoost(drawList);
 		//drawScore(drawList);
 
@@ -582,21 +602,7 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 void CustomUI::SetImGuiContext(uintptr_t ctx)
 {
 	ImGui::SetCurrentContext(reinterpret_cast<ImGuiContext*>(ctx));
-	auto gui = gameWrapper->GetGUIManager();
 
-
-	// This syntax requires c++17
-	auto [res, font] = gui.LoadFont("Oswald200", "Oswald-VariableFont_wght.ttf", 200);
-
-	if (res == 0) {
-		cvarManager->log("Failed to load the font!");
-	}
-	else if (res == 1) {
-		cvarManager->log("The font will be loaded");
-	}
-	else if (res == 2 && font) {
-		myFont = font;
-	}
 }
 
 string CustomUI::GetMenuName(){

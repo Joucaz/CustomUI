@@ -57,8 +57,13 @@ void CustomUI::onLoad()
 
 	/*gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
 	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));*/
-	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", bind(&CustomUI::onPauseOpen, this));
-	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", bind(&CustomUI::onPauseClose, this));
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.AddPauser", bind(&CustomUI::onPauseOpen, this));
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));
+	//gameWrapper->HookEvent("Function TAGame.GFxHUD_TA.OpenMidgameMenu", bind(&CustomUI::onPauseOpen, this));
+	//gameWrapper->HookEvent("Function ProjectX.OnlineMessageComponent_X.RemoveMessageHandler", bind(&CustomUI::onPauseClose, this));
+
+	gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
+
 
 	
 
@@ -106,15 +111,17 @@ void CustomUI::onUnload(){
 void CustomUI::initValues() {
 
 	// Screen resolution
-	screenSize = gameWrapper->GetScreenSize();
-	/*screenSize.X = 3840;
-	screenSize.Y = 2160;*/
+	//screenSize = gameWrapper->GetScreenSize();
+	screenSize.X = 3840;
+	screenSize.Y = 2160;
 
 	// Percentages for converting to a non-1080p screen
-	/*xPercent = ((float)screenSize.X / 1920);
-	yPercent = ((float)screenSize.Y / 1080);*/
-	xPercent = ((float)1);
-	yPercent = ((float)1);
+	xPercent = ((float)screenSize.X / 1920);
+	yPercent = ((float)screenSize.Y / 1080);
+	/*xPercentFont = ((float)screenSize.X / 1920);
+	yPercentFont = ((float)screenSize.Y / 1080);*/
+	/*xPercent = ((float)1);
+	yPercent = ((float)1);*/
 
 
 	presetPath = gameWrapper->GetDataFolder().string() + "\\CustomUI" + "\\Presets" + "\\presets.json";
@@ -192,6 +199,7 @@ void CustomUI::onGameStart() {
 	}*/
 	LOG("onGameStart");
 	gameDisplay = true;
+	isOnPause = false;
 	
 }
 
@@ -199,6 +207,7 @@ void CustomUI::onGameEnd() {
 	LOG("onGameEnd");
 	gameDisplay = false;
 	isOvertime = false;
+	isOnPause = false;
 }
 
 void CustomUI::onReplayStart() {
@@ -222,18 +231,16 @@ void CustomUI::onOvertime() {
 	isOvertime = true;
 }
 
+void CustomUI::onPauseOpenGame() {
+	if (isInGame()) {
+		isOnPause = !isOnPause;
+	}
+}
 void CustomUI::onPauseOpen() {
 	isOnPause = true;
-	numberPause += 1;
 }
 void CustomUI::onPauseClose() {
-	if (numberPause == 1) {
-		isOnPause = false;
-		numberPause = 0;
-	}
-	else {
-		numberPause -= 1;
-	}
+	isOnPause = false;
 }
 
 map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {

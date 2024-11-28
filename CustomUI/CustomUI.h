@@ -93,6 +93,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onReplayEnd();
 
 	void onPauseOpen();
+	void onPauseOpenGame();
 	void onPauseClose();
 
 	//void Render(CanvasWrapper canvas);
@@ -145,7 +146,6 @@ private:
 
 	bool isMenuOpened = false;
 	bool isOnPause = false;
-	int numberPause = 0;
 
 	int changePositionX = 0;
 	int changePositionY = 0;
@@ -179,6 +179,8 @@ private:
 	Vector2 screenSize;
 	float xPercent;
 	float yPercent;
+	float xPercentFont;
+	float yPercentFont;
 
 	Vector2 boostBegin;
 	Vector2 boostEnd;

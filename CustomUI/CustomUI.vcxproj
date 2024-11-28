@@ -92,7 +92,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CustomUISettings.cpp" />
-    <ClCompile Include="CustomUIWindow.cpp" />
+    <ClCompile Include="CustomUIDraw.cpp" />
+    <ClCompile Include="CustomUIMenu.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imguivariouscontrols.cpp" />
     <ClCompile Include="imgui\imgui_additions.cpp" />
