@@ -113,10 +113,11 @@ void CustomUI::RenderWindow()
 		return;
 	}
 
-	/*if (!myFont) {
-		auto gui = gameWrapper->GetGUIManager();
-		myFont = gui.GetFont("Oswald");
-	}*/
+	if (!myFont) {
+		/*auto gui = gameWrapper->GetGUIManager();
+		myFont = gui.GetFont("Oswald");*/
+		loadThemeFont();
+	}
 	//LOG("font size " + to_string(gameWrapper->GetGUIManager().GetFont("Oswald200")->FontSize));
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -124,6 +125,9 @@ void CustomUI::RenderWindow()
 	if (myFont) {
 		ImGui::PushFont(myFont);
 		//ImGui::Text("Custom UI Overlay");
+	}
+	else {
+		LOG("not font");
 	}
 
 

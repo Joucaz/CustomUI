@@ -72,6 +72,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	SettingsItems loadSettingsBoostDisplay(const json& value);
 
 	void loadThemeFont();
+	void appendFont();
 
 	int intChangePositionX(SettingsItems settings, string settingsName);
 	int intChangePositionY(SettingsItems settings, string settingsName);

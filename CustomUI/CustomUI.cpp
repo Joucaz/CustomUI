@@ -130,37 +130,35 @@ void CustomUI::initValues() {
 
 	string boostFormCvar = getCvarString("CustomUI_boostForm");
 	changeBoostDisplay(boostFormCvar);
-
-
-	string font_prefix = "CustomUI_";
-	string font_path = "Presets/Original/fonts/Oswald.ttf";
-	string font_dest = ("../CustomUI/" + font_path);
-	auto gui = gameWrapper->GetGUIManager();
-	// This syntax requires c++17
-	auto [res, font] = gui.LoadFont("Oswald", font_dest, 200 * xPercent);
-
-	if (res == 0) {
-		LOG("Failed to load the font!");
-	}
-	else if (res == 1) {
-		LOG("The font will be loaded");
-	}
-	else if (res == 2 && font) {
-		//ImGui::SetWindowFontScale(50);
-		LOG("Font loaded with size : " + to_string(font->FontSize));
-		basicFont = font;
-		loadThemeFont();
-	}
-
+	loadThemeFont();
 
 }
 
 void CustomUI::loadThemeFont() {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	LOG("keypreset themefont : " + keyPreset);
 
-	if (allPresets[keyPreset].font.nameFont.empty()) {
-		myFont = basicFont;
-		LOG("basicFont");
+	if (allPresets[keyPreset].font.nameFont == "") {
+		string font_prefix = "CustomUI_";
+		string font_path = "Presets/Original/fonts/Oswald.ttf";
+		string font_dest = ("../CustomUI/" + font_path);
+		auto gui = gameWrapper->GetGUIManager();
+		// This syntax requires c++17
+		auto [res, font] = gui.LoadFont("Oswald", font_dest, 200 * xPercent);
+
+		if (res == 0) {
+			LOG("Failed to load the font!");
+		}
+		else if (res == 1) {
+			LOG("The font WILL be loaded");
+			myFont = font;
+		}
+		else if (res == 2 && font) {
+			//ImGui::SetWindowFontScale(50);
+			LOG("Font Init loaded with size : " + to_string(font->FontSize));
+			myFont = font;
+		}
+		LOG("basicFont because empty");
 		return;
 	}
 
@@ -182,18 +180,23 @@ void CustomUI::loadThemeFont() {
 		}
 		else if (res == 1) {
 			LOG("The font will be loaded");
+			myFont = font;
 		}
 		else if (res == 2 && font) {
 			//ImGui::SetWindowFontScale(50);
-			LOG("Font loaded with size : " + to_string(font->FontSize));
+			LOG("Font ThemeLoad loaded with size : " + to_string(font->FontSize));
 			myFont = font;
 		}
 		
 	}
 }
 
+void CustomUI::appendFont() {
+
+}
+
 void CustomUI::writeCvar() {
-	cvarManager->executeCommand("writeconfig", false);
+	cvarManager->executeCommand("writeconfig", true);
 }
 
 string CustomUI::getCvarString(string cVarName) {
