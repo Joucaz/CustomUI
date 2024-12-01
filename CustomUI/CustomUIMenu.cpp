@@ -74,6 +74,7 @@ void CustomUI::RenderMenu() {
 		setCvarString(presetChoosenCvar, selectedPreset->first);
 		setCvarString(boostFormCvar, selectedPreset->second.boostForm);
 		loadThemeFont();
+		appendFont();
 	}
 
 	if (ImGui::IsItemHovered()) {

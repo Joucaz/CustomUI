@@ -131,6 +131,7 @@ void CustomUI::initValues() {
 	string boostFormCvar = getCvarString("CustomUI_boostForm");
 	changeBoostDisplay(boostFormCvar);
 	loadThemeFont();
+	appendFont();
 
 }
 
@@ -144,19 +145,19 @@ void CustomUI::loadThemeFont() {
 		string font_dest = ("../CustomUI/" + font_path);
 		auto gui = gameWrapper->GetGUIManager();
 		// This syntax requires c++17
-		auto [res, font] = gui.LoadFont("Oswald", font_dest, 200 * xPercent);
+		auto [res, font] = gui.LoadFont("BasicFont", font_dest, 200 * xPercent);
 
 		if (res == 0) {
 			LOG("Failed to load the font!");
 		}
 		else if (res == 1) {
 			LOG("The font WILL be loaded");
-			myFont = font;
+			//myFont = font;
 		}
 		else if (res == 2 && font) {
 			//ImGui::SetWindowFontScale(50);
 			LOG("Font Init loaded with size : " + to_string(font->FontSize));
-			myFont = font;
+			//myFont = font;
 		}
 		LOG("basicFont because empty");
 		return;
@@ -180,19 +181,35 @@ void CustomUI::loadThemeFont() {
 		}
 		else if (res == 1) {
 			LOG("The font will be loaded");
-			myFont = font;
+			//myFont = font;
 		}
 		else if (res == 2 && font) {
 			//ImGui::SetWindowFontScale(50);
 			LOG("Font ThemeLoad loaded with size : " + to_string(font->FontSize));
-			myFont = font;
+			//myFont = font;
 		}
 		
 	}
 }
 
 void CustomUI::appendFont() {
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	GuiManagerWrapper gui = gameWrapper->GetGUIManager();
 
+	if (allPresets[keyPreset].font.nameFont == "") {
+		myFont = gui.GetFont("BasicFont");
+	}
+	else {
+
+		int font_size = allPresets[keyPreset].font.sizeFont;
+		string font_file = allPresets[keyPreset].font.nameFont;
+		string font_prefix = "CustomUI_";
+		string font_path = ("Presets/" + keyPreset + "/fonts/" + font_file);
+		string font_dest = ("../CustomUI/" + font_path);
+		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(font_size);
+
+		myFont = gui.GetFont(font_name);
+	}
 }
 
 void CustomUI::writeCvar() {
