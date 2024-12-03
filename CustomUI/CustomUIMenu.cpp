@@ -101,11 +101,9 @@ void CustomUI::RenderMenu() {
 			else {
 				itemsPositionCombo = {
 					"",
-					"Boost All Items",
 					"Background Image Boost",
 					"Texture Image Boost",
 					"Text Boost",
-					"Score All Items",
 					"Background Image Score",
 					"Text Score My Team",
 					"Text Score Opposite Team",
@@ -113,11 +111,9 @@ void CustomUI::RenderMenu() {
 				};
 				itemsPosition = {
 					"",
-					"settingsBoostAllItems",
 					"settingsBoostDisplay",
 					"settingsBoostTexture",
 					"settingsBoostText",
-					"settingsScoreAllItems",
 					"settingsScoreDisplay",
 					"settingsScoreMyTeam",
 					"settingsScoreOppositeTeam",
@@ -222,6 +218,13 @@ void CustomUI::RenderMenu() {
 			ImGui::EndTabItem();
 		}
 
+		if (ImGui::BeginTabItem("Others"))
+		{
+			ImGui::Text("Made by @JoucazJC");
+
+			ImGui::EndTabItem();
+		}
+
 		ImGui::EndTabBar();
 	}
 
@@ -256,7 +259,13 @@ void CustomUI::RenderMenu() {
 }
 
 float CustomUI::intToFloatPosition(int position, int screenSize) {
-	return static_cast<float>(position + screenSize) / (2.0f * screenSize);
+	// Calcul de la position flottante
+	float result = static_cast<float>(position + screenSize) / (2.0f * screenSize);
+
+	// Arrondi à 2 décimales
+	result = std::round(result * 100.0f) / 100.0f;
+
+	return result;
 }
 int CustomUI::floatToIntPosition(float position, int screenSize) {
 	return static_cast<int>(std::round(2.0f * position * screenSize - screenSize));
@@ -284,10 +293,10 @@ void CustomUI::showRenderEditPosition() {
 
 
 	ImGui::SetNextItemWidth(200.0f);
-	if (ImGui::SliderFloat("Position X", &sliderX, 0.0f, 1.0f))
+	if (ImGui::SliderFloat("Position X", &sliderX, 0.0f, 1.0f, "%.3f"))
 	{
-		int mappedValueX = floatToIntPosition(sliderX, screenSize.X);
-		changePositionX = mappedValueX;
+		changePositionX = floatToIntPosition(sliderX, screenSize.X);
+		ImGui::Text(to_string(sliderX).c_str());
 
 	}
 	ImGui::SameLine();
@@ -316,9 +325,7 @@ void CustomUI::showRenderEditPosition() {
 	ImGui::SetNextItemWidth(200.0f);
 	if (ImGui::SliderFloat("Position Y", &sliderY, 0.0f, 1.0f))
 	{
-		int mappedValue = floatToIntPosition(sliderY, screenSize.Y);
-		changePositionY = mappedValue;
-
+		changePositionY = floatToIntPosition(sliderY, screenSize.Y);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("-"))
@@ -345,8 +352,9 @@ void CustomUI::showRenderEditPosition() {
 
 	if (ImGui::Button("Save Position"))
 	{
-		updateJsonFieldFloat(keyPreset, settingsItems, "positionX", intToFloatPosition(changePositionX, screenSize.X));
-		updateJsonFieldFloat(keyPreset, settingsItems, "positionY", intToFloatPosition(changePositionY, screenSize.Y));
+
+		updateJsonFieldFloat(keyPreset, settingsItems, "positionX", sliderX);
+		updateJsonFieldFloat(keyPreset, settingsItems, "positionY", sliderY);
 		changePositionX = 0;
 		changePositionY = 0;
 		showPositionEditor = false;

@@ -329,7 +329,6 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	//auto& preset = allPresets[keyPreset];
 	auto& settingsBoostDisplayArray = currentPreset.settingsBoostDisplay;
 	auto& settingsBoostAllItemsArray = currentPreset.settingsBoostAllItems;
 
@@ -339,56 +338,38 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 
 	if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
 		auto size = imageDisplayBoost[keyPreset]->GetSizeF();
-
-		const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
-			? settingsBoostAllItemsArray
-			: settingsBoostDisplayArray;
-		const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
-			? settingsBoostDisplayArray
-			: settingsBoostAllItemsArray;
-
-		const string& stringSettings = (settingsItems == "settingsBoostAllItems")
-			? "settingsBoostAllItems"
-			: "settingsBoostDisplay";
-
-		ImVec2 position = ImVec2(
-			0 + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings),
-			0 + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)
-		);
-
-		ImVec2 fullSize = ImVec2(
-			size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
-			size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
-		);
+		ImVec2 position;
+		ImVec2 fullSize;
 
 		if (isArtistMode) {
-			drawList->AddImage(
-				renderImageBoost,
-				ImVec2(position.x, position.y),
-				ImVec2(position.x + fullSize.x, position.y + fullSize.y),
-				ImVec2(0, 0),
-				ImVec2(1, 1),
-				IM_COL32(255, 255, 255, 255)
+			position = ImVec2(
+				0 + intChangePositionX(settingsBoostDisplayArray, "settingsBoostDisplay"),
+				0 + intChangePositionY(settingsBoostDisplayArray, "settingsBoostDisplay")
+			);
+			fullSize = ImVec2(
+				size.X * floatChangeSizeX(settingsBoostDisplayArray, "settingsBoostDisplay"),
+				size.Y * floatChangeSizeY(settingsBoostDisplayArray, "settingsBoostDisplay")
 			);
 		}
 		else {
-			drawList->AddImage(
-				renderImageBoost,
-				ImVec2(
-					0 + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
-					0 + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")
-				),
-				ImVec2(
-					(size.X * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems") +
-						intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")),
-					(size.Y * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems") +
-						intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems"))
-				),
-				ImVec2(0, 0),
-				ImVec2(1, 1),
-				IM_COL32(255, 255, 255, 255)
+			position = ImVec2(
+				0 + floatToIntPosition(settingsBoostDisplayArray.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
+				0 + floatToIntPosition(settingsBoostDisplayArray.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")
+			);
+			fullSize = ImVec2(
+				size.X * settingsBoostDisplayArray.sizeX * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
+				size.Y * settingsBoostDisplayArray.sizeY * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems")
 			);
 		}
+
+		drawList->AddImage(
+			renderImageBoost,
+			ImVec2(position.x, position.y),
+			ImVec2(position.x + fullSize.x, position.y + fullSize.y),
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			IM_COL32(255, 255, 255, 255)
+		);
 	}
 }
 
@@ -414,6 +395,9 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 
 		// Récupération des paramètres selon le format
 		if (isArtistMode) {
+
+
+
 			const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
 				? settingsBoostAllItems
 				: settingsBoostTexture;

@@ -488,32 +488,26 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
 	if (jsonData["presets"].contains(presetKey)) {
 		// Mise à jour du JSON
-		jsonData["presets"][presetKey][field][positionScale] = newValue;
+		//newValue = round(newValue * 1000.0f) / 1000.0f;
+		jsonData["presets"][presetKey][field][positionScale] = round(newValue * 1000.0f) / 1000.0f;
 		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
-
-		// Mise à jour de allPresets
-		if (allPresets.contains(presetKey)) {
-			try {
-				SettingsItems& settings = getSettings(allPresets[presetKey], field);				
-				if (positionScale == "positionX") {
-					settings.positionX = newValue;
-				}
-				else if (positionScale == "positionY") {
-					settings.positionY = newValue;
-				}
-				else if (positionScale == "sizeX") {
-					settings.sizeX = newValue;
-				}
-				else if (positionScale == "sizeY") {
-					settings.sizeY = newValue;
-				}
+		try {
+			SettingsItems& settings = getSettings(currentPreset, field);				
+			if (positionScale == "positionX") {
+				settings.positionX = newValue;
 			}
-			catch (const std::invalid_argument& e) {
-				LOG(e.what());
+			else if (positionScale == "positionY") {
+				settings.positionY = newValue;
+			}
+			else if (positionScale == "sizeX") {
+				settings.sizeX = newValue;
+			}
+			else if (positionScale == "sizeY") {
+				settings.sizeY = newValue;
 			}
 		}
-		else {
-			LOG("Erreur : clé " + presetKey + " absente dans allPresets.");
+		catch (const std::invalid_argument& e) {
+			LOG(e.what());
 		}
 
 		saveJsonToFile(presetPath);
