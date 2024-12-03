@@ -16,7 +16,7 @@ int CustomUI::intChangePositionX(SettingsItems settings, string settingsName) {
 			return changePositionX;
 		}
 	}
-	return settings.int1;
+	return floatToIntPosition(settings.positionX, screenSize.X);
 	
 }
 int CustomUI::intChangePositionY(SettingsItems settings, string settingsName) {
@@ -26,7 +26,7 @@ int CustomUI::intChangePositionY(SettingsItems settings, string settingsName) {
 			return changePositionY;
 		}
 	}
-	return settings.int2;
+	return floatToIntPosition(settings.positionY, screenSize.Y);
 
 }
 
@@ -37,7 +37,7 @@ float CustomUI::floatChangeSizeX(SettingsItems settings, string settingsName) {
 			return changeSizeX;
 		}
 	}
-	return settings.float1;
+	return settings.sizeX;
 
 }
 float CustomUI::floatChangeSizeY(SettingsItems settings, string settingsName) {
@@ -47,7 +47,7 @@ float CustomUI::floatChangeSizeY(SettingsItems settings, string settingsName) {
 			return changeSizeY;
 		}
 	}
-	return settings.float2;
+	return settings.sizeY;
 
 }
 
@@ -194,16 +194,16 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 			: "settingsScoreDisplay";
 
 		ImVec2 position = ImVec2(
-			0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings),
-			0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)
+			0 + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings),
+			0 + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)
 		);
 
 		ImVec2 fullSize = ImVec2(
-			size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-			size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings)
+			size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+			size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
 		);
 
-		if (preset.format == "custom") {
+		if (isArtistMode) {
 			drawList->AddImage(
 				renderImageScore,
 				ImVec2(position.x, position.y),
@@ -250,9 +250,9 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
 
-	ImU32 colorScoreMyTeam = IM_COL32(allPresets[keyPreset].colorScoreMyTeam[0], allPresets[keyPreset].colorScoreMyTeam[1], allPresets[keyPreset].colorScoreMyTeam[2], allPresets[keyPreset].colorScoreMyTeam[3]);
-	ImU32 colorScoreOppositeTeam = IM_COL32(allPresets[keyPreset].colorScoreOppositeTeam[0], allPresets[keyPreset].colorScoreOppositeTeam[1], allPresets[keyPreset].colorScoreOppositeTeam[2], allPresets[keyPreset].colorScoreOppositeTeam[3]);
-	ImU32 colorGameTime = IM_COL32(allPresets[keyPreset].colorGameTime[0], allPresets[keyPreset].colorGameTime[1], allPresets[keyPreset].colorGameTime[2], allPresets[keyPreset].colorGameTime[3]);
+	ImU32 colorScoreMyTeam = IM_COL32(preset.colorScoreMyTeam[0], preset.colorScoreMyTeam[1], preset.colorScoreMyTeam[2], preset.colorScoreMyTeam[3]);
+	ImU32 colorScoreOppositeTeam = IM_COL32(preset.colorScoreOppositeTeam[0], preset.colorScoreOppositeTeam[1], preset.colorScoreOppositeTeam[2], preset.colorScoreOppositeTeam[3]);
+	ImU32 colorGameTime = IM_COL32(preset.colorGameTime[0], preset.colorGameTime[1], preset.colorGameTime[2], preset.colorGameTime[3]);
 
 	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
@@ -285,18 +285,18 @@ void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSiz
 	int vx = Position.X;
 	int vy = Position.Y;
 
-	if (allPresets[keyPreset].format == "custom") {
+	if (isArtistMode) {
 		if (settingsItems != "settingsScoreAllItems") {
 
-			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings))),
+			drawList->AddText(myFont, fontSize * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+				ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+					(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
 				color, text.c_str());
 		}
 		else {
-			drawList->AddText(myFont, fontSize * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings))),
+			drawList->AddText(myFont, fontSize * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+				ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+					(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
 				color, text.c_str());
 		}
 	}
@@ -352,16 +352,16 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 			: "settingsBoostDisplay";
 
 		ImVec2 position = ImVec2(
-			0 + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings),
-			0 + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)
+			0 + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings),
+			0 + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)
 		);
 
 		ImVec2 fullSize = ImVec2(
-			size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-			size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings)
+			size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+			size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
 		);
 
-		if (preset.format == "custom") {
+		if (isArtistMode) {
 			drawList->AddImage(
 				renderImageBoost,
 				ImVec2(position.x, position.y),
@@ -413,7 +413,7 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		ImVec2 fullSize = { 0, 0 };
 
 		// Récupération des paramètres selon le format
-		if (preset.format == "custom") {
+		if (isArtistMode) {
 			const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
 				? settingsBoostAllItems
 				: settingsBoostTexture;
@@ -426,12 +426,12 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 				: "settingsBoostTexture";
 
 			position = ImVec2(
-				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings))
+				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))
 			);
 			fullSize = ImVec2(
-				size.X * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-				size.Y * baseSettings.float2 * floatChangeSizeY(sourceSettings, stringSettings)
+				size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+				size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
 			);
 		}
 		else {
@@ -493,12 +493,12 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	//radius = 140.0f * xPercent; // Rayon du cercle
 	//strokeThickness = 26.0f * xPercent; // Échelle de l'épaisseur du trait
 
-	if (preset.format == "custom") {
+	if (isArtistMode) {
 
-		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings)));
-		radius = 140.0f * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings);
-		strokeThickness = 26.0f * baseSettings.float2 * floatChangeSizeX(sourceSettings, stringSettings);
+		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)));
+		radius = 140.0f * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings);
+		strokeThickness = 26.0f * baseSettings.sizeY * floatChangeSizeX(sourceSettings, stringSettings);
 
 	}
 	else {
@@ -559,18 +559,18 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 		vy = v3y;
 	}
 
-	if (allPresets[keyPreset].format == "custom") {
+	if (isArtistMode) {
 		if (settingsItems != "settingsBoostAllItems") {
 
-			drawList->AddText(myFont, 160 * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings))),
+			drawList->AddText(myFont, 160 * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+				ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+					(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
 				color, to_string(boost).c_str());
 		}
 		else {
-			drawList->AddText(myFont, 160 * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings),
-				ImVec2((vx * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int1 + intChangePositionX(sourceSettings, stringSettings)),
-					(vy * baseSettings.float1 * floatChangeSizeX(sourceSettings, stringSettings) + baseSettings.int2 + intChangePositionY(sourceSettings, stringSettings))),
+			drawList->AddText(myFont, 160 * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
+				ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
+					(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
 				color, to_string(boost).c_str());
 		}
 	}

@@ -98,6 +98,9 @@ void CustomUI::onLoad()
 	// You could also use std::bind here
 	//gameWrapper->HookEvent("Function TAGame.Ball_TA.Explode", std::bind(&CustomUI::startGame, this));
 
+	cvarManager->setBind("F3", "CustomUI_openSettings");
+
+
 	gameWrapper->RegisterDrawable(bind(&CustomUI::UpdateVars, this));
 	gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
 		cvarManager->executeCommand("togglemenu " + GetMenuName());
@@ -132,6 +135,8 @@ void CustomUI::initValues() {
 	changeBoostDisplay(boostFormCvar);
 	loadThemeFont();
 	appendFont();
+
+	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
 }
 
@@ -340,7 +345,6 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 	// Parcourir les presets dans le fichier JSON
 	for (auto& [key, value] : jsonData["presets"].items()) {
 		Preset preset;
-		preset.format = value["format"];
 		preset.font.nameFont = value["font"]["nameFont"].is_null()
 			? ""
 			: value["font"]["nameFont"].get<string>();
@@ -396,12 +400,16 @@ map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
 
 	return presets;
 }
+
+Preset CustomUI::loadCurrentPreset(string keyPreset) {
+	return allPresets[keyPreset];
+}
 SettingsItems CustomUI::loadSettingsBoostDisplay(const json& value) {
 	return {
-		value["int1"].get<int>(),   // Premier entier
-		value["int2"].get<int>(),   // Deuxième entier
-		value["float1"].get<float>(), // Premier flottant
-		value["float2"].get<float>()  // Deuxième flottant
+		value["positionX"].get<float>(),   // Premier entier
+		value["positionY"].get<float>(),   // Deuxième entier
+		value["sizeX"].get<float>(), // Premier flottant
+		value["sizeY"].get<float>()  // Deuxième flottant
 	};
 }
 SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldName) {
@@ -436,45 +444,45 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 		throw std::invalid_argument("Invalid field name: " + fieldName);
 	}
 }
-
-void CustomUI::updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue) {
-	if (jsonData["presets"].contains(presetKey)) {
-		// Mise à jour du JSON
-		jsonData["presets"][presetKey][field][positionScale] = newValue;
-		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
-
-		// Mise à jour de allPresets
-		if (allPresets.contains(presetKey)) {
-			try {
-				// Obtenez la référence au champ et mettez à jour la valeur
-				SettingsItems& settings = getSettings(allPresets[presetKey], field);
-				if (positionScale == "int1") {
-					settings.int1 = newValue;
-				}
-				else {
-					settings.int2 = newValue;
-				}
-			}
-			catch (const std::invalid_argument& e) {
-				LOG(e.what());
-			}
-		}
-		else {
-			LOG("Erreur : clé " + presetKey + " absente dans allPresets.");
-		}
-
-		saveJsonToFile(presetPath);
-	}
-	else {
-		LOG("Preset " + presetKey + " introuvable !");
-	}
-
-	// Vérification de corruption
-	if (jsonData.is_discarded()) {
-		LOG("Erreur : jsonData est corrompu !");
-		return;
-	}
-}
+//
+//void CustomUI::updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue) {
+//	if (jsonData["presets"].contains(presetKey)) {
+//		// Mise à jour du JSON
+//		jsonData["presets"][presetKey][field][positionScale] = newValue;
+//		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
+//
+//		// Mise à jour de allPresets
+//		if (allPresets.contains(presetKey)) {
+//			try {
+//				// Obtenez la référence au champ et mettez à jour la valeur
+//				SettingsItems& settings = getSettings(allPresets[presetKey], field);
+//				if (positionScale == "positionX") {
+//					settings.positionX = newValue;
+//				}
+//				else {
+//					settings.positionY = newValue;
+//				}
+//			}
+//			catch (const std::invalid_argument& e) {
+//				LOG(e.what());
+//			}
+//		}
+//		else {
+//			LOG("Erreur : clé " + presetKey + " absente dans allPresets.");
+//		}
+//
+//		saveJsonToFile(presetPath);
+//	}
+//	else {
+//		LOG("Preset " + presetKey + " introuvable !");
+//	}
+//
+//	// Vérification de corruption
+//	if (jsonData.is_discarded()) {
+//		LOG("Erreur : jsonData est corrompu !");
+//		return;
+//	}
+//}
 
 
 void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
@@ -487,11 +495,17 @@ void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, strin
 		if (allPresets.contains(presetKey)) {
 			try {
 				SettingsItems& settings = getSettings(allPresets[presetKey], field);				
-				if (positionScale == "float1") {
-					settings.float1 = newValue;
+				if (positionScale == "positionX") {
+					settings.positionX = newValue;
 				}
-				else {
-					settings.float2 = newValue;
+				else if (positionScale == "positionY") {
+					settings.positionY = newValue;
+				}
+				else if (positionScale == "sizeX") {
+					settings.sizeX = newValue;
+				}
+				else if (positionScale == "sizeY") {
+					settings.sizeY = newValue;
 				}
 			}
 			catch (const std::invalid_argument& e) {
@@ -508,7 +522,6 @@ void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, strin
 		LOG("Preset " + presetKey + " introuvable !");
 	}
 
-	// Vérification de corruption
 	if (jsonData.is_discarded()) {
 		LOG("Erreur : jsonData est corrompu !");
 		return;
@@ -524,8 +537,7 @@ void CustomUI::saveJsonToFile(const string jsonFilePath) {
 			return;
 		}
 
-		// Sauvegarder le JSON dans le fichier
-		file << jsonData.dump(4);  // Dump avec une indentation de 4 espaces pour rendre le fichier lisible
+		file << jsonData.dump(4); 
 		file.close(); 
 
 		LOG("Fichier JSON sauvegardé avec succès à : " + jsonFilePath);
@@ -739,108 +751,4 @@ inline std::string CustomUI::lead_zeros(int n, int len)
 
 	return result;
 }
-
-//
-//void CustomUI::positionBoostBar(int selected) {
-//
-//	switch (selected) {
-//		case 0:
-//			positionBoostBarLRTB(1598, 1015, 1630, 797);
-//			positionTextBoost(1700, 800);
-//			isVertical = true;
-//			break;
-//		case 1:
-//			positionBoostBarLRTB(1800, 1000, 1650, 700);
-//			break;
-//		case 2:
-//			positionBoostBarLRTB(1630, 770, 1870, 720);
-//			isVertical = false;
-//			break;
-//		case 3:
-//			positionBoostBarLRTB(1600, 1050, 1920, 1000);
-//			break;
-//		default:
-//			break;
-//		}
-//}
-//
-//void CustomUI::positionBoostBarLRTB(float v1x, float v1y, float v2x, float v2y) {
-//	boostBegin = { (int)(screenSize.X * (v1x / 1920.0)), (int)(screenSize.Y * (v1y / 1080.0)) };
-//	boostMax = { (int)(screenSize.X * (v2x / 1920.0)), (int)(screenSize.Y * (v2y / 1080.0)) };
-//	
-//	if (isVertical) {
-//		//imageBoost = imageBoostLeftJoucaz;
-//		boostEnd = { boostMax.X, (int)(boostBegin.Y + (boostMax.Y - boostBegin.Y) * boost / 100.0f) };
-//	}
-//	else {
-//		//imageBoost = imageBoostTopJoucaz;
-//		boostEnd = { (int)(boostBegin.X + (boostMax.X - boostBegin.X) * boost / 100.0f), boostMax.Y };
-//	}
-//	//drawBoost();
-//}
-//
-//void CustomUI::positionTextBoost(float v1x, float v1y) {
-//	boostTextPosition = { (int)(screenSize.X * (v1x / 1920.0)), (int)(screenSize.Y * (v1y / 1080.0)) };
-//}
-//
-//void CustomUI::Render(CanvasWrapper canvas) {
-//
-//	UpdateVars();
-//
-//	// defines colors in RGBA 0-255
-//	LinearColor colors;
-//	colors.R = 255;
-//	colors.G = 255;
-//	colors.B = 255;
-//	colors.A = 255;
-//	canvas.SetColor(colors);
-//
-//	// sets position to top left
-//	// x moves to the right
-//	// y moves down
-//	// bottom right would be 1920, 1080 for 1080p monitors
-//	canvas.SetPosition(Vector2F{ 0.0, 0.0 });
-//	canvas.DrawString("Version " + std::string(plugin_version), 2.0, 2.0, false);
-//
-//	// says hi
-//	// draws from the last set position
-//	// the two floats are text x and y scale
-//	// the false turns off the drop shadow
-//	
-//	//screenSize = canvas.GetSize();
-//
-//	xPercent = ((float)screenSize.X / 1920);
-//	yPercent = ((float)screenSize.Y / 1080);
-//
-//	if (!zeroBoost(boost)) {
-//		string keyPreset = cvarManager->getCvar("CustomUI_choosenPresets").getStringValue();		
-//		canvas.SetColor(allPresets[keyPreset].color[0], allPresets[keyPreset].color[1], allPresets[keyPreset].color[2], allPresets[keyPreset].color[3]);
-//		int position = cvarManager->getCvar("CustomUI_positionBoostBar").getIntValue();
-//		/*positionBoostBar(position);
-//		canvas.DrawRect(boostBegin, boostEnd);*/
-//
-//		//canvas.SetColor(colors);
-//		//canvas.SetPosition(Vector2F{ 0.0, 0.0 });
-//		/*imageBoost[keyPreset]->LoadForCanvas();
-//		if (imageBoost[keyPreset]->IsLoadedForCanvas()) {
-//			canvas.DrawTexture(imageBoost[keyPreset].get(), 1);
-//		}
-//		else {
-//			LOG("Render pas loaded");
-//		}*/
-//
-//
-//		//boostTextSize = canvas.GetStringSize(std::to_string(boost), (float)((int)((boostBoxSize.X / 24) * 10) / 10), (float)((int)((boostBoxSize.Y / 24) * 10) / 10));
-//		//boostTextPosition.X = ((screenSize.X - (boostBoxSize.X / 2)) - (int)((screenSize.X * 3) / 100)) - (boostTextSize.X / 2);
-//		//boostTextPosition.Y = ((screenSize.Y - (boostBoxSize.Y / 2)) - (int)((screenSize.X * 3) / 100)) - (boostTextSize.Y / 2);
-//
-//		/*canvas.SetPosition(boostTextPosition);
-//		canvas.DrawString(std::to_string(boost), 1.0f, 1.0f);*/
-//	}
-//	canvas.SetPosition(Vector2F{ 0.0, 0.0 });
-//	
-//	
-//}
-
-
 

@@ -16,10 +16,10 @@ using namespace std;
 using json = nlohmann::json;
 
 struct SettingsItems {
-	int int1; 
-	int int2; 
-	float float1; 
-	float float2;
+	float positionX; 
+	float positionY; 
+	float sizeX; 
+	float sizeY;
 };
 struct Font {
 	string nameFont;
@@ -27,7 +27,6 @@ struct Font {
 };
 struct Preset {
 	//string name;
-	string format;
 	Font font;
 	string boostDisplayImage;
 	string boostTextureImage;
@@ -64,8 +63,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void initValues();
 	void writeCvar();
 	map<string, Preset> loadPresets(const string& jsonFilePath);
+	Preset loadCurrentPreset(string keyPreset);
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
-	void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
+	//void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
 	void saveJsonToFile(const string jsonFilePath);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
@@ -78,6 +78,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	int intChangePositionY(SettingsItems settings, string settingsName);
 	float floatChangeSizeX(SettingsItems settings, string settingsName);
 	float floatChangeSizeY(SettingsItems settings, string settingsName);
+
+	float intToFloatPosition(int position, int screenSize);
+	int floatToIntPosition(float position, int screenSize);
 
 	void UpdateVars();
 	int getBoostAmount();
@@ -155,6 +158,7 @@ private:
 
 	bool isMenuOpened = false;
 	bool isOnPause = false;
+	bool isArtistMode = false;
 
 	int changePositionX = 0;
 	int changePositionY = 0;
@@ -203,6 +207,7 @@ private:
 	
 
 	map<string, Preset> allPresets;
+	Preset currentPreset;
 
 	map<string, shared_ptr<ImageWrapper>> imageDisplayBoost;
 	map<string, shared_ptr<ImageWrapper>> imageTextureBoost;

@@ -4,48 +4,52 @@ using namespace std;
 
 void CustomUI::RenderSettings() {
     
-    if (ImGui::Button("Open Menu"))
-    {
-        isSettingsOpen = true;
-    }
+    
+            if (ImGui::Button("Open Menu"))
+            {
+                isSettingsOpen = true;
+            }
 
-	ImGui::Text("test + %s", std::to_string(isSettingsOpen).c_str());
+            ImGui::Separator();
 
-    ImGui::Separator();
+            ImGui::Text("Set A Bind To Open The Customizable Window");
+            static char KeyBindInputBuf[200] = "F3";
+            ImGui::InputText("##KeyBindInput", KeyBindInputBuf, IM_ARRAYSIZE(KeyBindInputBuf));
 
-    ImGui::Text("Set A Bind To Open The Customizable Window");
-    static char KeyBindInputBuf[200] = "F3";
-    ImGui::InputText("##KeyBindInput", KeyBindInputBuf, IM_ARRAYSIZE(KeyBindInputBuf));
+            ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowWidth() / 2, ImGui::GetWindowHeight() / 2), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+            if (ImGui::BeginPopupModal("BindSet", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            {
+                ImGui::Text("To open the window, you can now press : %s", std::string(KeyBindInputBuf).c_str());
+                ImGui::NewLine();
 
-    ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowWidth() / 2, ImGui::GetWindowHeight() / 2), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    if (ImGui::BeginPopupModal("BindSet", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::Text("To open the window, you can now press : %s", std::string(KeyBindInputBuf));
-        ImGui::NewLine();
+                if (ImGui::Button("OK", ImVec2(100.f, 25.f)))
+                {
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndPopup();
+            }
 
-        if (ImGui::Button("OK", ImVec2(100.f, 25.f))) { 
-			ImGui::CloseCurrentPopup(); 
-		}
-        ImGui::EndPopup();
-    }
+            if (ImGui::Button("Set Bind"))
+            {
+                gameWrapper->Execute([&](GameWrapper* gw) {
+                    cvarManager->setBind(KeyBindInputBuf, "CustomUI_openSettings");
+                    cvarManager->log("New key bind set : " + std::string(KeyBindInputBuf) + " -> CustomUI_openSettings");
+                    });
 
+                ImGui::OpenPopup("BindSet");
+            }
 
-    if (ImGui::Button("Set Bind"))
-    {
-		//isSettingsOpen = true;
-		gameWrapper->Execute([&](GameWrapper* gw) {
-			cvarManager->setBind(KeyBindInputBuf, "CustomUI_openSettings");
-			cvarManager->log("New key bind set : " + std::string(KeyBindInputBuf) + " -> CustomUI_openSettings");
-			});
-
-        ImGui::OpenPopup("BindSet");
-    }
-
-
+            ImGui::Text("Welcome to the new tab!");
+            ImGui::Text("Here, you can add custom content.");
+            if (ImGui::Button("Do Something"))
+            {
+                cvarManager->log("Button in the new tab clicked!");
+            }
 
 
-    ImGui::Separator();
-    ImGui::Text("Plugin made by Vync");
+
+    //ImGui::Separator();
+    //ImGui::Text("Plugin made by Vync");
     // Commence l'affichage de la fenêtre ImGui
     /*ImGuiStyle& style = ImGui::GetStyle();
     UserStyle = style;
