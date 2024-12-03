@@ -168,12 +168,12 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	auto& preset = allPresets[keyPreset];
-	auto& settingsScoreAllItems = preset.settingsScoreAllItems;
-	auto& settingsScoreDisplay = preset.settingsScoreDisplay;
-	auto& settingsScoreMyTeam = preset.settingsScoreMyTeam;
-	auto& settingsScoreOppositeTeam = preset.settingsScoreOppositeTeam;
-	auto& settingsGameTime = preset.settingsGameTime;
+	//auto& preset = allPresets[keyPreset];
+	auto& settingsScoreAllItems = currentPreset.settingsScoreAllItems;
+	auto& settingsScoreDisplay = currentPreset.settingsScoreDisplay;
+	auto& settingsScoreMyTeam = currentPreset.settingsScoreMyTeam;
+	auto& settingsScoreOppositeTeam = currentPreset.settingsScoreOppositeTeam;
+	auto& settingsGameTime = currentPreset.settingsGameTime;
 
 	if (!imageScore[keyPreset]->IsLoadedForImGui()) {
 		return;
@@ -250,9 +250,9 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
 
-	ImU32 colorScoreMyTeam = IM_COL32(preset.colorScoreMyTeam[0], preset.colorScoreMyTeam[1], preset.colorScoreMyTeam[2], preset.colorScoreMyTeam[3]);
-	ImU32 colorScoreOppositeTeam = IM_COL32(preset.colorScoreOppositeTeam[0], preset.colorScoreOppositeTeam[1], preset.colorScoreOppositeTeam[2], preset.colorScoreOppositeTeam[3]);
-	ImU32 colorGameTime = IM_COL32(preset.colorGameTime[0], preset.colorGameTime[1], preset.colorGameTime[2], preset.colorGameTime[3]);
+	ImU32 colorScoreMyTeam = IM_COL32(currentPreset.colorScoreMyTeam[0], currentPreset.colorScoreMyTeam[1], currentPreset.colorScoreMyTeam[2], currentPreset.colorScoreMyTeam[3]);
+	ImU32 colorScoreOppositeTeam = IM_COL32(currentPreset.colorScoreOppositeTeam[0], currentPreset.colorScoreOppositeTeam[1], currentPreset.colorScoreOppositeTeam[2], currentPreset.colorScoreOppositeTeam[3]);
+	ImU32 colorGameTime = IM_COL32(currentPreset.colorGameTime[0], currentPreset.colorGameTime[1], currentPreset.colorGameTime[2], currentPreset.colorGameTime[3]);
 
 	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
@@ -329,9 +329,9 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	auto& preset = allPresets[keyPreset];
-	auto& settingsBoostDisplayArray = preset.settingsBoostDisplay;
-	auto& settingsBoostAllItemsArray = preset.settingsBoostAllItems;
+	//auto& preset = allPresets[keyPreset];
+	auto& settingsBoostDisplayArray = currentPreset.settingsBoostDisplay;
+	auto& settingsBoostAllItemsArray = currentPreset.settingsBoostAllItems;
 
 	if (!imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
 		return;
@@ -396,9 +396,9 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
 
-	auto& preset = allPresets[keyPreset];
-	auto& settingsBoostTexture = preset.settingsBoostTexture;
-	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
+	//auto& preset = allPresets[keyPreset];
+	auto& settingsBoostTexture = currentPreset.settingsBoostTexture;
+	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
 	if (!imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
 		return;
@@ -468,15 +468,15 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
+	ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
 
 	ImVec2 center = { 0,0 };
 	float radius;
 	float strokeThickness;
 
-	auto& preset = allPresets[keyPreset];
-	auto& settingsBoostTexture = preset.settingsBoostTexture;
-	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
+	//auto& preset = allPresets[keyPreset];
+	auto& settingsBoostTexture = currentPreset.settingsBoostTexture;
+	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
 	const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
 		? settingsBoostAllItems
@@ -526,11 +526,11 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = IM_COL32(allPresets[keyPreset].colorBoost[0], allPresets[keyPreset].colorBoost[1], allPresets[keyPreset].colorBoost[2], allPresets[keyPreset].colorBoost[3]);
+	ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
 
-	auto& preset = allPresets[keyPreset];
-	auto& settingsBoostText = preset.settingsBoostText;
-	auto& settingsBoostAllItems = preset.settingsBoostAllItems;
+	//auto& preset = allPresets[keyPreset];
+	auto& settingsBoostText = currentPreset.settingsBoostText;
+	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
 	const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
 		? settingsBoostAllItems
