@@ -396,51 +396,36 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		// Récupération des paramètres selon le format
 		if (isArtistMode) {
 
-
-
-			const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
-				? settingsBoostAllItems
-				: settingsBoostTexture;
-			const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
-				? settingsBoostTexture
-				: settingsBoostAllItems;
-
-			const string& stringSettings = (settingsItems == "settingsBoostAllItems")
-				? "settingsBoostAllItems"
-				: "settingsBoostTexture";
-
 			position = ImVec2(
-				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
-				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))
+				(80 + intChangePositionX(settingsBoostTexture, "settingsBoostTexture")),
+				(92 + intChangePositionY(settingsBoostTexture, "settingsBoostTexture"))
 			);
 			fullSize = ImVec2(
-				size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
-				size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
+				size.X * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture"),
+				size.Y * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture")
 			);
 		}
 		else {
 			position = ImVec2(
-				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))
+				(80 + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
+				(92 + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))
 			);
 			fullSize = ImVec2(
-				size.X * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
-				size.Y * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")
+				size.X * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
+				size.Y * settingsBoostTexture.sizeY * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems")
 			);
 		}
 
-		// Calcul de la hauteur visible selon le boost (du bas vers le haut)
 		float visibleHeight = fullSize.y * boostRatio;
 
-		// Ajuster les UVs pour ne montrer que la hauteur visible
-		ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio); // Bas de l'image en fonction du boost
-		ImVec2 uv_max = ImVec2(1.0f, 1.0f);           // Haut de l'image
+		ImVec2 uv_min = ImVec2(0.0f, 1 - boostRatio);
+		ImVec2 uv_max = ImVec2(1.0f, 1.0f);
 
 		// Dessiner l'image
 		drawList->AddImage(
 			renderImageBoost,
-			ImVec2(position.x, position.y + (fullSize.y - visibleHeight)), // Position ajustée
-			ImVec2(position.x + fullSize.x, position.y + fullSize.y),     // Taille ajustée
+			ImVec2(position.x, position.y + (fullSize.y - visibleHeight)),
+			ImVec2(position.x + fullSize.x, position.y + fullSize.y),
 			uv_min,
 			uv_max,
 			IM_COL32(255, 255, 255, 255)
@@ -458,41 +443,24 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	float radius;
 	float strokeThickness;
 
-	//auto& preset = allPresets[keyPreset];
 	auto& settingsBoostTexture = currentPreset.settingsBoostTexture;
 	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
-	const auto& sourceSettings = (settingsItems == "settingsBoostAllItems")
-		? settingsBoostAllItems
-		: settingsBoostTexture;
-	const auto& baseSettings = (settingsItems == "settingsBoostAllItems")
-		? settingsBoostTexture
-		: settingsBoostAllItems;
-
-	const string& stringSettings = (settingsItems == "settingsBoostAllItems")
-		? "settingsBoostAllItems"
-		: "settingsBoostTexture";
-
-	//center = ImVec2(200 * xPercent, 198 * yPercent); // Centre du cercle
-	//radius = 140.0f * xPercent; // Rayon du cercle
-	//strokeThickness = 26.0f * xPercent; // Échelle de l'épaisseur du trait
-
 	if (isArtistMode) {
 
-		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
-			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)));
-		radius = 140.0f * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings);
-		strokeThickness = 26.0f * baseSettings.sizeY * floatChangeSizeX(sourceSettings, stringSettings);
+		center = ImVec2((200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionX(settingsBoostTexture, "settingsBoostTexture")),
+			(198 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionY(settingsBoostTexture, "settingsBoostTexture")));
+		radius = 140.0f * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture");
+		strokeThickness = 26.0f * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture");
 
 	}
 	else {
-		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")));
-		radius = 140.0f * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
-		strokeThickness = 26.0f * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
-	}
 
-	// Paramètres pour le cercle
+		center = ImVec2((200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
+			(198 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")));
+		radius = 140.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+		strokeThickness = 26.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+	}
 
 	float startAngle = IM_PI / 2.0f; // Début de l'arc (à 3h sur un cadran)
 	float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
