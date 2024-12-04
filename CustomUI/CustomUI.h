@@ -62,12 +62,12 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	void initValues();
 	void writeCvar();
-	map<string, Preset> loadPresets(const string& jsonFilePath);
+	map<string, Preset> loadPresets();
 	Preset loadCurrentPreset(string keyPreset);
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
 	//void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
-	void saveJsonToFile(const string jsonFilePath);
+	void saveJsonToFile(const string jsonFilePath, const json& jsonData);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	SettingsItems loadSettingsBoostDisplay(const json& value);
 

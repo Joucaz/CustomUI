@@ -4,8 +4,10 @@
 
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 using json = nlohmann::json;
 
@@ -128,8 +130,10 @@ void CustomUI::initValues() {
 	yPercent = ((float)1);*/
 
 
-	presetPath = gameWrapper->GetDataFolder().string() + "\\CustomUI" + "\\Presets" + "\\presets.json";
-	allPresets = loadPresets(presetPath);
+	//presetPath = gameWrapper->GetDataFolder().string() + "\\CustomUI" + "\\Presets" + "\\presets.json";
+	//allPresets = loadPresets(presetPath);
+	allPresets = loadPresets();
+
 
 	string boostFormCvar = getCvarString("CustomUI_boostForm");
 	changeBoostDisplay(boostFormCvar);
@@ -327,76 +331,167 @@ void CustomUI::onPauseOpen() {
 void CustomUI::onPauseClose() {
 	isOnPause = false;
 }
+//
+//map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
+//	map<string, Preset> presets;
+//
+//	ifstream file(jsonFilePath);
+//	if (!file.is_open()) {
+//		LOG("Impossible d'ouvrir le fichier JSON !");
+//		return presets;
+//	}
+//	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
+//
+//	file >> jsonData;
+//
+//	LOG("Fichier JSON chargé avec succès !");
+//
+//	// Parcourir les presets dans le fichier JSON
+//	for (auto& [key, value] : jsonData["presets"].items()) {
+//		Preset preset;
+//		preset.font.nameFont = value["font"]["nameFont"].is_null()
+//			? ""
+//			: value["font"]["nameFont"].get<string>();
+//		preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
+//		preset.boostDisplayImage = value["boostDisplayImage"];
+//		preset.boostTextureImage = value["boostTextureImage"];
+//		preset.colorBoost = {
+//			value["colorBoost"][0],
+//			value["colorBoost"][1],
+//			value["colorBoost"][2],
+//			value["colorBoost"][3]
+//		};
+//		preset.boostForm = value["boostForm"];
+//		preset.scoreImage = value["scoreImage"];
+//		preset.colorScoreMyTeam = {
+//			value["colorScoreMyTeam"][0],
+//			value["colorScoreMyTeam"][1],
+//			value["colorScoreMyTeam"][2],
+//			value["colorScoreMyTeam"][3]
+//		};
+//		preset.colorScoreOppositeTeam = {
+//			value["colorScoreOppositeTeam"][0],
+//			value["colorScoreOppositeTeam"][1],
+//			value["colorScoreOppositeTeam"][2],
+//			value["colorScoreOppositeTeam"][3]
+//		};
+//		preset.colorGameTime = {
+//			value["colorGameTime"][0],
+//			value["colorGameTime"][1],
+//			value["colorGameTime"][2],
+//			value["colorGameTime"][3]
+//		};
+//		preset.settingsBoostDisplay = loadSettingsBoostDisplay(value["settingsBoostDisplay"]);
+//		preset.settingsScoreDisplay = loadSettingsBoostDisplay(value["settingsScoreDisplay"]);
+//		preset.settingsBoostAllItems = loadSettingsBoostDisplay(value["settingsBoostAllItems"]);
+//		preset.settingsScoreAllItems = loadSettingsBoostDisplay(value["settingsScoreAllItems"]);
+//		preset.settingsBoostTexture = loadSettingsBoostDisplay(value["settingsBoostTexture"]);
+//		preset.settingsBoostText = loadSettingsBoostDisplay(value["settingsBoostText"]);
+//		preset.settingsScoreMyTeam = loadSettingsBoostDisplay(value["settingsScoreMyTeam"]);
+//		preset.settingsScoreOppositeTeam = loadSettingsBoostDisplay(value["settingsScoreOppositeTeam"]);
+//		preset.settingsGameTime = loadSettingsBoostDisplay(value["settingsGameTime"]);
+//
+//
+//		// Charger les images avec la fonction utilitaire
+//		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
+//		loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
+//		loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
+//
+//		// Ajout du preset à la map
+//		presets[key] = preset;
+//	}
+//
+//
+//	return presets;
+//}
 
-map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
+map<string, Preset> CustomUI::loadPresets() {
 	map<string, Preset> presets;
 
-	ifstream file(jsonFilePath);
-	if (!file.is_open()) {
-		LOG("Impossible d'ouvrir le fichier JSON !");
+	// Dossier racine où se trouvent les différents sous-dossiers thématiques
+	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
+
+	// Vérifier si le dossier existe
+	if (!fs::exists(basePath) || !fs::is_directory(basePath)) {
+		LOG("Le dossier de presets n'existe pas !");
 		return presets;
 	}
-	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
 
-	file >> jsonData;
+	// Parcourir chaque dossier dans le dossier de base (chaque thème)
+	for (const auto& themeDir : fs::directory_iterator(basePath)) {
+		if (fs::is_directory(themeDir)) {
+			// Chemin du fichier JSON dans le thème
+			fs::path jsonFilePath = themeDir.path() / "preset.json"; // On suppose que chaque thème a un fichier preset.json
 
-	LOG("Fichier JSON chargé avec succès !");
+			// Vérifier si le fichier existe
+			if (fs::exists(jsonFilePath) && fs::is_regular_file(jsonFilePath)) {
+				ifstream file(jsonFilePath);
+				if (!file.is_open()) {
+					LOG("Impossible d'ouvrir le fichier JSON : " + jsonFilePath.string());
+					continue;
+				}
 
-	// Parcourir les presets dans le fichier JSON
-	for (auto& [key, value] : jsonData["presets"].items()) {
-		Preset preset;
-		preset.font.nameFont = value["font"]["nameFont"].is_null()
-			? ""
-			: value["font"]["nameFont"].get<string>();
-		preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
-		preset.boostDisplayImage = value["boostDisplayImage"];
-		preset.boostTextureImage = value["boostTextureImage"];
-		preset.colorBoost = {
-			value["colorBoost"][0],
-			value["colorBoost"][1],
-			value["colorBoost"][2],
-			value["colorBoost"][3]
-		};
-		preset.boostForm = value["boostForm"];
-		preset.scoreImage = value["scoreImage"];
-		preset.colorScoreMyTeam = {
-			value["colorScoreMyTeam"][0],
-			value["colorScoreMyTeam"][1],
-			value["colorScoreMyTeam"][2],
-			value["colorScoreMyTeam"][3]
-		};
-		preset.colorScoreOppositeTeam = {
-			value["colorScoreOppositeTeam"][0],
-			value["colorScoreOppositeTeam"][1],
-			value["colorScoreOppositeTeam"][2],
-			value["colorScoreOppositeTeam"][3]
-		};
-		preset.colorGameTime = {
-			value["colorGameTime"][0],
-			value["colorGameTime"][1],
-			value["colorGameTime"][2],
-			value["colorGameTime"][3]
-		};
-		preset.settingsBoostDisplay = loadSettingsBoostDisplay(value["settingsBoostDisplay"]);
-		preset.settingsScoreDisplay = loadSettingsBoostDisplay(value["settingsScoreDisplay"]);
-		preset.settingsBoostAllItems = loadSettingsBoostDisplay(value["settingsBoostAllItems"]);
-		preset.settingsScoreAllItems = loadSettingsBoostDisplay(value["settingsScoreAllItems"]);
-		preset.settingsBoostTexture = loadSettingsBoostDisplay(value["settingsBoostTexture"]);
-		preset.settingsBoostText = loadSettingsBoostDisplay(value["settingsBoostText"]);
-		preset.settingsScoreMyTeam = loadSettingsBoostDisplay(value["settingsScoreMyTeam"]);
-		preset.settingsScoreOppositeTeam = loadSettingsBoostDisplay(value["settingsScoreOppositeTeam"]);
-		preset.settingsGameTime = loadSettingsBoostDisplay(value["settingsGameTime"]);
+				// Charger le contenu JSON
+				json jsonData;
+				file >> jsonData;
+				LOG("Fichier JSON chargé avec succès : " + jsonFilePath.string());
 
+				// Parcourir les presets dans le fichier JSON et les ajouter à la map
+				for (auto& [key, value] : jsonData["presets"].items()) {
+					Preset preset;
+					preset.font.nameFont = value["font"]["nameFont"].is_null()
+						? ""
+						: value["font"]["nameFont"].get<string>();
+					preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
+					preset.boostDisplayImage = value["boostDisplayImage"];
+					preset.boostTextureImage = value["boostTextureImage"];
+					preset.colorBoost = {
+						value["colorBoost"][0],
+						value["colorBoost"][1],
+						value["colorBoost"][2],
+						value["colorBoost"][3]
+					};
+					preset.boostForm = value["boostForm"];
+					preset.scoreImage = value["scoreImage"];
+					preset.colorScoreMyTeam = {
+						value["colorScoreMyTeam"][0],
+						value["colorScoreMyTeam"][1],
+						value["colorScoreMyTeam"][2],
+						value["colorScoreMyTeam"][3]
+					};
+					preset.colorScoreOppositeTeam = {
+						value["colorScoreOppositeTeam"][0],
+						value["colorScoreOppositeTeam"][1],
+						value["colorScoreOppositeTeam"][2],
+						value["colorScoreOppositeTeam"][3]
+					};
+					preset.colorGameTime = {
+						value["colorGameTime"][0],
+						value["colorGameTime"][1],
+						value["colorGameTime"][2],
+						value["colorGameTime"][3]
+					};
+					preset.settingsBoostDisplay = loadSettingsBoostDisplay(value["settingsBoostDisplay"]);
+					preset.settingsScoreDisplay = loadSettingsBoostDisplay(value["settingsScoreDisplay"]);
+					preset.settingsBoostAllItems = loadSettingsBoostDisplay(value["settingsBoostAllItems"]);
+					preset.settingsScoreAllItems = loadSettingsBoostDisplay(value["settingsScoreAllItems"]);
+					preset.settingsBoostTexture = loadSettingsBoostDisplay(value["settingsBoostTexture"]);
+					preset.settingsBoostText = loadSettingsBoostDisplay(value["settingsBoostText"]);
+					preset.settingsScoreMyTeam = loadSettingsBoostDisplay(value["settingsScoreMyTeam"]);
+					preset.settingsScoreOppositeTeam = loadSettingsBoostDisplay(value["settingsScoreOppositeTeam"]);
+					preset.settingsGameTime = loadSettingsBoostDisplay(value["settingsGameTime"]);
 
-		// Charger les images avec la fonction utilitaire
-		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
-		loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
-		loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
+					// Charger les images avec la fonction utilitaire
+					loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
+					loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
+					loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
 
-		// Ajout du preset à la map
-		presets[key] = preset;
+					// Ajout du preset à la map
+					presets[key] = preset;
+				}
+			}
+		}
 	}
-
 
 	return presets;
 }
@@ -445,30 +540,38 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 	}
 }
 //
-//void CustomUI::updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue) {
+//void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
+//	
+//	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
+//
+//	// Chercher le fichier correspondant au preset
+//	string presetPath = (basePath / presetKey / "preset.json").string();
+//
+//	
 //	if (jsonData["presets"].contains(presetKey)) {
 //		// Mise à jour du JSON
+//		//newValue = round(newValue * 1000.0f) / 1000.0f;
+//		//std::string truncatedValueStr = floatToStringWithPrecision(newValue);
+//
 //		jsonData["presets"][presetKey][field][positionScale] = newValue;
 //		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
-//
-//		// Mise à jour de allPresets
-//		if (allPresets.contains(presetKey)) {
-//			try {
-//				// Obtenez la référence au champ et mettez à jour la valeur
-//				SettingsItems& settings = getSettings(allPresets[presetKey], field);
-//				if (positionScale == "positionX") {
-//					settings.positionX = newValue;
-//				}
-//				else {
-//					settings.positionY = newValue;
-//				}
+//		try {
+//			SettingsItems& settings = getSettings(currentPreset, field);				
+//			if (positionScale == "positionX") {
+//				settings.positionX = newValue;
 //			}
-//			catch (const std::invalid_argument& e) {
-//				LOG(e.what());
+//			else if (positionScale == "positionY") {
+//				settings.positionY = newValue;
+//			}
+//			else if (positionScale == "sizeX") {
+//				settings.sizeX = newValue;
+//			}
+//			else if (positionScale == "sizeY") {
+//				settings.sizeY = newValue;
 //			}
 //		}
-//		else {
-//			LOG("Erreur : clé " + presetKey + " absente dans allPresets.");
+//		catch (const std::invalid_argument& e) {
+//			LOG(e.what());
 //		}
 //
 //		saveJsonToFile(presetPath);
@@ -477,52 +580,79 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 //		LOG("Preset " + presetKey + " introuvable !");
 //	}
 //
-//	// Vérification de corruption
 //	if (jsonData.is_discarded()) {
 //		LOG("Erreur : jsonData est corrompu !");
 //		return;
 //	}
 //}
 
+void CustomUI::updateJsonFieldFloat(const string presetKey, const string& field, const string positionScale, float newValue) {
+	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
 
-void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
-	if (jsonData["presets"].contains(presetKey)) {
-		// Mise à jour du JSON
-		//newValue = round(newValue * 1000.0f) / 1000.0f;
-		jsonData["presets"][presetKey][field][positionScale] = round(newValue * 1000.0f) / 1000.0f;
-		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
-		try {
-			SettingsItems& settings = getSettings(currentPreset, field);				
-			if (positionScale == "positionX") {
-				settings.positionX = newValue;
-			}
-			else if (positionScale == "positionY") {
-				settings.positionY = newValue;
-			}
-			else if (positionScale == "sizeX") {
-				settings.sizeX = newValue;
-			}
-			else if (positionScale == "sizeY") {
-				settings.sizeY = newValue;
-			}
-		}
-		catch (const std::invalid_argument& e) {
-			LOG(e.what());
+	// Chercher le fichier correspondant au preset
+	fs::path presetPath = basePath / presetKey / "preset.json";
+	LOG(presetPath.string());
+
+	if (fs::exists(presetPath)) {
+		// Charger le fichier JSON
+		ifstream file(presetPath);
+		if (!file.is_open()) {
+			LOG("Impossible d'ouvrir le fichier JSON : " + presetPath.string());
+			return;
 		}
 
-		saveJsonToFile(presetPath);
+		json jsonData;
+		file >> jsonData;
+		file.close();
+
+		// Vérifier si le preset existe dans le fichier JSON
+		if (jsonData["presets"].contains(presetKey)) {
+			// Mise à jour du champ dans le JSON
+			json& preset = jsonData["presets"][presetKey];
+			if (preset.contains(field)) {
+				preset[field][positionScale] = newValue; // Mise à jour de la valeur
+
+				LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
+
+				try {
+					SettingsItems& settings = getSettings(currentPreset, field);				
+					if (positionScale == "positionX") {
+						settings.positionX = newValue;
+						LOG("new positionX");
+					}
+					else if (positionScale == "positionY") {
+						settings.positionY = newValue;
+						LOG("new positionY");
+					}
+					else if (positionScale == "sizeX") {
+						settings.sizeX = newValue;
+						LOG("new SizeX");
+					}
+					else if (positionScale == "sizeY") {
+						settings.sizeY = newValue;
+						LOG("new SizeY");
+					}
+				}
+				catch (const std::invalid_argument& e) {
+					LOG(e.what());
+				}
+
+				// Sauvegarder les changements dans le fichier
+				saveJsonToFile(presetPath.string(), jsonData);
+			}
+			else {
+				LOG("Le champ " + field + " n'existe pas dans le preset " + presetKey);
+			}
+		}
+		else {
+			LOG("Preset " + presetKey + " introuvable dans le fichier JSON.");
+		}
 	}
 	else {
-		LOG("Preset " + presetKey + " introuvable !");
-	}
-
-	if (jsonData.is_discarded()) {
-		LOG("Erreur : jsonData est corrompu !");
-		return;
+		LOG("Fichier preset.json introuvable pour " + presetKey);
 	}
 }
-
-void CustomUI::saveJsonToFile(const string jsonFilePath) {
+void CustomUI::saveJsonToFile(const string jsonFilePath, const json& jsonData) {
 	try {
 		// Ouvrir le fichier en mode écriture
 		ofstream file(jsonFilePath);
@@ -531,8 +661,9 @@ void CustomUI::saveJsonToFile(const string jsonFilePath) {
 			return;
 		}
 
-		file << jsonData.dump(4); 
-		file.close(); 
+		// Sauvegarder le JSON dans le fichier
+		file << jsonData.dump(4);  // formatage avec indentation
+		file.close();
 
 		LOG("Fichier JSON sauvegardé avec succès à : " + jsonFilePath);
 	}
@@ -540,6 +671,26 @@ void CustomUI::saveJsonToFile(const string jsonFilePath) {
 		LOG("Erreur lors de la sauvegarde du fichier JSON: " + string(e.what()));
 	}
 }
+
+
+//void CustomUI::saveJsonToFile(const string jsonFilePath) {
+//	try {
+//		// Ouvrir le fichier en mode écriture
+//		ofstream file(jsonFilePath);
+//		if (!file.is_open()) {
+//			LOG("Impossible d'ouvrir le fichier pour la sauvegarde à : " + jsonFilePath);
+//			return;
+//		}
+//
+//		file << jsonData.dump(4); 
+//		file.close(); 
+//
+//		LOG("Fichier JSON sauvegardé avec succès à : " + jsonFilePath);
+//	}
+//	catch (const std::exception& e) {
+//		LOG("Erreur lors de la sauvegarde du fichier JSON: " + string(e.what()));
+//	}
+//}
 
 void CustomUI::loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath,
 	map<string, shared_ptr<ImageWrapper>>& imageMap, const string& imageType) {
