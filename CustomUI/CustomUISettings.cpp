@@ -39,12 +39,6 @@ void CustomUI::RenderSettings() {
                 ImGui::OpenPopup("BindSet");
             }
 
-            ImGui::Text("Welcome to the new tab!");
-            ImGui::Text("Here, you can add custom content.");
-            if (ImGui::Button("Do Something"))
-            {
-                cvarManager->log("Button in the new tab clicked!");
-            }
 
 
 

@@ -199,25 +199,33 @@ void CustomUI::RenderMenu() {
 						&intComboSelections[i], itemsPositionCombo.data(),
 						itemsPositionCombo.size())) {
 						ImGui::Text("Option sélectionnée : %s", itemsPositionCombo[intComboSelections[i]]);
-
-
 					}
 				}
 			}
 
 			if (intComboSelections.size() > 0) {
 				setCvarString(itemsPositionSelected2, itemsPosition[intComboSelections[0]]);
+				setCvarString(itemsPositionSelected3, "");
+				setCvarString(itemsPositionSelected4, "");
 				writeCvar();
 			}
 			if (intComboSelections.size() > 1) {
 				//itemsPositionSelected3.setValue(itemsPositionCombo[intComboSelections[1]]);
 				setCvarString(itemsPositionSelected3, itemsPosition[intComboSelections[1]]);
+				setCvarString(itemsPositionSelected4, "");
 				writeCvar();
 			}
 			if (intComboSelections.size() > 2) {
 				setCvarString(itemsPositionSelected4, itemsPosition[intComboSelections[2]]);
 				writeCvar();
 			}
+			if (intComboSelections.size() == 0) {
+				setCvarString(itemsPositionSelected2, "");
+				setCvarString(itemsPositionSelected3, "");
+				setCvarString(itemsPositionSelected4, "");
+				writeCvar();
+			}
+
 
 
 
@@ -254,8 +262,9 @@ void CustomUI::RenderMenu() {
 					errorTimer = 2.0f;
 				}
 			}
-			ImGui::SameLine();
-			if (isArtistMode) {
+			if (isArtistMode) 
+			{
+				ImGui::SameLine();
 				if (ImGui::Button("Edit color"))
 				{
 					if (currentPosition != 0 && cvarIsText(itemsPositionSelected) && cvarIsText(itemsPositionSelected2) && cvarIsText(itemsPositionSelected3) && cvarIsText(itemsPositionSelected4)) {

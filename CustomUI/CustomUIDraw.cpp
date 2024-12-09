@@ -349,8 +349,8 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 				0 + floatToIntPosition(settingsScoreDisplay.positionY, screenSize.Y) + intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")
 			);
 			fullSize = ImVec2(
-				size.X * settingsScoreDisplay.positionX * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems"),
-				size.Y * settingsScoreDisplay.positionY * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems")
+				size.X * settingsScoreDisplay.sizeX * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems"),
+				size.Y * settingsScoreDisplay.sizeY * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems")
 			);
 		}
 		drawList->AddImage(
