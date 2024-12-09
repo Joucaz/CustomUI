@@ -10,29 +10,45 @@ using namespace std;
 
 
 int CustomUI::intChangePositionX(SettingsItems settings, string settingsName) {
-	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	if (settingsName == settingsItems) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
 		if (showPositionEditor) {
 			return changePositionX;
 		}
 	}
 	return floatToIntPosition(settings.positionX, screenSize.X);
-	
 }
 int CustomUI::intChangePositionY(SettingsItems settings, string settingsName) {
-	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	if (settingsName == settingsItems) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
 		if (showPositionEditor) {
 			return changePositionY;
 		}
 	}
 	return floatToIntPosition(settings.positionY, screenSize.Y);
-
 }
 
 float CustomUI::floatChangeSizeX(SettingsItems settings, string settingsName) {
-	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	if (settingsName == settingsItems) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
 		if (showSizeEditor) {
 			return changeSizeX;
 		}
@@ -41,14 +57,41 @@ float CustomUI::floatChangeSizeX(SettingsItems settings, string settingsName) {
 
 }
 float CustomUI::floatChangeSizeY(SettingsItems settings, string settingsName) {
-	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	if (settingsName == settingsItems) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
 		if (showSizeEditor) {
 			return changeSizeY;
 		}
 	}
 	return settings.sizeY;
 
+}
+
+
+ImU32 CustomUI::changeColorText(array<int, 4> settingsColor, string settingsName) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
+		if (showColorEditor) {
+			ImU32 color = IM_COL32(changeColorR, changeColorG, changeColorB, changeColorA);
+			LOG("showolor");
+			return color;
+		}
+	}
+	LOG("1 : " + to_string(settingsColor[0]) + "2 : " + to_string(settingsColor[1]) + "3 : " + to_string(settingsColor[2]) + "4 : " + to_string(settingsColor[3]));
+	ImU32 color = IM_COL32(settingsColor[0], settingsColor[1], settingsColor[2], settingsColor[3]);
+	return color;
 }
 
 void CustomUI::Render() {
@@ -337,9 +380,13 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
 
-	ImU32 colorScoreMyTeam = IM_COL32(currentPreset.colorScoreMyTeam[0], currentPreset.colorScoreMyTeam[1], currentPreset.colorScoreMyTeam[2], currentPreset.colorScoreMyTeam[3]);
-	ImU32 colorScoreOppositeTeam = IM_COL32(currentPreset.colorScoreOppositeTeam[0], currentPreset.colorScoreOppositeTeam[1], currentPreset.colorScoreOppositeTeam[2], currentPreset.colorScoreOppositeTeam[3]);
-	ImU32 colorGameTime = IM_COL32(currentPreset.colorGameTime[0], currentPreset.colorGameTime[1], currentPreset.colorGameTime[2], currentPreset.colorGameTime[3]);
+	//ImU32 color = changeColorText(currentPreset.colorScoreMyTeam, "settingsScoreMyTeam");
+	//ImU32 color = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
+	//ImU32 color = changeColorText(currentPreset.colorGameTime, "settingsScoreOppositeTeam");
+
+	ImU32 colorScoreMyTeam = changeColorText(currentPreset.colorScoreMyTeam, "settingsScoreMyTeam");
+	ImU32 colorScoreOppositeTeam = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
+	ImU32 colorGameTime = changeColorText(currentPreset.colorGameTime, "settingsScoreOppositeTeam"); 
 
 	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
@@ -560,7 +607,8 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
+	ImU32 color = changeColorText(currentPreset.colorBoost, "settingsBoostText");
+	//ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
 
 	//auto& preset = allPresets[keyPreset];
 	auto& settingsBoostText = currentPreset.settingsBoostText;

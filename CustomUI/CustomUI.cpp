@@ -33,6 +33,9 @@ void CustomUI::onLoad()
 	//auto cvar = cvarManager->registerCvar("CustomUI_positionBoostBar", "left", "the position of the boost bar");
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
+	auto cvarItemsNamePosition2 = cvarManager->registerCvar("CustomUI_itemsNamePosition2", "", "item selected to move and resize", true, false, 0, false);
+	auto cvarItemsNamePosition3 = cvarManager->registerCvar("CustomUI_itemsNamePosition3", "", "item selected to move and resize", true, false, 0, false);
+	auto cvarItemsNamePosition4 = cvarManager->registerCvar("CustomUI_itemsNamePosition4", "", "item selected to move and resize", true, false, 0, false);
 
 	auto cvarCustomizationWindow = cvarManager->registerCvar("CustomUI_enableCustomizationWindow", "0", "enable the window to edit items", true, true, 0, true, 1);
 
@@ -539,6 +542,59 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 		throw std::invalid_argument("Invalid field name: " + fieldName);
 	}
 }
+array<int, 4>& CustomUI::getSettingsSettingsColor(Preset& preset, const std::string& fieldName) {
+
+	if (fieldName == "settingsBoostText") {
+		return preset.colorBoost;
+	}
+	else if (fieldName == "settingsScoreMyTeam") {
+		return preset.colorScoreMyTeam;
+	}
+	else if (fieldName == "settingsScoreOppositeTeam") {
+		return preset.colorScoreOppositeTeam;
+	}
+	else if (fieldName == "settingsGameTime") {
+		return preset.colorGameTime;
+	}
+	else {
+		throw std::invalid_argument("Invalid field name: " + fieldName);
+	}
+}
+array<int, 4>& CustomUI::getSettingsColor(Preset& preset, const std::string& fieldName) {
+
+	if (fieldName == "colorBoost") {
+		return preset.colorBoost;
+	}
+	else if (fieldName == "colorScoreMyTeam") {
+		return preset.colorScoreMyTeam;
+	}
+	else if (fieldName == "colorScoreOppositeTeam") {
+		return preset.colorScoreOppositeTeam;
+	}
+	else if (fieldName == "colorGameTime") {
+		return preset.colorGameTime;
+	}
+	else {
+		throw std::invalid_argument("Invalid field name: " + fieldName);
+	}
+}
+string CustomUI::getStringSettingsColor(string nameSettings) {
+	if (nameSettings == "settingsBoostText") {
+		return "colorBoost";
+	}
+	else if (nameSettings == "settingsScoreMyTeam") {
+		return "colorScoreMyTeam";
+	}
+	else if (nameSettings == "settingsScoreOppositeTeam") {
+		return "colorScoreOppositeTeam";
+	}
+	else if (nameSettings == "settingsGameTime") {
+		return "colorGameTime";
+	}
+	else {
+		throw std::invalid_argument("Invalid field name: " + nameSettings);
+	}
+}
 //
 //void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
 //	
@@ -585,6 +641,64 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 //		return;
 //	}
 //}
+
+void CustomUI::updateJsonColor(const string presetKey, const string& field, array<int, 4>& newValues) {
+	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
+
+	// Chercher le fichier correspondant au preset
+	fs::path presetPath = basePath / presetKey / "preset.json";
+	LOG(presetPath.string());
+
+	if (fs::exists(presetPath)) {
+		// Charger le fichier JSON
+		ifstream file(presetPath);
+		if (!file.is_open()) {
+			LOG("Impossible d'ouvrir le fichier JSON : " + presetPath.string());
+			return;
+		}
+
+		json jsonData;
+		file >> jsonData;
+		file.close();
+
+		if (jsonData["presets"].contains(presetKey)) {
+			json& preset = jsonData["presets"][presetKey];
+			if (preset[field].is_array() && preset[field].size() >= 4) { // Vérifier que le champ est un tableau
+				for (int index = 0; index < 4; ++index) {
+					preset[field][index] = newValues[index]; // Mise à jour des valeurs
+					LOG("Mise à jour de " + field + "[" + std::to_string(index) + "] à " + std::to_string(newValues[index]));
+				}
+
+				try {
+					// Mettre à jour les couleurs locales
+					array<int, 4>& settingsColor = getSettingsColor(currentPreset, field);
+					for (int i = 0; i < 4; ++i) {
+						LOG("before : " + to_string(settingsColor[i]));
+						settingsColor[i] = newValues[i];
+						LOG("after : " + to_string(settingsColor[i]));
+					}
+				}
+				catch (const std::invalid_argument& e) {
+					LOG(e.what());
+				}
+				
+
+				saveJsonToFile(presetPath.string(), jsonData);
+				LOG("Changements sauvegardés2.");
+			}
+			else {
+				LOG("Le champ " + field + " n'est pas un tableau valide dans le preset " + presetKey);
+			}
+			
+		}
+		else {
+			LOG("Preset " + presetKey + " introuvable dans le fichier JSON.");
+		}
+	}
+	else {
+		LOG("Fichier preset.json introuvable pour " + presetKey);
+	}
+}
 
 void CustomUI::updateJsonFieldFloat(const string presetKey, const string& field, const string positionScale, float newValue) {
 	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";

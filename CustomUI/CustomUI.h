@@ -35,12 +35,12 @@ struct Preset {
 	SettingsItems settingsBoostDisplay;
 	SettingsItems settingsBoostTexture;
 	SettingsItems settingsBoostText;
-	array<int, 4> colorBoost; // RGBA
+	array<int, 4> colorBoost;
 	string boostForm;
 	string scoreImage;
-	array<int, 4> colorScoreMyTeam; // RGBA
-	array<int, 4> colorScoreOppositeTeam; // RGBA
-	array<int, 4> colorGameTime; // RGBA
+	array<int, 4> colorScoreMyTeam;
+	array<int, 4> colorScoreOppositeTeam;
+	array<int, 4> colorGameTime;
 	SettingsItems settingsScoreDisplay;
 	SettingsItems settingsScoreMyTeam;
 	SettingsItems settingsScoreOppositeTeam;
@@ -67,8 +67,12 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
 	//void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
+	void updateJsonColor(string presetKey, const string& field, array<int, 4>& newValues);
 	void saveJsonToFile(const string jsonFilePath, const json& jsonData);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
+	array<int, 4>& getSettingsColor(Preset& preset, const std::string& fieldName);
+	array<int, 4>& getSettingsSettingsColor(Preset& preset, const std::string& fieldName);
+	string getStringSettingsColor(string nameSettings);
 	SettingsItems loadSettingsBoostDisplay(const json& value);
 
 	void loadThemeFont();
@@ -78,6 +82,10 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	int intChangePositionY(SettingsItems settings, string settingsName);
 	float floatChangeSizeX(SettingsItems settings, string settingsName);
 	float floatChangeSizeY(SettingsItems settings, string settingsName);
+	ImU32 changeColorText(array<int, 4> settingsColor, string settingsName);
+
+	//void drawPositionSizeMenu(int currentPosition, string keyPreset, CVarWrapper itemsPositionSelected, CVarWrapper itemsPositionSelected2, CVarWrapper itemsPositionSelected3, CVarWrapper itemsPositionSelected4);
+	bool cvarIsText(CVarWrapper cvar);
 
 	float intToFloatPosition(int position, int screenSize);
 	int floatToIntPosition(float position, int screenSize);
@@ -147,6 +155,7 @@ public:
 
 	void showRenderEditPosition();
 	void showRenderEditSize();
+	void showRenderEditColor();
 	bool escape_state = false;
 	bool isSettingsOpen = false;
 	string menuName_ = "customui";
@@ -164,9 +173,15 @@ private:
 	int changePositionY = 0;
 	float changeSizeX = 1;
 	float changeSizeY = 1;
+	int changeColorR = 0;
+	int changeColorG = 0;
+	int changeColorB = 0;
+	int changeColorA = 0;
 	bool changingBeginPosition = false;
 	bool changingBeginSize = false;
 
+	std::vector<std::string> itemsAdded;
+	std::vector<int> intComboSelections;
 
 	int boost;
 	string gameTime = "";
@@ -176,6 +191,7 @@ private:
 
 	bool showPositionEditor = false;
 	bool showSizeEditor = false;
+	bool showColorEditor = false;
 
 	string fontNameLoad;
 

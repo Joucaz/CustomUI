@@ -42,8 +42,24 @@ void CustomUI::RenderMenu() {
 
 	CVarWrapper itemsPositionSelected = cvarManager->getCvar("CustomUI_itemsNamePosition");
 	if (!itemsPositionSelected) { return; }
+	CVarWrapper itemsPositionSelected2 = cvarManager->getCvar("CustomUI_itemsNamePosition2");
+	if (!itemsPositionSelected2) { return; }
+	CVarWrapper itemsPositionSelected3 = cvarManager->getCvar("CustomUI_itemsNamePosition3");
+	if (!itemsPositionSelected3) { return; }
+	CVarWrapper itemsPositionSelected4 = cvarManager->getCvar("CustomUI_itemsNamePosition4");
+	if (!itemsPositionSelected4) { return; }
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
+
+	int maxComboCount;
+	if (isArtistMode) {
+		maxComboCount = 3;
+	}
+	else {
+		maxComboCount = 1;
+	}
+	
+	static int currentPosition = 0;
 
 	if (ImGui::BeginTabBar("MainTabBar"))
 	{
@@ -69,7 +85,6 @@ void CustomUI::RenderMenu() {
 					index++;
 				}
 			}
-			static int currentPosition = 0;
 
 			ImGui::Text("ChoosePreset");
 			ImGui::SetNextItemWidth(200.0f);
@@ -89,7 +104,28 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetTooltip("Choose the preset to apply");
 			}
+			/*if (isArtistMode) {
+				if (ImGui::BeginTabBar("SecondTabBar"))
+				{
+					if (ImGui::BeginTabItem("Position & Size"))
+					{
 
+						drawPositionSizeMenu(currentPosition, keyPreset, itemsPositionSelected, itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4);
+
+						ImGui::EndTabItem();
+					}
+					if (ImGui::BeginTabItem("Text Color"))
+					{
+						ImGui::EndTabItem();
+					}
+					ImGui::EndTabBar();
+
+				}
+			}
+			else {
+				drawPositionSizeMenu(currentPosition, keyPreset, itemsPositionSelected, itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4);
+			}
+			*/
 			// Configuration des options en fonction du format du preset
 			std::vector<const char*> itemsPositionCombo;
 			std::vector<const char*> itemsPosition;
@@ -141,14 +177,61 @@ void CustomUI::RenderMenu() {
 				ImGui::SetTooltip("Select which item you want to move or resize");
 			}
 
-			static bool showError = false; // Variable pour suivre l'état d'erreur
+			ImGui::SameLine();
+			if (ImGui::Button(" - ##RemoveItem")) {
+				if (!itemsAdded.empty()) {
+					itemsAdded.pop_back();
+					intComboSelections.pop_back();
+				}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(" + ##AddItem")) {
+				if (intComboSelections.size() < maxComboCount) {
+					itemsAdded.push_back("Nouvel élément " + std::to_string(itemsAdded.size() + 1));
+					intComboSelections.push_back(0);
+				}
+			}
+			if (!itemsAdded.empty()) {
+				for (size_t i = 0; i < itemsAdded.size(); ++i) {
+
+					ImGui::SetNextItemWidth(200.0f);
+					if (ImGui::Combo(("##Combo_" + std::to_string(i)).c_str(),
+						&intComboSelections[i], itemsPositionCombo.data(),
+						itemsPositionCombo.size())) {
+						ImGui::Text("Option sélectionnée : %s", itemsPositionCombo[intComboSelections[i]]);
+
+
+					}
+				}
+			}
+
+			if (intComboSelections.size() > 0) {
+				setCvarString(itemsPositionSelected2, itemsPosition[intComboSelections[0]]);
+				writeCvar();
+			}
+			if (intComboSelections.size() > 1) {
+				//itemsPositionSelected3.setValue(itemsPositionCombo[intComboSelections[1]]);
+				setCvarString(itemsPositionSelected3, itemsPosition[intComboSelections[1]]);
+				writeCvar();
+			}
+			if (intComboSelections.size() > 2) {
+				setCvarString(itemsPositionSelected4, itemsPosition[intComboSelections[2]]);
+				writeCvar();
+			}
+
+
+
+			static bool showError = false;
 			static float errorTimer = 0.0f;
+			static bool showErrorColor = false;
+			static float errorTimerColor = 0.0f;
 
 			if (ImGui::Button("Edit position"))
 			{
 				if (currentPosition != 0) {
 					showPositionEditor = true;
 					showSizeEditor = false;
+					showColorEditor = false;
 					showError = false;
 				}
 				else {
@@ -163,6 +246,7 @@ void CustomUI::RenderMenu() {
 				if (currentPosition != 0) {
 					showPositionEditor = false;
 					showSizeEditor = true;
+					showColorEditor = false;
 					showError = false;
 				}
 				else {
@@ -170,6 +254,23 @@ void CustomUI::RenderMenu() {
 					errorTimer = 2.0f;
 				}
 			}
+			ImGui::SameLine();
+			if (isArtistMode) {
+				if (ImGui::Button("Edit color"))
+				{
+					if (currentPosition != 0 && cvarIsText(itemsPositionSelected) && cvarIsText(itemsPositionSelected2) && cvarIsText(itemsPositionSelected3) && cvarIsText(itemsPositionSelected4)) {
+						showColorEditor = true;
+						showPositionEditor = false;
+						showSizeEditor = false;
+						showErrorColor = false;
+					}
+					else {
+						showErrorColor = true;
+						errorTimerColor = 2.0f;
+					}
+				}
+			}
+
 			if (showError) {
 				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Select an item before editing on the droplist");
 				errorTimer -= ImGui::GetIO().DeltaTime;
@@ -178,31 +279,25 @@ void CustomUI::RenderMenu() {
 					showError = false;
 				}
 			}
+			if (showErrorColor) {
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Select only text items to modify their color");
+				errorTimerColor -= ImGui::GetIO().DeltaTime;
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f)); // Couleur rouge
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 1.0f)); // Rouge légèrement plus sombre au survol
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f)); // Rouge encore plus sombre en clic
+				if (errorTimerColor <= 0.0f) {
+					showErrorColor = false;
+				}
+			}
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
 
 			if (ImGui::Button("Reset the preset")) {
-				std::vector<const char*> itemsPositionReset;
-				if (!isArtistMode) {
-					itemsPositionReset = { "settingsBoostAllItems", "settingsScoreAllItems" };
-				}
-				else {
-					itemsPositionReset = { "settingsBoostDisplay",
-					"settingsBoostTexture",
-					"settingsBoostText",
-					"settingsScoreDisplay",
-					"settingsScoreMyTeam",
-					"settingsScoreOppositeTeam",
-					"settingsGameTime" };
-				}
-				
-				for (size_t i = 0; i < itemsPositionReset.size(); ++i) {
-					updateJsonFieldFloat(keyPreset, itemsPositionReset[i], "positionX", 0.5f);
-					updateJsonFieldFloat(keyPreset, itemsPositionReset[i], "positionY", 0.5f);
-					updateJsonFieldFloat(keyPreset, itemsPositionReset[i], "sizeX", 1.0f);
-					updateJsonFieldFloat(keyPreset, itemsPositionReset[i], "sizeY", 1.0f);
+				for (size_t i = 1; i < itemsPosition.size(); ++i) {
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionX", 0.5f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionY", 0.5f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeX", 1.0f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeY", 1.0f);
 					changePositionX = 0.5f;
 					changePositionX = 0.5f;
 					changeSizeX = 1.0f;
@@ -212,22 +307,30 @@ void CustomUI::RenderMenu() {
 
 			ImGui::PopStyleColor(3);
 
-
-
 			if (showPositionEditor) {
 				showRenderEditPosition();
 			}
 			if (showSizeEditor) {
 				showRenderEditSize();
 			}
-
+			if (showColorEditor) {
+				showRenderEditColor();
+			}
 
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Customization"))
+		if (ImGui::BeginTabItem("Artist"))
 		{
-			ImGui::Checkbox("Artist Mode", &isArtistMode);
+			if (ImGui::Checkbox("Artist Mode", &isArtistMode)) {
+				currentPosition = 0;
+				setCvarString(itemsPositionSelected, "");
+				setCvarString(itemsPositionSelected2, "");
+				setCvarString(itemsPositionSelected3, "");
+				setCvarString(itemsPositionSelected4, "");
+				intComboSelections.clear();
+				itemsAdded.clear();
+			};
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f)); // Rouge vif
 			ImGui::TextWrapped("Warning: When Artist Mode is active, all items are editable, and presets can be broken. Proceed with caution!");
 			ImGui::PopStyleColor();
@@ -245,35 +348,45 @@ void CustomUI::RenderMenu() {
 		ImGui::EndTabBar();
 	}
 
-
-	/*if (ImGui::ArrowButton("##themes_left", ImGuiDir_Left) && rs_theme > 0)
-		--rs_theme;
-	ImGui::SameLine(0.f, 0.f);
-	if (ImGui::ArrowButton("##themes_right", ImGuiDir_Right) && themes.size() && rs_theme < (themes.size() - 1))
-		++rs_theme;
-
-	bool enabled = enableCvar.getBoolValue();
-	if (ImGui::Checkbox("Enable plugin", &enabled)) {
-		enableCvar.setValue(enabled);
-	}
-	if (ImGui::IsItemHovered()) {
-		ImGui::SetTooltip("Toggle Cool Plugin");
-	}
-
-	CVarWrapper distanceCvar = cvarManager->getCvar("cool_distance");
-	if (!distanceCvar) { return; }
-	float distance = distanceCvar.getFloatValue();
-	if (ImGui::SliderFloat("Distance", &distance, 0.0, 500.0)) {
-		distanceCvar.setValue(distance);
-	}
-	if (ImGui::IsItemHovered()) {
-		std::string hoverText = "distance is " + std::to_string(distance);
-		ImGui::SetTooltip(hoverText.c_str());
-	}*/
-
 	ImGui::End();
 
 }
+
+bool CustomUI::cvarIsText(CVarWrapper cvar) {
+	// Liste des valeurs attendues
+	const std::vector<std::string> validValues = {
+		"",
+		"settingsBoostText",
+		"settingsScoreMyTeam",
+		"settingsScoreOppositeTeam",
+		"settingsGameTime"
+	};
+
+	// Récupérer la chaîne du CVar
+	std::string value = getCvarString(cvar.getCVarName());
+
+	// Parcourir les valeurs attendues
+	for (const auto& validValue : validValues) {
+		if (value == validValue) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+//void CustomUI::addNewItemCombo(string nameCombo) {
+//	if (ImGui::Combo("##ItemsToModify", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
+//		setCvarString(itemsPositionSelected, itemsPosition[currentPosition]);
+//		writeCvar();
+//	}
+//}
+
+//void CustomUI::drawPositionSizeMenu(int currentPosition, string keyPreset, CVarWrapper itemsPositionSelected, CVarWrapper itemsPositionSelected2, CVarWrapper itemsPositionSelected3, CVarWrapper itemsPositionSelected4) {
+//	
+//	
+//}
 
 float CustomUI::intToFloatPosition(int position, int screenSize) {
 	// Calcul de la position flottante
@@ -291,6 +404,12 @@ int CustomUI::floatToIntPosition(float position, int screenSize) {
 void CustomUI::showRenderEditPosition() {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	std::vector<std::string> settingsItemsList = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
 
 
 	static float sliderX = 0.5f;
@@ -315,13 +434,13 @@ void CustomUI::showRenderEditPosition() {
 
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("-##PositionX"))
+	if (ImGui::Button(" - ##PositionX-"))
 	{
 		changePositionX -= 1;
 		sliderX = intToFloatPosition(changePositionX, screenSize.X);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("+##PositionX"))
+	if (ImGui::Button(" + ##PositionX+"))
 	{
 		changePositionX += 1;
 		sliderX = intToFloatPosition(changePositionX, screenSize.X);
@@ -339,13 +458,13 @@ void CustomUI::showRenderEditPosition() {
 		changePositionY = floatToIntPosition(sliderY, screenSize.Y);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("-##PositionY"))
+	if (ImGui::Button(" - ##PositionY-"))
 	{
 		changePositionY -= 1;
 		sliderY = intToFloatPosition(changePositionY, screenSize.Y);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("+##PositionY"))
+	if (ImGui::Button(" + ##PositionY+"))
 	{
 		changePositionY += 1;
 		sliderY = intToFloatPosition(changePositionY, screenSize.Y);
@@ -359,8 +478,12 @@ void CustomUI::showRenderEditPosition() {
 
 	if (ImGui::Button("Save Position"))
 	{
-		updateJsonFieldFloat(keyPreset, settingsItems, "positionX", sliderX);
-		updateJsonFieldFloat(keyPreset, settingsItems, "positionY", sliderY);
+		/*updateJsonFieldFloat(keyPreset, settingsItems, "positionX", sliderX);
+		updateJsonFieldFloat(keyPreset, settingsItems, "positionY", sliderY);*/
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionX", sliderX);
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionY", sliderY);
+		}
 		changePositionX = 0;
 		changePositionY = 0;
 		showPositionEditor = false;
@@ -380,6 +503,15 @@ void CustomUI::showRenderEditPosition() {
 void CustomUI::showRenderEditSize() {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	/*string settingsItems2 = getCvarString("CustomUI_itemsNamePosition2");
+	string settingsItems3 = getCvarString("CustomUI_itemsNamePosition3");
+	string settingsItems4 = getCvarString("CustomUI_itemsNamePosition4");*/
+	std::vector<std::string> settingsItemsList = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
 
 	static float slider_x;
 	static float slider_y;
@@ -399,14 +531,14 @@ void CustomUI::showRenderEditSize() {
 		changeSizeY = slider_x;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("-##Size"))
+	if (ImGui::Button(" - ##Size-"))
 	{
 		changeSizeX -= .01f;
 		changeSizeY -= .01f;
 		slider_x -= .01f;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("+##Size"))
+	if (ImGui::Button(" + ##Size+"))
 	{
 		changeSizeX += .01f;
 		changeSizeY += .01f;
@@ -424,8 +556,12 @@ void CustomUI::showRenderEditSize() {
 
 	if (ImGui::Button("Save Size")) {
 
-		updateJsonFieldFloat(keyPreset, settingsItems, "sizeX", changeSizeX);
-		updateJsonFieldFloat(keyPreset, settingsItems, "sizeY", changeSizeY);
+		/*updateJsonFieldFloat(keyPreset, settingsItems, "sizeX", changeSizeX);
+		updateJsonFieldFloat(keyPreset, settingsItems, "sizeY", changeSizeY);*/
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonFieldFloat(keyPreset, settingsItem, "sizeX", changeSizeX);
+			updateJsonFieldFloat(keyPreset, settingsItem, "sizeY", changeSizeY);
+		}
 		changeSizeX = 1;
 		changeSizeY = 1;
 		showPositionEditor = false;
@@ -438,6 +574,82 @@ void CustomUI::showRenderEditSize() {
 		changeSizeX = 1;
 		changeSizeY = 1;
 		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginSize = false;
+	}
+}
+
+void CustomUI::showRenderEditColor() {
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+
+	std::vector<std::string> settingsItemsList = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	static float baseColor[4];
+	//ImGui::ColorPicker3("##picker", (float*)&col1, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
+	//ImGui::ColorPicker4("##picker", (float*)&col2, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);*/
+	//ImGui::ColorEdit3("color 1", col1);
+	//ImGui::ColorPicker3("Text Color", (float*)&col2, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoOptions);
+	
+	array<int, 4>& settings = getSettingsSettingsColor(currentPreset, settingsItems);
+
+	if (!changingBeginSize) {
+		baseColor[0] = settings[0] / 255.0f;
+		baseColor[1] = settings[1] / 255.0f;
+		baseColor[2] = settings[2] / 255.0f;
+		baseColor[3] = settings[3] / 255.0f;
+		changeColorR = settings[0];
+		changeColorG = settings[1];
+		changeColorB = settings[2];
+		changeColorA = settings[3];
+		changingBeginSize = true;
+	}
+
+	ImGui::SetNextItemWidth(300);
+	if (ImGui::ColorEdit4("Text Color", baseColor, ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_DisplayHex | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_InputRGB)) {
+		changeColorR = baseColor[0] * 255.0f;
+		changeColorG = baseColor[1] * 255.0f;
+		changeColorB = baseColor[2] * 255.0f;
+		changeColorA = baseColor[3] * 255.0f;
+
+	}
+	if (ImGui::Button("Save Color")) {
+
+		for (const auto& settingsItem : settingsItemsList) {
+			try {
+				string colorSettingsJson = getStringSettingsColor(settingsItem);
+				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
+				LOG("NON Erreur lors du traitement de '" + settingsItem);
+				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
+			}
+			catch (const std::exception& e) {
+				LOG("Erreur lors du traitement de '" + settingsItem + "': " + std::string(e.what()));
+			}
+		}
+
+		changeColorR = 0;
+		changeColorG = 0;
+		changeColorB = 0;
+		changeColorA = 0;
+		showPositionEditor = false;
+		showColorEditor = false;
+		showSizeEditor = false;
+		changingBeginSize = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+
+		changeColorR = 0;
+		changeColorG = 0;
+		changeColorB = 0;
+		changeColorA = 0;
+		showPositionEditor = false;
+		showColorEditor = false;
 		showSizeEditor = false;
 		changingBeginSize = false;
 	}
