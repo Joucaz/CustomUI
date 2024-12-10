@@ -7,6 +7,50 @@ using namespace std;
 
 void CustomUI::RenderMenu() {
 
+
+	ImVec4 baseYellow = ImVec4(227.0f / 255.0f, 180.0f / 255.0f, 5.0f / 255.0f, 255.0f / 255.0f); //e3b405
+	ImVec4 baseYellowDark = ImVec4(160 / 255.0f, 129 / 255.0f, 10 / 255.0f, 255.0f / 255.0f);
+
+	ImVec4 baseBlack = ImVec4(23 / 255.0f, 22 / 255.0f, 23 / 255.0f, 255.0f / 255.0f); //171617
+
+	ImVec4 baseGrey = ImVec4{ 58 / 255.0f, 58 / 255.0f, 58 / 255.0f, 1.0f }; 
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	UserStyle = style;
+
+	style.FramePadding = ImVec2(7, 7);
+	style.FrameRounding = 5;
+	style.TabRounding = 2.0f;
+	style.Alpha = 1.0f;
+
+	style.Colors[ImGuiCol_Button] = baseYellow;
+	style.Colors[ImGuiCol_ButtonHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_CheckMark] = baseYellow;
+
+	style.Colors[ImGuiCol_TabActive] = baseYellow;
+	style.Colors[ImGuiCol_TabHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_Tab] = baseGrey;
+
+	style.Colors[ImGuiCol_ResizeGrip] = baseGrey;
+	style.Colors[ImGuiCol_ResizeGripActive] = baseYellow;
+	style.Colors[ImGuiCol_ResizeGripHovered] = baseYellowDark;
+
+	style.Colors[ImGuiCol_FrameBg] = baseGrey;
+	style.Colors[ImGuiCol_FrameBgActive] = baseGrey;
+	style.Colors[ImGuiCol_FrameBgHovered] = baseYellowDark;
+
+	style.Colors[ImGuiCol_Header] = baseGrey;
+	style.Colors[ImGuiCol_HeaderActive] = baseGrey;
+	style.Colors[ImGuiCol_HeaderHovered] = baseYellowDark;
+
+	style.Colors[ImGuiCol_SliderGrab] = baseYellow;
+	style.Colors[ImGuiCol_SliderGrabActive] = baseYellowDark;
+
+	style.Colors[ImGuiCol_TextSelectedBg] = baseYellowDark;
+
+	style.Colors[ImGuiCol_WindowBg] = baseBlack;
+
+
 	static bool no_titlebar = false;
 	static bool no_scrollbar = false;
 	static bool no_menu = true;
@@ -356,6 +400,8 @@ void CustomUI::RenderMenu() {
 
 		ImGui::EndTabBar();
 	}
+	style = UserStyle;
+
 
 	ImGui::End();
 

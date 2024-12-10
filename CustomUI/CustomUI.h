@@ -180,6 +180,9 @@ private:
 	bool changingBeginPosition = false;
 	bool changingBeginSize = false;
 
+	// ImGui Shabananagans
+	ImGuiStyle UserStyle;
+
 	std::vector<std::string> itemsAdded;
 	std::vector<int> intComboSelections;
 

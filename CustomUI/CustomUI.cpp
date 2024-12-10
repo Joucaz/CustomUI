@@ -145,6 +145,24 @@ void CustomUI::initValues() {
 
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
+	GuiManagerWrapper gui = gameWrapper->GetGUIManager();
+	string font_path = "Presets/Original/fonts/Jaguar.ttf";
+	string font_dest = ("../CustomUI/" + font_path);
+	auto [res, font] = gui.LoadFont("BasicFontTitle", font_dest, 50 * xPercent);
+	basicFont = font;
+	if (res == 0) {
+		LOG("Failed to load the font!");
+	}
+	else if (res == 1) {
+		LOG("The font WILL be loaded");
+		//myFont = font;
+	}
+	else if (res == 2 && font) {
+		//ImGui::SetWindowFontScale(50);
+		LOG("Font Init loaded with size : " + to_string(font->FontSize));
+		//myFont = font;
+	}
+
 }
 
 void CustomUI::loadThemeFont() {
