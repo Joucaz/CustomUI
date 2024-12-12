@@ -120,6 +120,7 @@ void CustomUI::RenderMenu() {
 	}
 
 
+
 	if (auto renderImageLogoText = imageLogoText->GetImGuiTex()) {
 		auto size = imageLogoText->GetSizeF();
 
@@ -135,13 +136,14 @@ void CustomUI::RenderMenu() {
 
 	// Calculer l'espace disponible
 	float availableWidth = ImGui::GetContentRegionAvail().x;
+	ImVec2 textSizeTextX = ImGui::CalcTextSize("x");
 
 	if (auto renderImageDiscord = discordLogo->GetImGuiTex()) {
 		auto sizeDiscord = discordLogo->GetSizeF();
 		ImVec2 discordImageSize(sizeDiscord.X, sizeDiscord.Y);
 
 		// Calculer le décalage horizontal pour aligner l'image à droite
-		float offsetX = availableWidth - discordImageSize.x;
+		float offsetX = availableWidth - discordImageSize.x - textSizeTextX.x - 20.0f;
 		if (offsetX > 0) {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 		}
@@ -165,9 +167,23 @@ void CustomUI::RenderMenu() {
 		if (ImGui::IsItemClicked()) {
 			system("Start https://discord.gg/NQ8Qw4Mw2w");
 		}
+
+		ImGui::SameLine();
+
+		float availableWidthTextX = ImGui::GetContentRegionAvail().x;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + availableWidthTextX - textSizeTextX.x - 5.0f);
+
+		ImGui::Text("x");
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			ImGui::BeginTooltip();
+			ImGui::Text("Close");
+			ImGui::EndTooltip();
+		}
+		if (ImGui::IsItemClicked()) {
+			isSettingsOpen = false;
+		}
 	}
-
-
 	
 
 	if (ImGui::BeginTabBar("MainTabBar"))
@@ -179,7 +195,7 @@ void CustomUI::RenderMenu() {
 			static vector<const char*> itemsPreset;
 			static int currentChoosenPreset = 0;
 
-			if (itemsPreset.empty()) {
+			if (presetReload) {
 				// Lire le CVar contenant le nom du preset sélectionné
 				string savedPresetName = presetChoosenCvar.getStringValue();
 
@@ -193,9 +209,10 @@ void CustomUI::RenderMenu() {
 					}
 					index++;
 				}
+				presetReload = false;
 			}
 
-			ImGui::Text("ChoosePreset");
+			ImGui::Text("Choose a Preset");
 			ImGui::SetNextItemWidth(400.0f);
 			if (!itemsPreset.empty() && ImGui::Combo("##ChoosePreset", &currentChoosenPreset, itemsPreset.data(), itemsPreset.size())) {
 				// Appliquer le preset sélectionné
@@ -250,6 +267,11 @@ void CustomUI::RenderMenu() {
 				getCvarString("CustomUI_itemsNamePosition4")
 			};
 
+			ImGui::SameLine();
+
+			if (ImGui::Button("Refresh")) {
+				refreshFiles();
+			}
 			ImGui::SameLine();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
@@ -319,6 +341,9 @@ void CustomUI::RenderMenu() {
 					changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
 				}
 			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("Remove the last dropdown menu");
+			}
 			ImGui::SameLine();
 			if (ImGui::Button(" + ##AddItem")) {
 				if (intComboSelections.size() < maxComboCount) {
@@ -327,6 +352,9 @@ void CustomUI::RenderMenu() {
 					changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
 				}
 				
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("Add a new dropdown menu for an additional item");
 			}
 			if (!itemsAdded.empty()) {
 				for (size_t i = 0; i < itemsAdded.size(); ++i) {
@@ -420,11 +448,14 @@ void CustomUI::RenderMenu() {
 			if (showColorEditor) {
 				showRenderEditColor();
 			}
+			/*if (ImGui::Checkbox("Disable Base UI", &isDisableBasicUI)) {
+			
+			};*/
 
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Artist"))
+		if (ImGui::BeginTabItem("Settings"))
 		{
 			ImGui::Spacing();
 			ImGui::Indent(20.0f);
@@ -442,24 +473,28 @@ void CustomUI::RenderMenu() {
 			ImGui::TextWrapped("Warning: When Artist Mode is active, all items are editable, and presets can be broken. Proceed with caution!");
 			ImGui::PopStyleColor();
 
+			/*ImGui::Checkbox("Hide the Rocket League UI in game", &isDisableBasicUI);
+			ImGui::Text(to_string(isDisableBasicUI).c_str());*/
+
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Others"))
+		if (ImGui::BeginTabItem("Credits"))
 		{
 			ImGui::Spacing();
 			ImGui::Indent(20.0f);
 			ImGui::Text("Creator & Developer :");
 			ImGui::Spacing();
 			ImGui::Indent(15.0f);
-			ImGui::Text("Joucaz");
+			ImGui::TextColored(baseYellow, "Joucaz");
+			//ImGui::Text("Joucaz");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
 				auto size = xLogo->GetSizeF();
 
 				ImGui::Image(
 					renderImageLogoText,
-					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(size.X/1.7f, size.Y/1.7f),
 					ImVec2(0, 0),
 					ImVec2(1, 1),
 					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
@@ -480,7 +515,7 @@ void CustomUI::RenderMenu() {
 
 				ImGui::Image(
 					renderImageLogoText,
-					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(size.X/1.7f, size.Y/1.7f),
 					ImVec2(0, 0),
 					ImVec2(1, 1),
 					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
@@ -501,7 +536,7 @@ void CustomUI::RenderMenu() {
 
 				ImGui::Image(
 					renderImageLogoText,
-					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(size.X/1.7f, size.Y/1.7f),
 					ImVec2(0, 0),
 					ImVec2(1, 1),
 					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
@@ -517,8 +552,20 @@ void CustomUI::RenderMenu() {
 				system("Start https://twitter.com/JoucazJC");
 			}
 
+			ImGui::Spacing();
+			ImGui::Spacing();
+
 			ImGui::Indent(-15.0f);
 			ImGui::Text("Preset Artist :");
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Indent(15.0f);
+
+			ImGui::Spacing();
+			ImGui::Spacing();
+
+			ImGui::Indent(-15.0f);
+			ImGui::Text("Thanks to :");
 			ImGui::Spacing();
 			ImGui::Spacing();
 			ImGui::Indent(15.0f);
@@ -818,10 +865,6 @@ void CustomUI::showRenderEditColor() {
 	};
 
 	static float baseColor[4];
-	//ImGui::ColorPicker3("##picker", (float*)&col1, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
-	//ImGui::ColorPicker4("##picker", (float*)&col2, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);*/
-	//ImGui::ColorEdit3("color 1", col1);
-	//ImGui::ColorPicker3("Text Color", (float*)&col2, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoOptions);
 	
 	array<int, 4>& settings = getSettingsSettingsColor(currentPreset, settingsItems);
 
@@ -859,7 +902,6 @@ void CustomUI::showRenderEditColor() {
 			try {
 				string colorSettingsJson = getStringSettingsColor(settingsItem);
 				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
-				LOG("NON Erreur lors du traitement de '" + settingsItem);
 				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
 			}
 			catch (const std::exception& e) {
@@ -882,7 +924,6 @@ void CustomUI::showRenderEditColor() {
 			try {
 				string colorSettingsJson = getStringSettingsColor(settingsItem);
 				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
-				LOG("NON Erreur lors du traitement de '" + settingsItem);
 				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
 			}
 			catch (const std::exception& e) {

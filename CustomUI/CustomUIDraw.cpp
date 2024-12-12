@@ -85,11 +85,9 @@ ImU32 CustomUI::changeColorText(array<int, 4> settingsColor, string settingsName
 	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
 		if (showColorEditor) {
 			ImU32 color = IM_COL32(changeColorR, changeColorG, changeColorB, changeColorA);
-			LOG("showolor");
 			return color;
 		}
 	}
-	LOG("1 : " + to_string(settingsColor[0]) + "2 : " + to_string(settingsColor[1]) + "3 : " + to_string(settingsColor[2]) + "4 : " + to_string(settingsColor[3]));
 	ImU32 color = IM_COL32(settingsColor[0], settingsColor[1], settingsColor[2], settingsColor[3]);
 	return color;
 }

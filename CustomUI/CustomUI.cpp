@@ -71,9 +71,6 @@ void CustomUI::onLoad()
 	gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
 
 
-	
-
-
 	//gameWrapper->HookEvent("Function TAGame.NetworkInputBuffer_TA.ClientAckFrame", bind(&CustomUI::onBoostStart, this));
 	//gameWrapper->HookEvent("Function VehiclePickup_Boost_TA.Idle.EndState", bind(&CustomUI::onBoostEnd, this));
 	//Function TAGame.FXActor_Boost_TA.InitializeBoostMesh  //marche a moitie
@@ -147,6 +144,18 @@ void CustomUI::initValues() {
 
 	initFonts();
 	initImages();
+
+}
+
+void CustomUI::refreshFiles() {
+
+	allPresets = loadPresets();
+	presetReload = true;
+
+	string boostFormCvar = getCvarString("CustomUI_boostForm");
+	changeBoostDisplay(boostFormCvar);
+
+	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
 }
 
@@ -311,6 +320,7 @@ bool CustomUI::isInFreeplay() {
 }
 
 void CustomUI::onGameStart() {
+
 	if (isInFreeplay()) {
 		return;
 	}
@@ -686,7 +696,6 @@ void CustomUI::updateJsonColor(const string presetKey, const string& field, arra
 
 	// Chercher le fichier correspondant au preset
 	fs::path presetPath = basePath / presetKey / "preset.json";
-	LOG(presetPath.string());
 
 	if (fs::exists(presetPath)) {
 		// Charger le fichier JSON
@@ -712,9 +721,7 @@ void CustomUI::updateJsonColor(const string presetKey, const string& field, arra
 					// Mettre à jour les couleurs locales
 					array<int, 4>& settingsColor = getSettingsColor(currentPreset, field);
 					for (int i = 0; i < 4; ++i) {
-						LOG("before : " + to_string(settingsColor[i]));
 						settingsColor[i] = newValues[i];
-						LOG("after : " + to_string(settingsColor[i]));
 					}
 				}
 				catch (const std::invalid_argument& e) {
@@ -1049,4 +1056,14 @@ inline std::string CustomUI::lead_zeros(int n, int len)
 
 	return result;
 }
+//
+//void CustomUI::DisableBasicUI(bool disabled)
+//{
+//	cvarManager->executeCommand("toggle cl_rendering_scaleform_disabled " + to_string(disabled));
+//
+//	/*if (cvarManager->getCvar("cl_rendering_scaleform_disabled").getIntValue() != disabled) {
+//		cvarManager->getCvar("cl_rendering_scaleform_disabled").setValue(disabled);
+//
+//	}*/
+//}
 

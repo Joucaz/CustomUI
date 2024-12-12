@@ -78,6 +78,10 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	string getStringSettingsColor(string nameSettings);
 	SettingsItems loadSettingsBoostDisplay(const json& value);
 
+	void refreshFiles();
+
+	//void DisableBasicUI(bool disabled);
+
 	void loadThemeFont();
 	void appendFont();
 
@@ -186,6 +190,9 @@ private:
 	bool isMenuOpened = false;
 	bool isOnPause = false;
 	bool isArtistMode = false;
+	bool isDisableBasicUI = false;
+
+	bool presetReload = true;
 
 	int changePositionX = 0;
 	int changePositionY = 0;
