@@ -145,24 +145,45 @@ void CustomUI::initValues() {
 
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
-	GuiManagerWrapper gui = gameWrapper->GetGUIManager();
-	string font_path = "Presets/Original/fonts/Jaguar.ttf";
+	initFonts();
+	initImages();
+
+}
+
+void CustomUI::initFonts() {
+	string font_path = "Presets/Original/fonts/Montserrat.ttf";
 	string font_dest = ("../CustomUI/" + font_path);
-	auto [res, font] = gui.LoadFont("BasicFontTitle", font_dest, 50 * xPercent);
-	basicFont = font;
+	loadInitFonts("BasicFontMenu", font_dest, basicFontMenu);
+
+	string font_path2 = "Presets/Original/fonts/Quaaludehulk.ttf";
+	string font_dest2 = ("../CustomUI/" + font_path2);
+	loadInitFonts("BasicFontTitle", font_dest2, basicFontTitle);
+	
+
+}
+void CustomUI::loadInitFonts(string fontName, string font_dest, ImFont*& basicFont) {
+	GuiManagerWrapper gui = gameWrapper->GetGUIManager();
+	auto [res, font] = gui.LoadFont(fontName, font_dest, 20 * xPercent);
 	if (res == 0) {
 		LOG("Failed to load the font!");
 	}
 	else if (res == 1) {
 		LOG("The font WILL be loaded");
-		//myFont = font;
 	}
 	else if (res == 2 && font) {
-		//ImGui::SetWindowFontScale(50);
-		LOG("Font Init loaded with size : " + to_string(font->FontSize));
-		//myFont = font;
+		LOG("Font Ttile loaded with size : " + to_string(font->FontSize));
+		basicFont = font;
 	}
+}
 
+void CustomUI::initImages() {
+
+	imageLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "LogoCustomUI.png", false, true);
+	imageLogoText = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "LogoTextCustomUI.png", false, true);
+	discordLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "JoinDiscordLogo.png", false, true);
+	wesbiteLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "WebsiteLogo.png", false, true);
+	githubLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "GithubLogo.png", false, true);
+	xLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "XLogo.png", false, true);
 }
 
 void CustomUI::loadThemeFont() {

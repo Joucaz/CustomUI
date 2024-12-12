@@ -8,50 +8,53 @@ using namespace std;
 void CustomUI::RenderMenu() {
 
 
-	ImVec4 baseYellow = ImVec4(227.0f / 255.0f, 180.0f / 255.0f, 5.0f / 255.0f, 255.0f / 255.0f); //e3b405
-	ImVec4 baseYellowDark = ImVec4(160 / 255.0f, 129 / 255.0f, 10 / 255.0f, 255.0f / 255.0f);
-
-	ImVec4 baseBlack = ImVec4(23 / 255.0f, 22 / 255.0f, 23 / 255.0f, 255.0f / 255.0f); //171617
-
-	ImVec4 baseGrey = ImVec4{ 58 / 255.0f, 58 / 255.0f, 58 / 255.0f, 1.0f }; 
-
 	ImGuiStyle& style = ImGui::GetStyle();
 	UserStyle = style;
 
+	style.WindowBorderSize = 0.0f;
+	style.WindowRounding = 15;
 	style.FramePadding = ImVec2(7, 7);
 	style.FrameRounding = 5;
 	style.TabRounding = 2.0f;
+	style.ItemSpacing = ImVec2(5.0f, 10.0f); //spacing between object
+	style.ItemInnerSpacing = ImVec2(5, 5);
 	style.Alpha = 1.0f;
 
 	style.Colors[ImGuiCol_Button] = baseYellow;
-	style.Colors[ImGuiCol_ButtonHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_ButtonHovered] = baseYellowHovered;
+	style.Colors[ImGuiCol_ButtonActive] = baseYellowActive;
 	style.Colors[ImGuiCol_CheckMark] = baseYellow;
 
 	style.Colors[ImGuiCol_TabActive] = baseYellow;
-	style.Colors[ImGuiCol_TabHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_TabHovered] = baseYellowHovered;
 	style.Colors[ImGuiCol_Tab] = baseGrey;
 
 	style.Colors[ImGuiCol_ResizeGrip] = baseGrey;
 	style.Colors[ImGuiCol_ResizeGripActive] = baseYellow;
-	style.Colors[ImGuiCol_ResizeGripHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_ResizeGripHovered] = baseYellowHovered;
 
 	style.Colors[ImGuiCol_FrameBg] = baseGrey;
 	style.Colors[ImGuiCol_FrameBgActive] = baseGrey;
-	style.Colors[ImGuiCol_FrameBgHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_FrameBgHovered] = baseYellowHovered;
 
 	style.Colors[ImGuiCol_Header] = baseGrey;
 	style.Colors[ImGuiCol_HeaderActive] = baseGrey;
-	style.Colors[ImGuiCol_HeaderHovered] = baseYellowDark;
+	style.Colors[ImGuiCol_HeaderHovered] = baseYellowHovered;
 
 	style.Colors[ImGuiCol_SliderGrab] = baseYellow;
-	style.Colors[ImGuiCol_SliderGrabActive] = baseYellowDark;
+	style.Colors[ImGuiCol_SliderGrabActive] = baseYellowHovered;
 
-	style.Colors[ImGuiCol_TextSelectedBg] = baseYellowDark;
+	style.Colors[ImGuiCol_TextSelectedBg] = baseYellowHovered;
 
 	style.Colors[ImGuiCol_WindowBg] = baseBlack;
 
+	ImVec2 minSize(650.0f, 650.0f);
+	ImVec2 maxSize(1920, 1080);
 
-	static bool no_titlebar = false;
+	// Appliquer les contraintes avant de créer la fenêtre
+	ImGui::SetNextWindowSizeConstraints(minSize, maxSize);
+
+	static bool no_titlebar = true;
 	static bool no_scrollbar = false;
 	static bool no_menu = true;
 	static bool no_move = false;
@@ -105,12 +108,74 @@ void CustomUI::RenderMenu() {
 	
 	static int currentPosition = 0;
 
+	if (!basicFontMenu) {
+		initFonts();
+	}
+	/*if (!basicFontTitle) {
+		initFonts();
+	}*/
+
+	if (basicFontMenu) {
+		ImGui::PushFont(basicFontMenu);
+	}
+
+
+	if (auto renderImageLogoText = imageLogoText->GetImGuiTex()) {
+		auto size = imageLogoText->GetSizeF();
+
+		ImGui::Image(
+			renderImageLogoText,
+			ImVec2(size.X, size.Y),
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		);
+	}
+	ImGui::SameLine();
+
+	// Calculer l'espace disponible
+	float availableWidth = ImGui::GetContentRegionAvail().x;
+
+	if (auto renderImageDiscord = discordLogo->GetImGuiTex()) {
+		auto sizeDiscord = discordLogo->GetSizeF();
+		ImVec2 discordImageSize(sizeDiscord.X, sizeDiscord.Y);
+
+		// Calculer le décalage horizontal pour aligner l'image à droite
+		float offsetX = availableWidth - discordImageSize.x;
+		if (offsetX > 0) {
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+		}
+
+		// Dessiner l'image Discord
+		ImGui::Image(
+			renderImageDiscord,
+			discordImageSize,
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		);
+
+		// Ajouter les interactions pour l'image Discord
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			ImGui::BeginTooltip();
+			ImGui::Text("Join the discord to show all the available features");
+			ImGui::EndTooltip();
+		}
+		if (ImGui::IsItemClicked()) {
+			system("Start https://discord.gg/NQ8Qw4Mw2w");
+		}
+	}
+
+
+	
+
 	if (ImGui::BeginTabBar("MainTabBar"))
 	{
 		if (ImGui::BeginTabItem("Preset"))
 		{
-
-
+			ImGui::Spacing();
+			ImGui::Indent(20.0f);
 			static vector<const char*> itemsPreset;
 			static int currentChoosenPreset = 0;
 
@@ -131,7 +196,7 @@ void CustomUI::RenderMenu() {
 			}
 
 			ImGui::Text("ChoosePreset");
-			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SetNextItemWidth(400.0f);
 			if (!itemsPreset.empty() && ImGui::Combo("##ChoosePreset", &currentChoosenPreset, itemsPreset.data(), itemsPreset.size())) {
 				// Appliquer le preset sélectionné
 				auto selectedPreset = allPresets.begin();
@@ -148,29 +213,7 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetTooltip("Choose the preset to apply");
 			}
-			/*if (isArtistMode) {
-				if (ImGui::BeginTabBar("SecondTabBar"))
-				{
-					if (ImGui::BeginTabItem("Position & Size"))
-					{
 
-						drawPositionSizeMenu(currentPosition, keyPreset, itemsPositionSelected, itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4);
-
-						ImGui::EndTabItem();
-					}
-					if (ImGui::BeginTabItem("Text Color"))
-					{
-						ImGui::EndTabItem();
-					}
-					ImGui::EndTabBar();
-
-				}
-			}
-			else {
-				drawPositionSizeMenu(currentPosition, keyPreset, itemsPositionSelected, itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4);
-			}
-			*/
-			// Configuration des options en fonction du format du preset
 			std::vector<const char*> itemsPositionCombo;
 			std::vector<const char*> itemsPosition;
 
@@ -200,6 +243,52 @@ void CustomUI::RenderMenu() {
 					"settingsGameTime"
 				};
 			}
+			std::vector<std::string> settingsItemsList = {
+				getCvarString("CustomUI_itemsNamePosition"),
+				getCvarString("CustomUI_itemsNamePosition2"),
+				getCvarString("CustomUI_itemsNamePosition3"),
+				getCvarString("CustomUI_itemsNamePosition4")
+			};
+
+			ImGui::SameLine();
+
+			ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+
+			if (ImGui::Button("Reset the preset")) {
+				for (size_t i = 1; i < itemsPosition.size(); ++i) {
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionX", 0.5f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionY", 0.5f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeX", 1.0f);
+					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeY", 1.0f);
+					changePositionX = 0.5f;
+					changePositionX = 0.5f;
+					changeSizeX = 1.0f;
+					changeSizeY = 1.0f;
+					changeColorR = 255;
+					changeColorG = 255;
+					changeColorB = 255;
+					changeColorA = 255;
+					for (const auto& settingsItem : settingsItemsList) {
+						try {
+							string colorSettingsJson = getStringSettingsColor(settingsItem);
+							array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
+							LOG("NON Erreur lors du traitement de '" + settingsItem);
+							updateJsonColor(keyPreset, colorSettingsJson, colorValues);
+						}
+						catch (const std::exception& e) {
+							LOG("Erreur lors du traitement de '" + settingsItem + "': " + std::string(e.what()));
+						}
+					}
+					changeColorR = 0;
+					changeColorG = 0;
+					changeColorB = 0;
+					changeColorA = 0;
+				}
+			}
+
+			ImGui::PopStyleColor(3);
 
 			// Conversion du vector en tableau pour ImGui
 			std::vector<std::string> stringItems(itemsPositionCombo.begin(), itemsPositionCombo.end());
@@ -209,8 +298,9 @@ void CustomUI::RenderMenu() {
 			}
 
 			ImGui::Text("Choose Items to move and resize");
-			ImGui::SetNextItemWidth(200.0f);
+			ImGui::SetNextItemWidth(400.0f);
 			if (ImGui::Combo("##ItemsToModify", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
+				changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
 				setCvarString(itemsPositionSelected, itemsPosition[currentPosition]);
 				showPositionEditor = false;
 				showSizeEditor = false;
@@ -226,6 +316,7 @@ void CustomUI::RenderMenu() {
 				if (!itemsAdded.empty()) {
 					itemsAdded.pop_back();
 					intComboSelections.pop_back();
+					changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
 				}
 			}
 			ImGui::SameLine();
@@ -233,45 +324,23 @@ void CustomUI::RenderMenu() {
 				if (intComboSelections.size() < maxComboCount) {
 					itemsAdded.push_back("Nouvel élément " + std::to_string(itemsAdded.size() + 1));
 					intComboSelections.push_back(0);
+					changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
 				}
+				
 			}
 			if (!itemsAdded.empty()) {
 				for (size_t i = 0; i < itemsAdded.size(); ++i) {
 
-					ImGui::SetNextItemWidth(200.0f);
+					ImGui::SetNextItemWidth(400.0f);
 					if (ImGui::Combo(("##Combo_" + std::to_string(i)).c_str(),
 						&intComboSelections[i], itemsPositionCombo.data(),
-						itemsPositionCombo.size())) {
-						ImGui::Text("Option sélectionnée : %s", itemsPositionCombo[intComboSelections[i]]);
+						itemsPositionCombo.size())) 
+					{
+						changeCvarCombo(itemsPositionSelected2, itemsPositionSelected3, itemsPositionSelected4, itemsPosition);
+						//ImGui::Text("Option sélectionnée : %s", itemsPositionCombo[intComboSelections[i]]);
 					}
 				}
 			}
-
-			if (intComboSelections.size() > 0) {
-				setCvarString(itemsPositionSelected2, itemsPosition[intComboSelections[0]]);
-				setCvarString(itemsPositionSelected3, "");
-				setCvarString(itemsPositionSelected4, "");
-				writeCvar();
-			}
-			if (intComboSelections.size() > 1) {
-				//itemsPositionSelected3.setValue(itemsPositionCombo[intComboSelections[1]]);
-				setCvarString(itemsPositionSelected3, itemsPosition[intComboSelections[1]]);
-				setCvarString(itemsPositionSelected4, "");
-				writeCvar();
-			}
-			if (intComboSelections.size() > 2) {
-				setCvarString(itemsPositionSelected4, itemsPosition[intComboSelections[2]]);
-				writeCvar();
-			}
-			if (intComboSelections.size() == 0) {
-				setCvarString(itemsPositionSelected2, "");
-				setCvarString(itemsPositionSelected3, "");
-				setCvarString(itemsPositionSelected4, "");
-				writeCvar();
-			}
-
-
-
 
 			static bool showError = false;
 			static float errorTimer = 0.0f;
@@ -341,24 +410,6 @@ void CustomUI::RenderMenu() {
 				}
 			}
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
-
-			if (ImGui::Button("Reset the preset")) {
-				for (size_t i = 1; i < itemsPosition.size(); ++i) {
-					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionX", 0.5f);
-					updateJsonFieldFloat(keyPreset, itemsPosition[i], "positionY", 0.5f);
-					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeX", 1.0f);
-					updateJsonFieldFloat(keyPreset, itemsPosition[i], "sizeY", 1.0f);
-					changePositionX = 0.5f;
-					changePositionX = 0.5f;
-					changeSizeX = 1.0f;
-					changeSizeY = 1.0f;
-				}
-			}
-
-			ImGui::PopStyleColor(3);
 
 			if (showPositionEditor) {
 				showRenderEditPosition();
@@ -375,6 +426,9 @@ void CustomUI::RenderMenu() {
 
 		if (ImGui::BeginTabItem("Artist"))
 		{
+			ImGui::Spacing();
+			ImGui::Indent(20.0f);
+
 			if (ImGui::Checkbox("Artist Mode", &isArtistMode)) {
 				currentPosition = 0;
 				setCvarString(itemsPositionSelected, "");
@@ -384,7 +438,7 @@ void CustomUI::RenderMenu() {
 				intComboSelections.clear();
 				itemsAdded.clear();
 			};
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f)); // Rouge vif
+			ImGui::PushStyleColor(ImGuiCol_Text, redCaution); // Rouge vif
 			ImGui::TextWrapped("Warning: When Artist Mode is active, all items are editable, and presets can be broken. Proceed with caution!");
 			ImGui::PopStyleColor();
 
@@ -393,18 +447,123 @@ void CustomUI::RenderMenu() {
 
 		if (ImGui::BeginTabItem("Others"))
 		{
-			ImGui::Text("Made by @JoucazJC");
+			ImGui::Spacing();
+			ImGui::Indent(20.0f);
+			ImGui::Text("Creator & Developer :");
+			ImGui::Spacing();
+			ImGui::Indent(15.0f);
+			ImGui::Text("Joucaz");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("Joucaz Portfolio/Website");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://joudcazeaux.fr");
+			}
+			ImGui::SameLine();
+			if (auto renderImageLogoText = githubLogo->GetImGuiTex()) {
+				auto size = githubLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("Joucaaz");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://github.com/Joucaaz");
+			}
+			ImGui::SameLine();
+			if (auto renderImageLogoText = wesbiteLogo->GetImGuiTex()) {
+				auto size = wesbiteLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X/1.5f, size.Y/1.5f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@JoucazJC");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://twitter.com/JoucazJC");
+			}
+
+			ImGui::Indent(-15.0f);
+			ImGui::Text("Preset Artist :");
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Indent(15.0f);
 
 			ImGui::EndTabItem();
 		}
 
 		ImGui::EndTabBar();
 	}
+	if (basicFontMenu) {
+		ImGui::PopFont();
+	}
 	style = UserStyle;
 
 
 	ImGui::End();
 
+}
+
+void CustomUI::changeCvarCombo(CVarWrapper cvar2, CVarWrapper cvar3, CVarWrapper cvar4, vector<const char*> itemsPosition) {
+
+	// PAS DU TOUT OPTIMISE A CHANGER
+	if (intComboSelections.size() > 0) {
+		setCvarString(cvar2, itemsPosition[intComboSelections[0]]);
+		setCvarString(cvar3, "");
+		setCvarString(cvar4, "");
+		writeCvar();
+	}
+	if (intComboSelections.size() > 1) {
+		//itemsPositionSelected3.setValue(itemsPositionCombo[intComboSelections[1]]);
+		setCvarString(cvar3, itemsPosition[intComboSelections[1]]);
+		setCvarString(cvar4, "");
+		writeCvar();
+	}
+	if (intComboSelections.size() > 2) {
+		setCvarString(cvar4, itemsPosition[intComboSelections[2]]);
+		writeCvar();
+	}
+	if (intComboSelections.size() == 0) {
+		setCvarString(cvar2, "");
+		setCvarString(cvar3, "");
+		setCvarString(cvar4, "");
+		writeCvar();
+	}
+	// JUSQUE LA
 }
 
 bool CustomUI::cvarIsText(CVarWrapper cvar) {
@@ -481,9 +640,9 @@ void CustomUI::showRenderEditPosition() {
 		changingBeginPosition = true;
 	}
 
-
-	ImGui::SetNextItemWidth(200.0f);
-	if (ImGui::SliderFloat("Position X", &sliderX, 0.0f, 1.0f, "%.3f"))
+	ImGui::Text("Position X");
+	ImGui::SetNextItemWidth(300.0f);
+	if (ImGui::SliderFloat("##PositionX", &sliderX, 0.0f, 1.0f, "%.3f"))
 	{
 		changePositionX = floatToIntPosition(sliderX, screenSize.X);
 
@@ -500,15 +659,19 @@ void CustomUI::showRenderEditPosition() {
 		changePositionX += 1;
 		sliderX = intToFloatPosition(changePositionX, screenSize.X);
 	}
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
 	ImGui::SameLine();
-	if (ImGui::Button("Reset Position X"))
+	if (ImGui::Button("Reset X"))
 	{
 		changePositionX = 0;
 		sliderX = 0.5f;
 	}
-
-	ImGui::SetNextItemWidth(200.0f);
-	if (ImGui::SliderFloat("Position Y", &sliderY, 0.0f, 1.0f))
+	ImGui::PopStyleColor(3);
+	ImGui::Text("Position Y");
+	ImGui::SetNextItemWidth(300.0f);
+	if (ImGui::SliderFloat("##PositionY", &sliderY, 0.0f, 1.0f))
 	{
 		changePositionY = floatToIntPosition(sliderY, screenSize.Y);
 	}
@@ -524,12 +687,17 @@ void CustomUI::showRenderEditPosition() {
 		changePositionY += 1;
 		sliderY = intToFloatPosition(changePositionY, screenSize.Y);
 	}
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
 	ImGui::SameLine();
-	if (ImGui::Button("Reset Position Y"))
+	if (ImGui::Button("Reset Y"))
 	{
 		sliderY = 0.5f;
 		changePositionY = 0;
 	}
+	ImGui::PopStyleColor(3);
+
 
 	if (ImGui::Button("Save Position"))
 	{
@@ -579,9 +747,9 @@ void CustomUI::showRenderEditSize() {
 		slider_y = settings.sizeY;
 		changingBeginSize = true;
 	}
-
-	ImGui::SetNextItemWidth(200.0f);
-	if (ImGui::SliderFloat("Size X", &slider_x, 0, 5, "%.2f")) {
+	ImGui::Text("Size");
+	ImGui::SetNextItemWidth(300.0f);
+	if (ImGui::SliderFloat("##Size", &slider_x, 0, 5, "%.2f")) {
 		changeSizeX = slider_x;
 		changeSizeY = slider_x;
 	}
@@ -599,7 +767,9 @@ void CustomUI::showRenderEditSize() {
 		changeSizeY += .01f;
 		slider_x += .01f;
 	}
-	
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
 	ImGui::SameLine();
 	if (ImGui::Button("Reset Scale"))
 	{
@@ -608,6 +778,8 @@ void CustomUI::showRenderEditSize() {
 		slider_x = 1.0f;
 		slider_y = 1.0f;
 	}
+	ImGui::PopStyleColor(3);
+
 
 	if (ImGui::Button("Save Size")) {
 
@@ -673,6 +845,37 @@ void CustomUI::showRenderEditColor() {
 		changeColorA = baseColor[3] * 255.0f;
 
 	}
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Color"))
+	{
+		changeColorR = 255;
+		changeColorG = 255;
+		changeColorB = 255;
+		changeColorA = 255;
+		for (const auto& settingsItem : settingsItemsList) {
+			try {
+				string colorSettingsJson = getStringSettingsColor(settingsItem);
+				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
+				LOG("NON Erreur lors du traitement de '" + settingsItem);
+				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
+			}
+			catch (const std::exception& e) {
+				LOG("Erreur lors du traitement de '" + settingsItem + "': " + std::string(e.what()));
+			}
+		}
+		changeColorR = 0;
+		changeColorG = 0;
+		changeColorB = 0;
+		changeColorA = 0;
+		showPositionEditor = false;
+		showColorEditor = false;
+		showSizeEditor = false;
+		changingBeginSize = false;
+	}
+	ImGui::PopStyleColor(3);
 	if (ImGui::Button("Save Color")) {
 
 		for (const auto& settingsItem : settingsItemsList) {

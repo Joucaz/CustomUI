@@ -5,14 +5,7 @@
 using namespace std;
 
 void CustomUI::RenderSettings() {
-    
-
-    ImVec4 baseYellow = ImVec4(227.0f / 255.0f, 180.0f / 255.0f, 5.0f / 255.0f, 255.0f / 255.0f); //e3b405
-    ImVec4 baseYellowDark = ImVec4(160 / 255.0f, 129 / 255.0f, 10 / 255.0f, 255.0f / 255.0f);
-
-    ImVec4 baseBlack = ImVec4(23 / 255.0f, 22 / 255.0f, 23 / 255.0f, 255.0f / 255.0f); //171617
-
-    ImVec4 baseGrey = ImVec4{ 58 / 255.0f, 58 / 255.0f, 58 / 255.0f, 1.0f };
+   
 
     ImGuiStyle& style = ImGui::GetStyle();
     UserStyle = style;
@@ -23,33 +16,33 @@ void CustomUI::RenderSettings() {
     style.Alpha = 1.0f;
 
     style.Colors[ImGuiCol_Button] = baseYellow;
-    style.Colors[ImGuiCol_ButtonHovered] = baseYellowDark;
+    style.Colors[ImGuiCol_ButtonActive] = baseYellowActive;
+    style.Colors[ImGuiCol_ButtonHovered] = baseYellowHovered;
     style.Colors[ImGuiCol_CheckMark] = baseYellow;
 
     style.Colors[ImGuiCol_TabActive] = baseYellow;
-    style.Colors[ImGuiCol_TabHovered] = baseYellowDark;
+    style.Colors[ImGuiCol_TabHovered] = baseYellowHovered;
     style.Colors[ImGuiCol_Tab] = baseGrey;
 
     style.Colors[ImGuiCol_ResizeGrip] = baseGrey;
     style.Colors[ImGuiCol_ResizeGripActive] = baseYellow;
-    style.Colors[ImGuiCol_ResizeGripHovered] = baseYellowDark;
-
+    style.Colors[ImGuiCol_ResizeGripHovered] = baseYellowHovered;
     style.Colors[ImGuiCol_FrameBg] = baseGrey;
     style.Colors[ImGuiCol_FrameBgActive] = baseGrey;
-    style.Colors[ImGuiCol_FrameBgHovered] = baseYellowDark;
+    style.Colors[ImGuiCol_FrameBgHovered] = baseYellowHovered;
 
     style.Colors[ImGuiCol_Header] = baseGrey;
     style.Colors[ImGuiCol_HeaderActive] = baseGrey;
-    style.Colors[ImGuiCol_HeaderHovered] = baseYellowDark;
+    style.Colors[ImGuiCol_HeaderHovered] = baseYellowHovered;
 
     style.Colors[ImGuiCol_SliderGrab] = baseYellow;
-    style.Colors[ImGuiCol_SliderGrabActive] = baseYellowDark;
+    style.Colors[ImGuiCol_SliderGrabActive] = baseYellowHovered;
 
-    style.Colors[ImGuiCol_TextSelectedBg] = baseYellowDark;
+    style.Colors[ImGuiCol_TextSelectedBg] = baseYellowHovered;
 
     style.Colors[ImGuiCol_WindowBg] = baseBlack;
       
-   
+ 
     ImGui::Indent(5.0f);
     ImGui::Text("Window");
     ImGui::Indent(15.0f);

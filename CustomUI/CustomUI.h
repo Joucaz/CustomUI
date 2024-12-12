@@ -61,6 +61,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onUnload() override;
 
 	void initValues();
+	void initFonts();
+	void loadInitFonts(string fontName, string font_dest, ImFont*& basicFont);
+	void initImages();
 	void writeCvar();
 	map<string, Preset> loadPresets();
 	Preset loadCurrentPreset(string keyPreset);
@@ -89,6 +92,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	float intToFloatPosition(int position, int screenSize);
 	int floatToIntPosition(float position, int screenSize);
+
+	void changeCvarCombo(CVarWrapper cvar2, CVarWrapper cvar3, CVarWrapper cvar4, vector<const char*> itemsPosition);
 
 	void UpdateVars();
 	int getBoostAmount();
@@ -134,6 +139,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	ImFont* myFont;
 	ImFont* basicFont;
+	ImFont* basicFontMenu;
+	ImFont* basicFontTitle;
 
 	string getCvarString(string cVarName);
 	void setCvarString(CVarWrapper cVarName, string cVarValue);
@@ -160,6 +167,17 @@ public:
 	bool isSettingsOpen = false;
 	string menuName_ = "customui";
 	string menuTitle_ = "CustomUI Settings Menu";
+
+	//COLORS
+	static inline const ImVec4 baseYellow = ImVec4(227.0f / 255.0f, 180.0f / 255.0f, 5.0f / 255.0f, 1.0f); // e3b405
+	static inline const ImVec4 baseYellowHovered = ImVec4(160 / 255.0f, 129 / 255.0f, 10 / 255.0f, 1.0f);
+	static inline const ImVec4 baseYellowActive = ImVec4(255 / 255.0f, 201 / 255.0f, 0 / 255.0f, 1.0f);
+	static inline const ImVec4 baseBlack = ImVec4(23 / 255.0f, 22 / 255.0f, 23 / 255.0f, 1.0f); // 171617
+	static inline const ImVec4 baseGrey = ImVec4(58 / 255.0f, 58 / 255.0f, 58 / 255.0f, 1.0f);
+	static inline const ImVec4 discordPurple = ImVec4(88 / 255.0f, 101 / 255.0f, 242 / 255.0f, 1.0f);
+	static inline const ImVec4 redCaution = ImVec4(1.0f, 51 / 255.0f, 51 / 255.0f, 1.0f);
+	static inline const ImVec4 redCautionHovered = ImVec4(192 / 255.0f, 41 / 255.0f, 41 / 255.0f, 1.0f);
+	static inline const ImVec4 redCautionActive = ImVec4(255 / 255.0f, 0 / 255.0f, 0 / 255.0f, 1.0f);
 	
 
 private:
@@ -233,4 +251,12 @@ private:
 	map<string, shared_ptr<ImageWrapper>> imageScore;
 	map<string, shared_ptr<ImageWrapper>> imageReplay;
 	map<string, shared_ptr<ImageWrapper>> imageEnd;
+
+	shared_ptr<ImageWrapper> imageLogo;
+	shared_ptr<ImageWrapper> imageLogoText;
+	shared_ptr<ImageWrapper> discordLogo;
+	shared_ptr<ImageWrapper> wesbiteLogo;
+	shared_ptr<ImageWrapper> xLogo;
+	shared_ptr<ImageWrapper> githubLogo;
+
 };
