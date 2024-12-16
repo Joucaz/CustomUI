@@ -182,7 +182,7 @@ public:
 	static inline const ImVec4 redCaution = ImVec4(1.0f, 51 / 255.0f, 51 / 255.0f, 1.0f);
 	static inline const ImVec4 redCautionHovered = ImVec4(192 / 255.0f, 41 / 255.0f, 41 / 255.0f, 1.0f);
 	static inline const ImVec4 redCautionActive = ImVec4(255 / 255.0f, 0 / 255.0f, 0 / 255.0f, 1.0f);
-	
+	static inline const ImVec4 soulDaMeepColor = ImVec4{ 0.0f / 255.0f, 198.0f / 255.0f, 173.0f / 255.0f, 1.0f };
 
 private:
 	json jsonData;

@@ -455,7 +455,7 @@ void CustomUI::RenderMenu() {
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Settings"))
+		if (ImGui::BeginTabItem("Artist"))
 		{
 			ImGui::Spacing();
 			ImGui::Indent(20.0f);
@@ -524,11 +524,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				ImGui::BeginTooltip();
-				ImGui::Text("Joucaaz");
+				ImGui::Text("Joucaz Repositories");
 				ImGui::EndTooltip();
 			}
 			if (ImGui::IsItemClicked()) {
-				system("Start https://github.com/Joucaaz");
+				system("Start https://github.com/Joucaz");
 			}
 			ImGui::SameLine();
 			if (auto renderImageLogoText = wesbiteLogo->GetImGuiTex()) {
@@ -569,7 +569,42 @@ void CustomUI::RenderMenu() {
 			ImGui::Spacing();
 			ImGui::Spacing();
 			ImGui::Indent(15.0f);
+			//ImGui::TextColored(redCautionHovered, "Arubinu");
+			//if (ImGui::IsItemHovered()) {
+			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			//	ImGui::BeginTooltip();
+			//	ImGui::Text("Twitch : Arubinu42");
+			//	ImGui::EndTooltip();
+			//}
+			//if (ImGui::IsItemClicked()) {
+			//	system("Start https://twitch.tv/Arubinu42");
+			//}
 
+			//ImGui::SameLine();
+			//ImGui::Text(" | ");
+			//ImGui::SameLine();
+
+			//ImGui::TextColored(baseGrey, "Vync");
+			///*if (ImGui::IsItemHovered()) {
+			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			//	ImGui::BeginTooltip();
+			//	ImGui::Text("Vync Plugin");
+			//	ImGui::EndTooltip();
+			//}*/
+			///*ImGui::SameLine();
+			//if (ImGui::IsItemClicked()) {
+			//	system("Start https://bakkesplugins.com/plugins/view/223");
+			//}*/
+			//ImGui::SameLine();
+			//ImGui::Text(" | ");
+			//ImGui::SameLine();
+			//ImGui::TextColored(soulDaMeepColor, "SoulDaMeep");
+			//if (ImGui::IsItemHovered()) {
+			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			//	ImGui::BeginTooltip();
+			//	ImGui::Text("Discord: @souldameep");
+			//	ImGui::EndTooltip();
+			//}
 			ImGui::EndTabItem();
 		}
 
