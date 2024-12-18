@@ -3,7 +3,7 @@
 # Rocket League Plugin
 
 ## 🚀 Introduction  
-**CustomUI** is a plugin that allows players to create and display their own custom user interface (UI) directly inside **Rocket League**. This plugin gives players the freedom to design unique visual elements by adding a personal touch to the interface.
+[**CustomUI**](#) is a plugin that allows players to create and display their own custom user interface (UI) directly inside [**Rocket League**](#). This plugin gives players the freedom to design unique visual elements by adding a personal touch to the interface.
 
 ## 💡 Example UI 
 
@@ -18,11 +18,11 @@ Images
 
 1. Download and install [BakkesMod](https://bakkesmod.com/) and the CustomUI plugin.
 2. Launch Rocket League and press **F3** to toggle the CustomUI window. (Alternatively, you can change the hotkey by pressing **F2**, navigating to **Plugins → CustomUI** in the BakkesMod settings, and assigning a different key.)
-3. Select your **preset** and adjust the size and position to fit your preference.
+3. Select your **preset** and adjust the **size** and **position** to fit your preference.
 4. Start a freeplay session or any game mode to view your custom UI in action.
 
 ## 📚 Full Documentation  
-Join our [Discord](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!
+Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!
 
 #### Tutorial Videos:
 - [How to use CustomUI](#)  
