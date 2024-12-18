@@ -3,7 +3,7 @@
 # Rocket League Plugin
 
 ## 🚀 Introduction  
-[**CustomUI**](#) is a plugin that allows players to create and display their own custom user interface (UI) directly inside [**Rocket League**](#). This plugin gives players the freedom to design unique visual elements by adding a personal touch to the interface.
+[**CustomUI**](#) is a plugin that allows players to create and display their own custom user interface (UI) directly inside [**Rocket League**](https://www.rocketleague.com/fr). This plugin gives players the freedom to design unique visual elements by adding a personal touch to the interface.
 
 ## 💡 Example UI 
 
