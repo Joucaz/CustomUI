@@ -9,7 +9,7 @@ constexpr auto plugin_version = stringify(VERSION_MAJOR) "." stringify(VERSION_M
 
 #include <string>
 #include <map>
-#include <array>  // Ajoute cette ligne pour utiliser std::array
+#include <array>
 using namespace std;
 
 #include <nlohmann/json.hpp>
