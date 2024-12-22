@@ -384,11 +384,11 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 
 	ImU32 colorScoreMyTeam = changeColorText(currentPreset.colorScoreMyTeam, "settingsScoreMyTeam");
 	ImU32 colorScoreOppositeTeam = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
-	ImU32 colorGameTime = changeColorText(currentPreset.colorGameTime, "settingsScoreOppositeTeam"); 
+	ImU32 colorGameTime = changeColorText(currentPreset.colorGameTime, "settingsGameTime"); 
 
 	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
-	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsScoreOppositeTeam", gameTime);
+	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsGameTime", gameTime);
 
 }
 void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSize, ImU32 color, SettingsItems settingsAll, SettingsItems settingsItem, string textSettings, string text) {
