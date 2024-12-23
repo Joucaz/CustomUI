@@ -159,6 +159,7 @@ void CustomUI::RenderWindow()
 		myFont = gui.GetFont("Oswald");*/
 		loadThemeFont();
 		appendFont();
+		refreshFiles();
 	}
 	//LOG("font size " + to_string(gameWrapper->GetGUIManager().GetFont("Oswald200")->FontSize));
 
