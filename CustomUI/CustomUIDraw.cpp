@@ -202,111 +202,6 @@ void CustomUI::RenderWindow()
 
 }
 
-//
-//void CustomUI::drawScore(ImDrawList* drawList) {
-//
-//
-//	string keyPreset = getCvarString("CustomUI_choosenPresets");
-//	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-//
-//	//auto& preset = allPresets[keyPreset];
-//	auto& settingsScoreAllItems = currentPreset.settingsScoreAllItems;
-//	auto& settingsScoreDisplay = currentPreset.settingsScoreDisplay;
-//	auto& settingsScoreMyTeam = currentPreset.settingsScoreMyTeam;
-//	auto& settingsScoreOppositeTeam = currentPreset.settingsScoreOppositeTeam;
-//	auto& settingsGameTime = currentPreset.settingsGameTime;
-//
-//	if (!imageScore[keyPreset]->IsLoadedForImGui()) {
-//		return;
-//	}
-//
-//	if (auto renderImageScore = imageScore[keyPreset]->GetImGuiTex()) {
-//		auto size = imageScore[keyPreset]->GetSizeF();
-//
-//		const auto& sourceSettings = (settingsItems == "settingsScoreAllItems")
-//			? settingsScoreAllItems
-//			: settingsScoreDisplay;
-//		const auto& baseSettings = (settingsItems == "settingsScoreAllItems")
-//			? settingsScoreDisplay
-//			: settingsScoreAllItems;
-//
-//		const string& stringSettings = (settingsItems == "settingsScoreAllItems")
-//			? "settingsScoreAllItems"
-//			: "settingsScoreDisplay";
-//
-//		ImVec2 position = ImVec2(
-//			0 + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings),
-//			0 + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings)
-//		);
-//
-//		ImVec2 fullSize = ImVec2(
-//			size.X * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
-//			size.Y * baseSettings.sizeY * floatChangeSizeY(sourceSettings, stringSettings)
-//		);
-//
-//		if (isArtistMode) {
-//			drawList->AddImage(
-//				renderImageScore,
-//				ImVec2(position.x, position.y),
-//				ImVec2(position.x + fullSize.x, position.y + fullSize.y),
-//				ImVec2(0, 0),
-//				ImVec2(1, 1),
-//				IM_COL32(255, 255, 255, 255)
-//			);
-//		}
-//		else {
-//			drawList->AddImage(
-//				renderImageScore,
-//				ImVec2(
-//					0 + intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems"),
-//					0 + intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")
-//				),
-//				ImVec2(
-//					(size.X * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems") +
-//						intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems")),
-//					(size.Y * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems") +
-//						intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems"))
-//				),
-//				ImVec2(0, 0),
-//				ImVec2(1, 1),
-//				IM_COL32(255, 255, 255, 255)
-//			);
-//		}
-//	}
-//
-//	Vector2 PositionScoreA = { 188, -8 };
-//	Vector2 PositionGametime = { 283, -10 };
-//	Vector2 PositionScoreB = { 468, -8 };
-//
-//	if (isOvertime)
-//	{
-//		PositionGametime = { PositionGametime.X - 13 , PositionGametime.Y };
-//	}
-//	if (scoreA >= 10)
-//	{
-//		PositionScoreA = { PositionScoreA.X - 8 , PositionScoreA.Y };
-//	}
-//	if (scoreB >= 10)
-//	{
-//		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
-//	}
-//
-//	ImU32 colorScoreMyTeam = IM_COL32(currentPreset.colorScoreMyTeam[0], currentPreset.colorScoreMyTeam[1], currentPreset.colorScoreMyTeam[2], currentPreset.colorScoreMyTeam[3]);
-//	ImU32 colorScoreOppositeTeam = IM_COL32(currentPreset.colorScoreOppositeTeam[0], currentPreset.colorScoreOppositeTeam[1], currentPreset.colorScoreOppositeTeam[2], currentPreset.colorScoreOppositeTeam[3]);
-//	ImU32 colorGameTime = IM_COL32(currentPreset.colorGameTime[0], currentPreset.colorGameTime[1], currentPreset.colorGameTime[2], currentPreset.colorGameTime[3]);
-//
-//	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
-//	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
-//	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsScoreOppositeTeam", gameTime);
-//
-//	/*drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreA.X * xPercent, PositionScoreA.Y * yPercent),
-//		colorScoreMyTeam, to_string(scoreA).c_str());
-//	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionGametime.X * xPercent, PositionGametime.Y * yPercent),
-//		colorGameTime, (gameTime).c_str());
-//	drawList->AddText(myFont, 110 * xPercent, ImVec2(PositionScoreB.X * xPercent, PositionScoreB.Y * yPercent),
-//		colorScoreOppositeTeam, to_string(scoreB).c_str());*/
-//}
-
 
 void CustomUI::drawScore(ImDrawList* drawList) {
 
@@ -343,14 +238,17 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 		}
 		else {
 			position = ImVec2(
-				0 + floatToIntPosition(settingsScoreDisplay.positionX, screenSize.X) + intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems"),
-				0 + floatToIntPosition(settingsScoreDisplay.positionY, screenSize.Y) + intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")
+				(0 + floatToIntPosition(settingsScoreDisplay.positionX, screenSize.X) + intChangePositionX(settingsScoreAllItems, "settingsScoreAllItems")) * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems"),
+				(0 + floatToIntPosition(settingsScoreDisplay.positionY, screenSize.Y) + intChangePositionY(settingsScoreAllItems, "settingsScoreAllItems")) * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems")
 			);
 			fullSize = ImVec2(
 				size.X * settingsScoreDisplay.sizeX * floatChangeSizeX(settingsScoreAllItems, "settingsScoreAllItems"),
 				size.Y * settingsScoreDisplay.sizeY * floatChangeSizeY(settingsScoreAllItems, "settingsScoreAllItems")
 			);
+			
 		}
+
+		
 		drawList->AddImage(
 			renderImageScore,
 			ImVec2(position.x, position.y),
@@ -367,7 +265,7 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 
 	if (isOvertime)
 	{
-		PositionGametime = { PositionGametime.X - 13 , PositionGametime.Y };
+		PositionGametime = { PositionGametime.X - 17 , PositionGametime.Y };
 	}
 	if (scoreA >= 10)
 	{
@@ -386,9 +284,9 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	ImU32 colorScoreOppositeTeam = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
 	ImU32 colorGameTime = changeColorText(currentPreset.colorGameTime, "settingsGameTime"); 
 
-	drawTextScore(drawList, PositionScoreA, 110, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
-	drawTextScore(drawList, PositionScoreB, 110, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
-	drawTextScore(drawList, PositionGametime, 110, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsGameTime", gameTime);
+	drawTextScore(drawList, PositionScoreA, 160, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
+	drawTextScore(drawList, PositionScoreB, 160, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
+	drawTextScore(drawList, PositionGametime, 160, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsGameTime", gameTime);
 
 }
 void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSize, ImU32 color, SettingsItems settingsAll, SettingsItems settingsItem, string textSettings, string text) {
@@ -400,39 +298,19 @@ void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSiz
 
 	if (isArtistMode) {
 
-		drawList->AddText(myFont, 160 * floatChangeSizeX(settingsItem, textSettings),
+		drawList->AddText(myFont, fontSize * floatChangeSizeX(settingsItem, textSettings),
 			ImVec2((vx * floatChangeSizeX(settingsItem, textSettings) + intChangePositionX(settingsItem, textSettings)),
 				(vy * floatChangeSizeX(settingsItem, textSettings) + intChangePositionY(settingsItem, textSettings))),
 			color, text.c_str());
 	}
 	else {
-		drawList->AddText(myFont, 160 * settingsItem.sizeX * floatChangeSizeX(settingsAll, "settingsScoreAllItems"),
-			ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + floatToIntPosition(settingsItem.positionX, screenSize.X) + intChangePositionX(settingsAll, "settingsScoreAllItems")),
-				(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + floatToIntPosition(settingsItem.positionY, screenSize.Y) + intChangePositionY(settingsAll, "settingsScoreAllItems"))),
+		vx = vx * settingsItem.sizeX + floatToIntPosition(settingsItem.positionX, screenSize.X);
+		vy = vy * settingsItem.sizeY + floatToIntPosition(settingsItem.positionY, screenSize.Y);
+		drawList->AddText(myFont, fontSize * settingsItem.sizeX * floatChangeSizeX(settingsAll, "settingsScoreAllItems"),
+			ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionX(settingsAll, "settingsScoreAllItems")),
+				(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionY(settingsAll, "settingsScoreAllItems"))),
 			color, text.c_str());
 	}
-
-	//if (isArtistMode) {
-	//	if (settingsItems != "settingsScoreAllItems") {
-
-	//		drawList->AddText(myFont, fontSize * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
-	//			ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
-	//				(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
-	//			color, text.c_str());
-	//	}
-	//	else {
-	//		drawList->AddText(myFont, fontSize * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings),
-	//			ImVec2((vx * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionX, screenSize.X) + intChangePositionX(sourceSettings, stringSettings)),
-	//				(vy * baseSettings.sizeX * floatChangeSizeX(sourceSettings, stringSettings) + floatToIntPosition(baseSettings.positionY, screenSize.Y) + intChangePositionY(sourceSettings, stringSettings))),
-	//			color, text.c_str());
-	//	}
-	//}
-	//else {
-	//	drawList->AddText(myFont, fontSize * floatChangeSizeX(settingsAll, "settingsScoreAllItems"),
-	//		ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionX(settingsAll, "settingsScoreAllItems")),
-	//			(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionY(settingsAll, "settingsScoreAllItems"))),
-	//		color, text.c_str());
-	//}
 }
 
 void CustomUI::drawBoost(ImDrawList* drawList) {
@@ -479,14 +357,17 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 			);
 		}
 		else {
+
+			
 			position = ImVec2(
-				0 + floatToIntPosition(settingsBoostDisplayArray.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
-				0 + floatToIntPosition(settingsBoostDisplayArray.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")
+				(0 + floatToIntPosition(settingsBoostDisplayArray.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItemsArray, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
+				(0 + floatToIntPosition(settingsBoostDisplayArray.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItemsArray, "settingsBoostAllItems")) * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems")
 			);
 			fullSize = ImVec2(
 				size.X * settingsBoostDisplayArray.sizeX * floatChangeSizeX(settingsBoostAllItemsArray, "settingsBoostAllItems"),
 				size.Y * settingsBoostDisplayArray.sizeY * floatChangeSizeY(settingsBoostAllItemsArray, "settingsBoostAllItems")
 			);
+
 		}
 
 		drawList->AddImage(
@@ -520,7 +401,6 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		ImVec2 position = { 0, 0 };
 		ImVec2 fullSize = { 0, 0 };
 
-		// Récupération des paramètres selon le format
 		if (isArtistMode) {
 
 			position = ImVec2(
@@ -534,8 +414,8 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 		}
 		else {
 			position = ImVec2(
-				(80 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-				(92 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))
+				(80 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
+				(92 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")
 			);
 			fullSize = ImVec2(
 				size.X * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
@@ -583,19 +463,23 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	}
 	else {
 
-		center = ImVec2(200 * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems"),
-			198 * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"));
+		float centerX = 200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionX(settingsBoostTexture, "settingsBoostTexture");
+		float centerY = 198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + intChangePositionY(settingsBoostTexture, "settingsBoostTexture");
+
+		center = ImVec2(centerX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems"),
+						centerY * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"));
+
 		radius = 140.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
 		strokeThickness = 26.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+
 	}
 
 	float startAngle = IM_PI / 2.0f; // Début de l'arc (à 3h sur un cadran)
 	float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
 	float endAngle = startAngle + (maxAngle * (boost / 100.0f)); // Calculer l'angle final en fonction du boost
 
-	// Commencer à dessiner le path (cercle)
 	drawList->PathClear();
-	drawList->PathArcTo(center, radius, startAngle, endAngle, 100); // 100 segments pour le contour lisse
+	drawList->PathArcTo(center, radius, startAngle, endAngle, 100);
 	drawList->PathStroke(color, false, strokeThickness);
 }
 
@@ -635,17 +519,21 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 			color, to_string(boost).c_str());
 	}
 	else {
+		vx = vx * settingsBoostText.sizeX + floatToIntPosition(settingsBoostText.positionX, screenSize.X);
+		vy = vy * settingsBoostText.sizeY + floatToIntPosition(settingsBoostText.positionY, screenSize.Y);
+
+		/*drawList->AddText(myFont, 160 * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
+			ImVec2((vx * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
+				(vy * settingsBoostText.sizeY * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionY, screenSize.) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))),
+			color, to_string(boost).c_str());*/
+
 		drawList->AddText(myFont, 160 * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
-			ImVec2((vx * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionY, screenSize.Y) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))),
+			ImVec2((vx * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
+				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))),
 			color, to_string(boost).c_str());
 	}
 
 }
-
-
-
-
 
 
 // Don't call this yourself, BM will call this function with a pointer to the current ImGui context
