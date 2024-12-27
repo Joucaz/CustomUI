@@ -503,11 +503,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				ImGui::BeginTooltip();
-				ImGui::Text("Joucaz Portfolio/Website");
+				ImGui::Text("@JoucazJC");
 				ImGui::EndTooltip();
 			}
 			if (ImGui::IsItemClicked()) {
-				system("Start https://joudcazeaux.fr");
+				system("Start https://twitter.com/JoucazJC");
 			}
 			ImGui::SameLine();
 			if (auto renderImageLogoText = githubLogo->GetImGuiTex()) {
@@ -545,11 +545,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 				ImGui::BeginTooltip();
-				ImGui::Text("@JoucazJC");
+				ImGui::Text("Joucaz Portfolio/Website");
 				ImGui::EndTooltip();
 			}
 			if (ImGui::IsItemClicked()) {
-				system("Start https://twitter.com/JoucazJC");
+				system("Start https://joudcazeaux.fr");
 			}
 
 			ImGui::Spacing();
@@ -561,6 +561,51 @@ void CustomUI::RenderMenu() {
 			ImGui::Spacing();
 			ImGui::Indent(15.0f);
 
+			ImGui::TextColored(sucreDorgeColor, "SucreDorge");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@SucreDorgePSD");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://x.com/SucreDorgePSD");
+			}
+			ImGui::Spacing(); 
+			ImGui::TextColored(kisuteColor, "Kisute");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@Kisute3");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://x.com/Kisute3");
+			}
 			ImGui::Spacing();
 			ImGui::Spacing();
 
@@ -569,42 +614,42 @@ void CustomUI::RenderMenu() {
 			ImGui::Spacing();
 			ImGui::Spacing();
 			ImGui::Indent(15.0f);
-			//ImGui::TextColored(redCautionHovered, "Arubinu");
-			//if (ImGui::IsItemHovered()) {
-			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-			//	ImGui::BeginTooltip();
-			//	ImGui::Text("Twitch : Arubinu42");
-			//	ImGui::EndTooltip();
-			//}
-			//if (ImGui::IsItemClicked()) {
-			//	system("Start https://twitch.tv/Arubinu42");
-			//}
+			ImGui::TextColored(redCautionHovered, "Arubinu");
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("Twitch : Arubinu42");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://twitch.tv/Arubinu42");
+			}
 
-			//ImGui::SameLine();
-			//ImGui::Text(" | ");
-			//ImGui::SameLine();
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
 
-			//ImGui::TextColored(baseGrey, "Vync");
-			///*if (ImGui::IsItemHovered()) {
-			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-			//	ImGui::BeginTooltip();
-			//	ImGui::Text("Vync Plugin");
-			//	ImGui::EndTooltip();
-			//}*/
-			///*ImGui::SameLine();
-			//if (ImGui::IsItemClicked()) {
-			//	system("Start https://bakkesplugins.com/plugins/view/223");
-			//}*/
-			//ImGui::SameLine();
-			//ImGui::Text(" | ");
-			//ImGui::SameLine();
-			//ImGui::TextColored(soulDaMeepColor, "SoulDaMeep");
-			//if (ImGui::IsItemHovered()) {
-			//	ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-			//	ImGui::BeginTooltip();
-			//	ImGui::Text("Discord: @souldameep");
-			//	ImGui::EndTooltip();
-			//}
+			ImGui::TextColored(baseGrey, "Vync");
+			/*if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("Vync Plugin");
+				ImGui::EndTooltip();
+			}*/
+			/*ImGui::SameLine();
+			if (ImGui::IsItemClicked()) {
+				system("Start https://bakkesplugins.com/plugins/view/223");
+			}*/
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
+			ImGui::TextColored(soulDaMeepColor, "SoulDaMeep");
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("Discord: @souldameep");
+				ImGui::EndTooltip();
+			}
 			ImGui::EndTabItem();
 		}
 

@@ -308,9 +308,10 @@ void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSiz
 		vx = vx * settingsItem.sizeX + floatToIntPosition(settingsItem.positionX, screenSize.X);
 		vy = vy * settingsItem.sizeY + floatToIntPosition(settingsItem.positionY, screenSize.Y);
 		drawList->AddText(myFont, fontSize * settingsItem.sizeX * floatChangeSizeX(settingsAll, "settingsScoreAllItems"),
-			ImVec2((vx * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionX(settingsAll, "settingsScoreAllItems")),
-				(vy * floatChangeSizeX(settingsAll, "settingsScoreAllItems") + intChangePositionY(settingsAll, "settingsScoreAllItems"))),
+			ImVec2(((vx + intChangePositionX(settingsAll, "settingsScoreAllItems")) * floatChangeSizeX(settingsAll, "settingsScoreAllItems")),
+				((vy + intChangePositionY(settingsAll, "settingsScoreAllItems")) * floatChangeSizeY(settingsAll, "settingsScoreAllItems"))),
 			color, text.c_str());
+
 	}
 }
 
@@ -523,16 +524,14 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 		vx = vx * settingsBoostText.sizeX + floatToIntPosition(settingsBoostText.positionX, screenSize.X);
 		vy = vy * settingsBoostText.sizeY + floatToIntPosition(settingsBoostText.positionY, screenSize.Y);
 
-		/*drawList->AddText(myFont, 160 * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
-			ImVec2((vx * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionX, screenSize.X) + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-				(vy * settingsBoostText.sizeY * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + floatToIntPosition(settingsBoostText.positionY, screenSize.) + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))),
-			color, to_string(boost).c_str());*/
-
 		drawList->AddText(myFont, 160 * settingsBoostText.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems"),
-			ImVec2((vx * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")),
-				(vy * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"))),
+			ImVec2(((vx + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems")),
+				((vy + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems"))),
 			color, to_string(boost).c_str());
+
 	}
+
+
 
 }
 
