@@ -794,6 +794,13 @@ void CustomUI::showRenderEditPosition() {
 	{
 		changePositionX = 0;
 		sliderX = 0.5f;
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionX", sliderX);
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionY", sliderY);
+		}
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginPosition = false;
 	}
 	ImGui::PopStyleColor(3);
 	ImGui::Text("Position Y");
@@ -822,6 +829,13 @@ void CustomUI::showRenderEditPosition() {
 	{
 		sliderY = 0.5f;
 		changePositionY = 0;
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionX", sliderX);
+			updateJsonFieldFloat(keyPreset, settingsItem, "positionY", sliderY);
+		}
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginPosition = false;
 	}
 	ImGui::PopStyleColor(3);
 
@@ -904,6 +918,13 @@ void CustomUI::showRenderEditSize() {
 		changeSizeY = 1.0f;
 		slider_x = 1.0f;
 		slider_y = 1.0f;
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonFieldFloat(keyPreset, settingsItem, "sizeX", changeSizeX);
+			updateJsonFieldFloat(keyPreset, settingsItem, "sizeY", changeSizeY);
+		}
+		showPositionEditor = false;
+		showSizeEditor = false;
+		changingBeginSize = false;
 	}
 	ImGui::PopStyleColor(3);
 
