@@ -31,7 +31,7 @@ void CustomUI::onLoad()
 	//}, "", 0);
 
 	//auto cvar = cvarManager->registerCvar("CustomUI_positionBoostBar", "left", "the position of the boost bar");
-	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine", "preset choosen to show", true, true, 0, false);
+	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition2 = cvarManager->registerCvar("CustomUI_itemsNamePosition2", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition3 = cvarManager->registerCvar("CustomUI_itemsNamePosition3", "", "item selected to move and resize", true, false, 0, false);

@@ -263,16 +263,25 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	Vector2 PositionScoreA = { 188, -8 };
 	Vector2 PositionGametime = { 283, -10 };
 	Vector2 PositionScoreB = { 468, -8 };
-
-	if (isOvertime)
-	{
-		PositionGametime = { PositionGametime.X - 17 , PositionGametime.Y };
+	
+	if (getGameTime() != -1 && getGameTime() < 120 && getGameTime() >= 60) {
+		PositionGametime = { PositionGametime.X + 20 , PositionGametime.Y };
 	}
-	if (scoreA >= 10)
+	else if (isOvertime)
+	{
+		PositionGametime = { PositionGametime.X - 35 , PositionGametime.Y };
+	}
+	if (scoreA == 1) {
+		PositionScoreA = { PositionScoreA.X + 15 , PositionScoreA.Y };
+	}
+	else if (scoreA >= 10)
 	{
 		PositionScoreA = { PositionScoreA.X - 8 , PositionScoreA.Y };
 	}
-	if (scoreB >= 10)
+	if (scoreB == 1) {
+		PositionScoreB = { PositionScoreB.X + 15 , PositionScoreB.Y };
+	}
+	else if (scoreB >= 10)
 	{
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
@@ -486,7 +495,6 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 }
 
 
-
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
@@ -504,13 +512,17 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 		vx = v1x;
 		vy = v1y;
 	}
-	else if (boost < 10) {
-		vx = v2x;
-		vy = v2y;
+	else if (boost >= 10 && boost < 20) {
+		vx = v1x + 35;
+		vy = v1y;
 	}
-	else {
-		vx = v3x;
-		vy = v3y;
+	else if (boost < 10) {
+		vx = v1x + 60;
+		vy = v1y;
+	}
+	else { 
+		vx = v1x + 20;
+		vy = v1y;
 	}
 
 	if (isArtistMode) {
