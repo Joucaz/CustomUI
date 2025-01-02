@@ -199,7 +199,7 @@ void CustomUI::loadThemeFont() {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	LOG("keypreset themefont : " + keyPreset);
 
-	if (allPresets[keyPreset].font.nameFont == "") {
+	if (allPresets[keyPreset].font == "") {
 		string font_prefix = "CustomUI_";
 		string font_path = "Presets/Original/fonts/Oswald.ttf";
 		string font_dest = ("../CustomUI/" + font_path);
@@ -223,19 +223,19 @@ void CustomUI::loadThemeFont() {
 		return;
 	}
 
-	int font_size = allPresets[keyPreset].font.sizeFont;
-	string font_file = allPresets[keyPreset].font.nameFont;
+	//int font_size = allPresets[keyPreset].font.sizeFont;
+	string font_file = allPresets[keyPreset].font;
 
 	string font_prefix = "CustomUI_";
 	string font_path = ("Presets/" + keyPreset + "/fonts/" + font_file);
 	string font_dest = ("../CustomUI/" + font_path);
 
-	if (!font_file.empty() && font_size > 0)
+	if (!font_file.empty())
 	{
-		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(font_size);
+		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(200);
 
 		GuiManagerWrapper gui = gameWrapper->GetGUIManager();
-		auto [res, font] = gui.LoadFont(font_name, font_dest, font_size * xPercent);
+		auto [res, font] = gui.LoadFont(font_name, font_dest, 200 * xPercent);
 		if (res == 0) {
 			LOG("Failed to load the font!");
 		}
@@ -256,17 +256,17 @@ void CustomUI::appendFont() {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	GuiManagerWrapper gui = gameWrapper->GetGUIManager();
 
-	if (allPresets[keyPreset].font.nameFont == "") {
+	if (allPresets[keyPreset].font == "") {
 		myFont = gui.GetFont("BasicFont");
 	}
 	else {
 
-		int font_size = allPresets[keyPreset].font.sizeFont;
-		string font_file = allPresets[keyPreset].font.nameFont;
+		//int font_size = allPresets[keyPreset].font.sizeFont;
+		string font_file = allPresets[keyPreset].font;
 		string font_prefix = "CustomUI_";
 		string font_path = ("Presets/" + keyPreset + "/fonts/" + font_file);
 		string font_dest = ("../CustomUI/" + font_path);
-		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(font_size);
+		string font_name = font_prefix + (font_file.substr(0, font_file.find_last_of('.'))) + "_" + to_string(200);
 
 		myFont = gui.GetFont(font_name);
 	}
@@ -491,10 +491,9 @@ map<string, Preset> CustomUI::loadPresets() {
 				// Parcourir les presets dans le fichier JSON et les ajouter à la map
 				for (auto& [key, value] : jsonData["presets"].items()) {
 					Preset preset;
-					preset.font.nameFont = value["font"]["nameFont"].is_null()
+					preset.font = value["font"].is_null()
 						? ""
-						: value["font"]["nameFont"].get<string>();
-					preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
+						: value["font"].get<string>();
 					preset.boostDisplayImage = value["boostDisplayImage"];
 					preset.boostTextureImage = value["boostTextureImage"];
 					preset.colorBoost = {

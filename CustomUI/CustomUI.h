@@ -21,13 +21,14 @@ struct SettingsItems {
 	float sizeX; 
 	float sizeY;
 };
-struct Font {
-	string nameFont;
-	int sizeFont;
-};
+//struct Font {
+//	string nameFont;
+//	int sizeFont;
+//};
 struct Preset {
 	//string name;
-	Font font;
+	//Font font;
+	string font;
 	string boostDisplayImage;
 	string boostTextureImage;
 	SettingsItems settingsBoostAllItems;
@@ -185,6 +186,8 @@ public:
 	static inline const ImVec4 soulDaMeepColor = ImVec4{ 0.0f / 255.0f, 198.0f / 255.0f, 173.0f / 255.0f, 1.0f };
 	static inline const ImVec4 kisuteColor = ImVec4{ 40 / 255.0f, 57 / 255.0f, 178.0f / 255.0f, 1.0f };
 	static inline const ImVec4 sucreDorgeColor = ImVec4{ 178 / 255.0f, 166 / 255.0f, 40 / 255.0f, 1.0f };
+	static inline const ImVec4 krogezoColor = ImVec4{ 1 / 255.0f, 130 / 255.0f, 129 / 255.0f, 1.0f };
+	static inline const ImVec4 kcColor = ImVec4{ 0 / 255.0f, 189 / 255.0f, 255 / 255.0f, 1.0f };
 
 private:
 	json jsonData;
