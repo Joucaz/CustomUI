@@ -605,6 +605,50 @@ void CustomUI::RenderMenu() {
 			}
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Kisute3");
+			}ImGui::Spacing();
+			ImGui::TextColored(kcColor, "Emmy");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@CaptainArteis");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://x.com/CaptainArteis");
+			}ImGui::Spacing();
+			ImGui::TextColored(krogezoColor, "Krogezo");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@Krogezo");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://x.com/Krogezo");
 			}
 			ImGui::Spacing();
 			ImGui::Spacing();
