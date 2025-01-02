@@ -24,6 +24,9 @@ Images
 ## 📚 Full Documentation  
 Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!
 
+#### Wiki:
+- [Step-by-step guide](https://github.com/Joucaz/CustomUI/wiki/CustomUI-Tutorial)
+
 #### Tutorial Videos:
 - [How to use CustomUI](#)  
 - [How to create your own preset](#)
