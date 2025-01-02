@@ -24,6 +24,9 @@ Images
 ## 📚 Full Documentation  
 Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!
 
+#### Wiki:
+- [Step-by-step guide](https://github.com/Joucaz/CustomUI/wiki/CustomUI-Tutorial)
+
 #### Tutorial Videos:
 - [How to use CustomUI](#)  
 - [How to create your own preset](#)
@@ -38,7 +41,7 @@ A: Yes, presets can be easily exported and imported.
 ## 🔗 Links
 
 ### Presets Artists:
-[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD)
+[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
