@@ -41,7 +41,7 @@ A: Yes, presets can be easily exported and imported.
 ## 🔗 Links
 
 ### Presets Artists:
-[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD)
+[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
