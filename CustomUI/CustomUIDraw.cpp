@@ -465,7 +465,6 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
 	if (isArtistMode) {
-
 		center = ImVec2((200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionX(settingsBoostTexture, "settingsBoostTexture")),
 			(198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + intChangePositionY(settingsBoostTexture, "settingsBoostTexture")));
 		radius = 140.0f * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture");
@@ -474,11 +473,12 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	}
 	else {
 
-		float centerX = 200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionX(settingsBoostTexture, "settingsBoostTexture");
-		float centerY = 198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + intChangePositionY(settingsBoostTexture, "settingsBoostTexture");
+		float centerX = (200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X) 
+							+ intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+		float centerY = (198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y)
+							+ intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems");
 
-		center = ImVec2(centerX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems"),
-						centerY * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems") + intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems"));
+		center = ImVec2(centerX, centerY);
 
 		radius = 140.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
 		strokeThickness = 26.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");

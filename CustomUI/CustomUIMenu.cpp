@@ -777,8 +777,8 @@ float CustomUI::intToFloatPosition(int position, int screenSize) {
 	// Calcul de la position flottante
 	float result = static_cast<float>(position + screenSize) / (2.0f * screenSize);
 
-	// Arrondi à 2 décimales
-	result = std::round(result * 1000.0f) / 1000.0f;
+	// Arrondi
+	result = std::round(result * 10000.0f) / 10000.0f;
 
 	return result;
 }
@@ -813,7 +813,7 @@ void CustomUI::showRenderEditPosition() {
 
 	ImGui::Text("Position X");
 	ImGui::SetNextItemWidth(300.0f);
-	if (ImGui::SliderFloat("##PositionX", &sliderX, 0.0f, 1.0f, "%.3f"))
+	if (ImGui::SliderFloat("##PositionX", &sliderX, 0.0f, 1.0f, "%.4f"))
 	{
 		changePositionX = floatToIntPosition(sliderX, screenSize.X);
 
@@ -849,7 +849,7 @@ void CustomUI::showRenderEditPosition() {
 	ImGui::PopStyleColor(3);
 	ImGui::Text("Position Y");
 	ImGui::SetNextItemWidth(300.0f);
-	if (ImGui::SliderFloat("##PositionY", &sliderY, 0.0f, 1.0f))
+	if (ImGui::SliderFloat("##PositionY", &sliderY, 0.0f, 1.0f, "%.4f"))
 	{
 		changePositionY = floatToIntPosition(sliderY, screenSize.Y);
 	}
