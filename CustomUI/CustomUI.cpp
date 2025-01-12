@@ -308,7 +308,13 @@ void CustomUI::UpdateVars()
 		boost = getBoostAmount();
 	}*/
 
-	boost = getBoostAmount();
+	if (isMainPlayerSpectator()) {
+		boost = getBoostAmountSpectator();
+	}
+	else {
+		boost = getBoostAmount();
+	}
+	
 
 }
 
@@ -880,11 +886,49 @@ void CustomUI::changeBoostDisplay(string texture) {
 	}
 }
 
+
+int CustomUI::getBoostAmountSpectator()
+{
+	CameraWrapper camera = gameWrapper->GetCamera();
+	if (!camera) return -1;
+	ViewTarget target = camera.GetViewTarget();
+
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+
+	if (!localServer.IsNull()) {
+		for (CarWrapper cars : localServer.GetCars()) {
+			if (reinterpret_cast<uintptr_t>(target.Target) == cars.memory_address) {
+				BoostWrapper boostComponent = cars.GetBoostComponent();
+				if (boostComponent.IsNull())
+					return -1;
+
+				return boostComponent.GetCurrentBoostAmount() * 100;
+			}
+		}
+	}
+
+	if (!onlineServer.IsNull()) {
+		for (CarWrapper cars : onlineServer.GetCars()) {
+			if (reinterpret_cast<uintptr_t>(target.Target) == cars.memory_address) {
+				BoostWrapper boostComponent = cars.GetBoostComponent();
+				if (boostComponent.IsNull())
+					return -1;
+
+				return boostComponent.GetCurrentBoostAmount() * 100;
+			}
+		}
+	}
+
+	return -1;
+}
+
 int CustomUI::getBoostAmount()
 {
 	CarWrapper localCar = gameWrapper->GetLocalCar();
-	if (localCar.IsNull())
-		return -1;
+	if (!localCar) return -1;
+		
 
 	BoostWrapper boostComponent = localCar.GetBoostComponent();
 	if (boostComponent.IsNull())
@@ -941,6 +985,13 @@ int CustomUI::getTeamScore(int teamNumber)
 	if (gameWrapper->IsInGame() && !localServer.IsNull())
 	{
 		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+		PriWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer().GetPRI();
+
+		if (!localServerLocalPrimaryPlayer.IsNull()) {
+			/*LOG("je test");
+			LOG("testtt : " + localServerLocalPrimaryPlayer.GetStringSpectating().ToString());*/
+		}
+		
 
 		if (!localServerTeams.IsNull())
 			for (TeamWrapper team : localServerTeams) {
@@ -954,6 +1005,35 @@ int CustomUI::getTeamScore(int teamNumber)
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
 	{
 		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+		PriWrapper localServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer().GetPRI();
+		BaseCameraWrapper playerFollow = onlineServer.GetLocalPrimaryPlayer().GetSpectatorCameraArchetype();
+
+		
+
+		
+		if (!localServerLocalPrimaryPlayer.IsNull()) {
+			//LOG("testtt : " + localServerLocalPrimaryPlayer.IsClientPlayerPRI());
+		}
+		if (!playerFollow.IsNull()) {
+			/*auto target = playerFollow.GetViewTarget().Target;
+			ActorWrapper wrappedTarget(((uintptr_t) struct - &gt; Target))
+			auto pri = playerFollow.GetViewTarget().PRI;
+			PriWrapper wrappedPri((uintptr_t)pri);
+			if (!wrappedPri.IsNull()) {
+				LOG("testtt : " + wrappedPri.GetPlayerName().ToString());
+			}
+			else {
+				LOG("PriWrapped null");
+			}
+			if (!wrappedTarget.IsNull()) {
+			}
+			else {
+				LOG("targetwrapped null");
+			}*/
+		}
+		else {
+			//LOG("baseCamera null");
+		}
 
 		if (!onlineServerTeams.IsNull())
 			for (TeamWrapper team : onlineServerTeams) {
@@ -978,6 +1058,7 @@ bool CustomUI::isMainPlayerSpectator() {
 	if (gameWrapper->IsInGame() && !localServer.IsNull())
 	{
 		PriWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer().GetPRI();
+		
 
 		if (!localServerLocalPrimaryPlayer.IsNull()) {
 			if (localServerLocalPrimaryPlayer.IsSpectator()) {
@@ -1021,7 +1102,6 @@ int CustomUI::getMyTeamScore()
 		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
 			for (TeamWrapper team : localServerTeams) {
 				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
-					LOG("GetTeamNUm : " + to_string(localServerLocalPrimaryPlayer.GetTeamNum2()));
 					return team.GetScore();
 				}
 					
@@ -1036,7 +1116,6 @@ int CustomUI::getMyTeamScore()
 		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
 			for (TeamWrapper team : onlineServerTeams) {
 				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
-					LOG("GetTeamNUm : " + to_string(onlineServerLocalPrimaryPlayer.GetTeamNum2()));
 					return team.GetScore();
 				}
 									

@@ -102,6 +102,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	void UpdateVars();
 	int getBoostAmount();
+	int getBoostAmountSpectator();
 	bool zeroBoost(int boost);
 	int getGameTime();
 	bool zeroGameTime(string gameTime);
