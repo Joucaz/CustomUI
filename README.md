@@ -26,7 +26,7 @@ Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all a
 - [Step-by-step guide](https://github.com/Joucaz/CustomUI/wiki/CustomUI-Tutorial)
 
 #### Tutorial Videos:
-- [How to use CustomUI](#)  
+- [How to use CustomUI](https://youtu.be/-xOmT7EfpgA)  
 - [How to create your own preset](#)
 
 ## ❓ FAQ  
