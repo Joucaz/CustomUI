@@ -292,9 +292,16 @@ void CustomUI::UpdateVars()
 		gameTime = (getGameTime() != -1)
 			? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
 			: std::to_string(-1);
-
-		scoreA = getMyTeamScore();
-		scoreB = getOpposingTeamScore();
+		
+		if (isMainPlayerSpectator()) {
+			scoreA = getTeamScore(0);
+			scoreB = getTeamScore(1);
+		}
+		else {
+			scoreA = getMyTeamScore();
+			scoreB = getOpposingTeamScore();
+		}
+		
 	}
 	
 	/*else if (isInFreeplay()) {
@@ -926,6 +933,81 @@ int CustomUI::getGameTime()
 }
 
 
+int CustomUI::getTeamScore(int teamNumber)
+{
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
+
+		if (!localServerTeams.IsNull())
+			for (TeamWrapper team : localServerTeams) {
+				if (team.GetTeamNum2() == teamNumber) {
+					return team.GetScore();
+				}
+
+			}
+
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
+
+		if (!onlineServerTeams.IsNull())
+			for (TeamWrapper team : onlineServerTeams) {
+				if (team.GetTeamNum2() == teamNumber) {
+					return team.GetScore();
+				}
+
+			}
+
+	}
+	else {
+		return -1;
+	}
+
+}
+
+bool CustomUI::isMainPlayerSpectator() {
+
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+	if (gameWrapper->IsInGame() && !localServer.IsNull())
+	{
+		PriWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer().GetPRI();
+
+		if (!localServerLocalPrimaryPlayer.IsNull()) {
+			if (localServerLocalPrimaryPlayer.IsSpectator()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	
+
+	}
+	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
+	{
+		PriWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer().GetPRI();
+
+		if (!onlineServerLocalPrimaryPlayer.IsNull()) {
+			if (onlineServerLocalPrimaryPlayer.IsSpectator()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	else {
+		return false;
+	}
+}
+
 int CustomUI::getMyTeamScore()
 {
 	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
@@ -937,9 +1019,14 @@ int CustomUI::getMyTeamScore()
 		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
 
 		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : localServerTeams)
-				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+			for (TeamWrapper team : localServerTeams) {
+				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
+					LOG("GetTeamNUm : " + to_string(localServerLocalPrimaryPlayer.GetTeamNum2()));
 					return team.GetScore();
+				}
+					
+			}
+
 	}
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
 	{
@@ -947,9 +1034,13 @@ int CustomUI::getMyTeamScore()
 		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
 
 		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : onlineServerTeams)
-				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+			for (TeamWrapper team : onlineServerTeams) {
+				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
+					LOG("GetTeamNUm : " + to_string(onlineServerLocalPrimaryPlayer.GetTeamNum2()));
 					return team.GetScore();
+				}
+									
+			}
 	}
 	else {
 		return -1;

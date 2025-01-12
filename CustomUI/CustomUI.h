@@ -111,6 +111,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	int getMyTeamScore();
 	int getOpposingTeamScore();
+	int getTeamScore(int teamNumber);
+
+	bool isMainPlayerSpectator();
 
 	bool isInFreeplay();
 	bool isInGame();
