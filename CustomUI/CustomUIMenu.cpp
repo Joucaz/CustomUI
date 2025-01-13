@@ -700,6 +700,61 @@ void CustomUI::RenderMenu() {
 			}
 			ImGui::EndTabItem();
 		}
+		ImGui::SameLine();
+		ImGui::Text("test");
+		
+		if (ImGui::BeginTabItem("Patch Notes")) {
+			ImGui::Spacing();
+			ImGui::Indent(20.0f);
+			// Tableau des patch notes (titre et contenu)
+			PatchNote patch_notes[] = {
+				{
+					"v1.3.0", R"(
+Patch Notes v1.2.0:
+-------------------
+- Added support for custom team overlays.
+- Improved performance in large scenes.
+- Fixed a bug where player names would not display correctly.
+- Enhanced UI for esport features.
+
+Known Issues:
+- Minor visual glitches on high DPI screens.
+					)"
+				},
+				{
+					"v1.3.0", R"(
+Patch Notes v1.2.0:
+-------------------
+- Added support for custom team overlays.
+- Improved performance in large scenes.
+- Fixed a bug where player names would not display correctly.
+- Enhanced UI for esport features.
+
+Known Issues:
+- Minor visual glitches on high DPI screens.
+					)"
+				},
+			};
+
+			static int selected_patch = 0;
+
+			// Combo pour choisir le patch note (les titres sont extraits directement du tableau patch_notes)
+			const int patch_count = IM_ARRAYSIZE(patch_notes);
+			const char** patch_titles = new const char* [patch_count];
+			for (int i = 0; i < patch_count; ++i) {
+				patch_titles[i] = patch_notes[i].title;
+			}
+			ImGui::SetNextItemWidth(400.0f);
+			if (ImGui::Combo("Select Patch Note", &selected_patch, patch_titles, patch_count)) {
+				
+			}
+
+
+			ImGui::TextWrapped("%s", patch_notes[selected_patch].content);
+
+			ImGui::EndTabItem();
+		}
+
 
 		ImGui::EndTabBar();
 	}

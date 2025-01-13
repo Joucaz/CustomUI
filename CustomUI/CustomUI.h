@@ -48,6 +48,12 @@ struct Preset {
 	SettingsItems settingsGameTime;
 };
 
+// Définir une structure pour les patch notes
+struct PatchNote {
+	const char* title;
+	const char* content;
+};
+
 class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	//public BakkesMod::Plugin::PluginSettingsWindow,
 	public BakkesMod::Plugin::PluginWindow
