@@ -400,12 +400,18 @@ void CustomUI::onOvertime() {
 void CustomUI::onPauseOpenGame() {
 	if (isInGame()) {
 		if (!isMainPlayerSpectator()) {
+			LOG("not spectator");
 			isOnPause = !isOnPause;
 		}
 		else {
-			if (countdownPauseSpectate != 0) {
+			if (countdownPauseSpectate == 0) {
+				LOG("countdown != 0");
 				countdownPauseSpectate = 1;
+				
+			}
+			else {
 				isOnPause = !isOnPause;
+				LOG("countdown == 0");
 			}
 		}
 		
