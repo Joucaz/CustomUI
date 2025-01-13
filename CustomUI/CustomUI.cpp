@@ -326,8 +326,12 @@ void CustomUI::UpdateVars()
 
 bool CustomUI::isInGame() {
 	if (gameWrapper->IsInOnlineGame()) {
+		//LOG("isInGame");
 		return true;
 	}
+	//LOG(" " + gameDisplay);
+	//LOG("isNOTInGame");
+
 	return false;
 }
 
@@ -364,6 +368,7 @@ void CustomUI::onGameStart() {
 }
 
 void CustomUI::onGameEnd() {
+	countdownPauseSpectate = 0;
 	LOG("onGameEnd");
 	gameDisplay = false;
 	isOvertime = false;
@@ -371,7 +376,7 @@ void CustomUI::onGameEnd() {
 }
 
 void CustomUI::onReplayStart() {
-	isOnPause = false;
+	//isOnPause = false;
 	LOG("onReplayStart");
 	replayDisplay = true;
 	if (!isInFreeplay()) {
@@ -380,6 +385,7 @@ void CustomUI::onReplayStart() {
 }
 
 void CustomUI::onReplayEnd() {
+	//isOnPause = false;
 	LOG("onReplayEnd");
 	replayDisplay = false;
 	if (!isInFreeplay()) {
@@ -393,13 +399,25 @@ void CustomUI::onOvertime() {
 
 void CustomUI::onPauseOpenGame() {
 	if (isInGame()) {
-		isOnPause = !isOnPause;
+		if (!isMainPlayerSpectator()) {
+			isOnPause = !isOnPause;
+		}
+		else {
+			if (countdownPauseSpectate != 0) {
+				countdownPauseSpectate = 1;
+				isOnPause = !isOnPause;
+			}
+		}
+		
 	}
 }
 void CustomUI::onPauseOpen() {
+	LOG("pauseOpen");
 	isOnPause = true;
 }
 void CustomUI::onPauseClose() {
+	LOG("pauseClose");
+
 	isOnPause = false;
 }
 //

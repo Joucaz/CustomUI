@@ -222,6 +222,8 @@ private:
 	bool changingBeginPosition = false;
 	bool changingBeginSize = false;
 
+	int countdownPauseSpectate = 0;
+
 	// ImGui Shabananagans
 	ImGuiStyle UserStyle;
 
