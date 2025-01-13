@@ -709,16 +709,24 @@ void CustomUI::RenderMenu() {
 			// Tableau des patch notes (titre et contenu)
 			PatchNote patch_notes[] = {
 				{
-					"v1.3.0", R"(
-Patch Notes v1.2.0:
+					"v1.0.1 (latest)", R"(
+Patch Notes v1.0.1 
+Date: DD/MM/AAAA:
 -------------------
-- Added support for custom team overlays.
-- Improved performance in large scenes.
-- Fixed a bug where player names would not display correctly.
-- Enhanced UI for esport features.
 
-Known Issues:
-- Minor visual glitches on high DPI screens.
+New Features:
+	- Introduced a button to enable/disable the plugin's UI directly from the plugin window for easier control.
+	- Added detection of scores and boost amount in spectate mode.
+	- Added the detection of score and the boost amount in spectate mode.
+	- Added the button to enable/disable the UI of the plugin directly inside the plugin window.
+
+Improvements and Changes:
+	-
+
+Bug Fixes:
+	- Fixed the bug where the Circle boost was not moving in the same way as the background boost image.
+	- Fixed the bug where the boost component was not showing in spectate mode due to the pause menu.
+
 					)"
 				},
 				{
