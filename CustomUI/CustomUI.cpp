@@ -31,6 +31,12 @@ void CustomUI::onLoad()
 	//}, "", 0);
 
 	//auto cvar = cvarManager->registerCvar("CustomUI_positionBoostBar", "left", "the position of the boost bar");
+
+	cvarManager->registerCvar("CustomUI_enabled", "1", "Enable CustomUI Plugin", true, true, 0, true, 1)
+		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
+		pluginEnabled = cvar.getBoolValue();
+			});
+
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine Corp", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition2 = cvarManager->registerCvar("CustomUI_itemsNamePosition2", "", "item selected to move and resize", true, false, 0, false);
@@ -891,7 +897,6 @@ int CustomUI::getBoostAmountSpectator()
 {
 	CameraWrapper camera = gameWrapper->GetCamera();
 	if (!camera) return -1;
-	ViewTarget target = camera.GetViewTarget();
 
 	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
 	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
@@ -899,7 +904,7 @@ int CustomUI::getBoostAmountSpectator()
 
 	if (!localServer.IsNull()) {
 		for (CarWrapper cars : localServer.GetCars()) {
-			if (reinterpret_cast<uintptr_t>(target.Target) == cars.memory_address) {
+			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
 				BoostWrapper boostComponent = cars.GetBoostComponent();
 				if (boostComponent.IsNull())
 					return -1;
@@ -911,7 +916,7 @@ int CustomUI::getBoostAmountSpectator()
 
 	if (!onlineServer.IsNull()) {
 		for (CarWrapper cars : onlineServer.GetCars()) {
-			if (reinterpret_cast<uintptr_t>(target.Target) == cars.memory_address) {
+			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
 				BoostWrapper boostComponent = cars.GetBoostComponent();
 				if (boostComponent.IsNull())
 					return -1;

@@ -48,7 +48,7 @@ void CustomUI::RenderMenu() {
 
 	style.Colors[ImGuiCol_WindowBg] = baseBlack;
 
-	ImVec2 minSize(650.0f, 650.0f);
+	ImVec2 minSize(720.0f, 650.0f);
 	ImVec2 maxSize(1920, 1080);
 
 	// Appliquer les contraintes avant de créer la fenêtre
@@ -192,6 +192,10 @@ void CustomUI::RenderMenu() {
 		{
 			ImGui::Spacing();
 			ImGui::Indent(20.0f);
+
+			ImGui::Checkbox("Use CustomUI", &pluginEnabled);
+			//ImGui::Spacing();
+
 			static vector<const char*> itemsPreset;
 			static int currentChoosenPreset = 0;
 

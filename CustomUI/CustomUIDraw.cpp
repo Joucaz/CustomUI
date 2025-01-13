@@ -173,21 +173,23 @@ void CustomUI::RenderWindow()
 		LOG("not font");
 	}
 
-
-	if (isInGame() && gameDisplay) {
-		if (!isOnPause && !zeroBoost(boost)) {
-			drawBoost(drawList);
+	if (pluginEnabled) {
+		if (isInGame() && gameDisplay) {
+			if (!isOnPause && !zeroBoost(boost)) {
+				drawBoost(drawList);
+			}
+			drawScore(drawList);
 		}
-		drawScore(drawList);
-	}
-	else if (isInGame() && replayDisplay && !gameDisplay) {
-		drawScore(drawList);
-	}
-	else if (isInFreeplay() && !zeroBoost(boost) && !isOnPause) {
-		drawBoost(drawList);
-		//drawScore(drawList);
+		else if (isInGame() && replayDisplay && !gameDisplay) {
+			drawScore(drawList);
+		}
+		else if (isInFreeplay() && !zeroBoost(boost) && !isOnPause) {
+			drawBoost(drawList);
+			//drawScore(drawList);
 
+		}
 	}
+	
 		
 	if (myFont) {
 		ImGui::PopFont();

@@ -196,6 +196,8 @@ public:
 private:
 	json jsonData;
 
+	bool pluginEnabled = true;
+
 	bool isMenuOpened = false;
 	bool isOnPause = false;
 	bool isArtistMode = false;
