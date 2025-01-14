@@ -955,158 +955,6 @@ int CustomUI::getGameTime()
 	return localServer.GetSecondsRemaining();
 }
 
-shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWrapper>> imageDisplay, map<string, shared_ptr<ImageWrapper>> imageDisplay2, string keyPreset) {
-	if (getColorTeamInGame() == 0) {
-		return imageDisplay[keyPreset];
-	}
-	else if (getColorTeamInGame() == 1) {
-		return imageDisplay2[keyPreset];
-	}
-	else {
-		return imageDisplay[keyPreset];
-	}
-	
-}
-
-string CustomUI::getColorTeamByBool() {
-	if (colorTeamBool) {
-		return "blue";
-	}
-	else {
-		return "orange";
-	}
-
-}
-
-int CustomUI::getColorTeamInGame() {
-	if (isInFreeplay()) {
-		if (currentPreset.differentTeam) {
-			if (colorTeamBool) {
-				LOG("freeplay 0");
-
-				return 0;
-			}
-			else {
-				LOG("freeplay 1");
-				return 1;
-			}
-		}
-		else {
-			LOG("freeplay other");
-
-			return -1;
-		}
-		
-	}
-	else if (isInGame()) {
-		if (isMainPlayerSpectator()) {
-
-
-
-
-			//LOG("spectator");
-
-
-
-
-			/*CameraWrapper camera = gameWrapper->GetCamera();
-			if (!camera) return -1;
-
-			ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
-
-			if (!onlineServer.IsNull()) {
-
-				for (CarWrapper cars : onlineServer.GetCars()) {
-					LOG("for");
-					if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
-						LOG("online");
-						if (cars.GetTeamNum2() == 0) {
-							return 0;
-						}
-						else {
-							return 1;
-						}
-					}
-				}
-			}
-			else {
-				LOG("onlineServerNull");
-			}*/
-
-		}
-		else {
-			CarWrapper car = gameWrapper->GetLocalCar();
-			if (!car) {
-				LOG("not car");
-				return -1;
-			}
-			else {
-				if (currentPreset.differentTeam) {
-					if (car.GetTeamNum2() == 0) {
-						return 0;
-					}
-					else {
-						return 1;
-					}
-				}
-			}
-			LOG("isInGame");
-			return -1;
-		}
-		
-	}
-	//else if (isInGame()) {
-	//	/*if (isMainPlayerSpectator()) {
-	//		CameraWrapper camera = gameWrapper->GetCamera();
-	//		if (!camera) return -1;
-
-	//		ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
-	//		if (!onlineServer) {
-	//			return -1;
-	//		}
-	//		else {
-	//			if (!onlineServer.IsNull()) {
-	//				for (CarWrapper cars : onlineServer.GetCars()) {
-	//					if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
-	//						if (cars.GetTeamNum2() == 0) {
-	//							return 0;
-	//						}
-	//						else {
-	//							return 1;
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//		
-	//	}
-	//	else {*/
-	//		CarWrapper car = gameWrapper->GetLocalCar();
-	//		if (!car) {
-	//			LOG("not car");
-	//			return -1;
-	//		}
-	//		else {
-	//			if (currentPreset.differentTeam) {
-	//				if (car.GetTeamNum2() == 0) {
-	//					return 0;
-	//				}
-	//				else {
-	//					return 1;
-	//				}
-	//			}
-	//		}
-	//	//}
-	//
-	//	
-	//}
-	else {
-		LOG("others");
-
-		return -1;
-	}
-	
-}
 
 int CustomUI::getTeamScore(int teamNumber)
 {
@@ -1358,6 +1206,66 @@ inline std::string CustomUI::lead_zeros(int n, int len)
 
 	return result;
 }
+
+
+string CustomUI::getColorTeamByBool() {
+	if (colorTeamBool) {
+		return "blue";
+	}
+	else {
+		return "orange";
+	}
+
+}
+
+int CustomUI::getColorTeamInGame() {
+	if (isInFreeplay()) {
+		if (currentPreset.differentTeam) {
+			if (colorTeamBool) {
+				return 0;
+			}
+			else {
+				return 1;
+			}
+		}
+		else {
+			return -1;
+		}
+
+	}
+	else {
+		ServerWrapper server = gameWrapper->GetOnlineGame();
+		if (!server) { LOG("SERVER DOWN");  return -1; } else{ LOG("SERVER"); }
+		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = server.GetLocalPrimaryPlayer();
+		if (!onlineServerLocalPrimaryPlayer) { 
+			LOG("primary player DOWN");  
+			return -1; 
+		}
+		else { 
+			LOG("primary player"); 
+
+		}
+		
+		LOG("others");
+
+		return -1;
+	}
+
+}
+
+shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWrapper>> imageDisplay, map<string, shared_ptr<ImageWrapper>> imageDisplay2, string keyPreset) {
+	if (getColorTeamInGame() == 0) {
+		return imageDisplay[keyPreset];
+	}
+	else if (getColorTeamInGame() == 1) {
+		return imageDisplay2[keyPreset];
+	}
+	else {
+		return imageDisplay[keyPreset];
+	}
+
+}
+
 //
 //void CustomUI::DisableBasicUI(bool disabled)
 //{
