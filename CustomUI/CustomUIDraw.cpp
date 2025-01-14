@@ -349,13 +349,13 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 
 	auto& settingsBoostDisplayArray = currentPreset.settingsBoostDisplay;
 	auto& settingsBoostAllItemsArray = currentPreset.settingsBoostAllItems;
-
-	if (!imageDisplayBoost[keyPreset]->IsLoadedForImGui()) {
+	
+	if (!getImageRender(imageDisplayBoost, imageDisplayBoost2, keyPreset)->IsLoadedForImGui()) {
 		return;
 	}
 
-	if (auto renderImageBoost = imageDisplayBoost[keyPreset]->GetImGuiTex()) {
-		auto size = imageDisplayBoost[keyPreset]->GetSizeF();
+	if (auto renderImageBoost = getImageRender(imageDisplayBoost, imageDisplayBoost2, keyPreset)->GetImGuiTex()) {
+		auto size = getImageRender(imageDisplayBoost, imageDisplayBoost2, keyPreset)->GetSizeF();
 		ImVec2 position;
 		ImVec2 fullSize;
 

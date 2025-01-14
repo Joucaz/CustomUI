@@ -46,14 +46,14 @@ struct Preset {
 	SettingsItems settingsScoreMyTeam;
 	SettingsItems settingsScoreOppositeTeam;
 	SettingsItems settingsGameTime;
-	/*string boostDisplayImage2;
-	string boostTextureImage2;
-	string scoreImage2;
+	string boostDisplayImage2 = "";
+	string boostTextureImage2 = "";
+	string scoreImage2 = "";
 	array<int, 4> colorBoost2;
 	array<int, 4> colorScoreMyTeam2;
 	array<int, 4> colorScoreOppositeTeam2;
 	array<int, 4> colorGameTime2;
-	bool differentFiles;*/
+	bool differentTeam = false;
 };
 
 // Définir une structure pour les patch notes
@@ -127,8 +127,10 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	int getMyTeamScore();
 	int getOpposingTeamScore();
 	int getTeamScore(int teamNumber);
-	bool getColorTeamInGame();
+	int getColorTeamInGame();
 	string getColorTeamByBool();
+
+	shared_ptr<ImageWrapper> getImageRender(map<string, shared_ptr<ImageWrapper>> imageDisplay, map<string, shared_ptr<ImageWrapper>> imageDisplay2, string keyPreset);
 
 	bool isMainPlayerSpectator();
 
@@ -213,7 +215,6 @@ private:
 	json jsonData;
 
 	bool pluginEnabled = true;
-	bool differentFiles = false;
 
 	bool colorTeamBool = true;
 

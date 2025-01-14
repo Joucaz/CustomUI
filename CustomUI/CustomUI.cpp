@@ -427,79 +427,6 @@ void CustomUI::onPauseClose() {
 
 	isOnPause = false;
 }
-//
-//map<string, Preset> CustomUI::loadPresets(const string& jsonFilePath) {
-//	map<string, Preset> presets;
-//
-//	ifstream file(jsonFilePath);
-//	if (!file.is_open()) {
-//		LOG("Impossible d'ouvrir le fichier JSON !");
-//		return presets;
-//	}
-//	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
-//
-//	file >> jsonData;
-//
-//	LOG("Fichier JSON chargé avec succès !");
-//
-//	// Parcourir les presets dans le fichier JSON
-//	for (auto& [key, value] : jsonData["presets"].items()) {
-//		Preset preset;
-//		preset.font.nameFont = value["font"]["nameFont"].is_null()
-//			? ""
-//			: value["font"]["nameFont"].get<string>();
-//		preset.font.sizeFont = value["font"]["sizeFont"].get<int>();
-//		preset.boostDisplayImage = value["boostDisplayImage"];
-//		preset.boostTextureImage = value["boostTextureImage"];
-//		preset.colorBoost = {
-//			value["colorBoost"][0],
-//			value["colorBoost"][1],
-//			value["colorBoost"][2],
-//			value["colorBoost"][3]
-//		};
-//		preset.boostForm = value["boostForm"];
-//		preset.scoreImage = value["scoreImage"];
-//		preset.colorScoreMyTeam = {
-//			value["colorScoreMyTeam"][0],
-//			value["colorScoreMyTeam"][1],
-//			value["colorScoreMyTeam"][2],
-//			value["colorScoreMyTeam"][3]
-//		};
-//		preset.colorScoreOppositeTeam = {
-//			value["colorScoreOppositeTeam"][0],
-//			value["colorScoreOppositeTeam"][1],
-//			value["colorScoreOppositeTeam"][2],
-//			value["colorScoreOppositeTeam"][3]
-//		};
-//		preset.colorGameTime = {
-//			value["colorGameTime"][0],
-//			value["colorGameTime"][1],
-//			value["colorGameTime"][2],
-//			value["colorGameTime"][3]
-//		};
-//		preset.settingsBoostDisplay = loadSettingsBoostDisplay(value["settingsBoostDisplay"]);
-//		preset.settingsScoreDisplay = loadSettingsBoostDisplay(value["settingsScoreDisplay"]);
-//		preset.settingsBoostAllItems = loadSettingsBoostDisplay(value["settingsBoostAllItems"]);
-//		preset.settingsScoreAllItems = loadSettingsBoostDisplay(value["settingsScoreAllItems"]);
-//		preset.settingsBoostTexture = loadSettingsBoostDisplay(value["settingsBoostTexture"]);
-//		preset.settingsBoostText = loadSettingsBoostDisplay(value["settingsBoostText"]);
-//		preset.settingsScoreMyTeam = loadSettingsBoostDisplay(value["settingsScoreMyTeam"]);
-//		preset.settingsScoreOppositeTeam = loadSettingsBoostDisplay(value["settingsScoreOppositeTeam"]);
-//		preset.settingsGameTime = loadSettingsBoostDisplay(value["settingsGameTime"]);
-//
-//
-//		// Charger les images avec la fonction utilitaire
-//		loadImageFromJson(basePath, key, preset.boostDisplayImage, imageDisplayBoost, "Boost Display");
-//		loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
-//		loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
-//
-//		// Ajout du preset à la map
-//		presets[key] = preset;
-//	}
-//
-//
-//	return presets;
-//}
 
 map<string, Preset> CustomUI::loadPresets() {
 	map<string, Preset> presets;
@@ -581,63 +508,72 @@ map<string, Preset> CustomUI::loadPresets() {
 					loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
 					loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
 
-					//if exist load3image
 					
 
-					//if (value.contains("differentFiles")) {
-					//	preset.differentFiles = value["differentFiles"];
+					if (value.contains("differentTeam")) {
+						LOG("value oui");
+						preset.differentTeam = value["differentTeam"];
 
-					//	if (value.contains("boostDisplayImage2")) {
-					//		preset.boostDisplayImage2 = value["boostDisplayImage2"];
-					//		loadImageFromJson(basePath, key, preset.boostDisplayImage2, imageDisplayBoost2, "Boost Display 2");
-					//	}
+						if (value.contains("boostDisplayImage2")) {
+							LOG("boostimage2");
+							preset.boostDisplayImage2 = value["boostDisplayImage2"];
+							loadImageFromJson(basePath, key, preset.boostDisplayImage2, imageDisplayBoost2, "Boost Display 2");
+						}
 
-					//	if (value.contains("boostTextureImage2")) {
-					//		preset.boostTextureImage2 = value["boostTextureImage2"];
-					//		loadImageFromJson(basePath, key, preset.boostTextureImage2, imageTextureBoost2, "Boost Texture 2");
-					//	}
+						if (value.contains("boostTextureImage2")) {
+							preset.boostTextureImage2 = value["boostTextureImage2"];
+							loadImageFromJson(basePath, key, preset.boostTextureImage2, imageTextureBoost2, "Boost Texture 2");
+						}
 
-					//	if (value.contains("colorBoost2")) {
-					//		preset.colorBoost2 = {
-					//			value["colorBoost2"][0],
-					//			value["colorBoost2"][1],
-					//			value["colorBoost2"][2],
-					//			value["colorBoost2"][3]
-					//		};
-					//	}
+						if (value.contains("colorBoost2")) {
+							preset.colorBoost2 = {
+								value["colorBoost2"][0],
+								value["colorBoost2"][1],
+								value["colorBoost2"][2],
+								value["colorBoost2"][3]
+							};
+						}
 
-					//	if (value.contains("scoreImage2")) {
-					//		preset.scoreImage2 = value["scoreImage2"];
-					//		loadImageFromJson(basePath, key, preset.scoreImage2, imageScore2, "Score 2");
-					//	}
+						if (value.contains("scoreImage2")) {
+							preset.scoreImage2 = value["scoreImage2"];
+							loadImageFromJson(basePath, key, preset.scoreImage2, imageScore2, "Score 2");
+						}
 
-					//	if (value.contains("colorScoreMyTeam2")) {
-					//		preset.colorScoreMyTeam2 = {
-					//			value["colorScoreMyTeam2"][0],
-					//			value["colorScoreMyTeam2"][1],
-					//			value["colorScoreMyTeam2"][2],
-					//			value["colorScoreMyTeam2"][3]
-					//		};
-					//	}
+						if (value.contains("colorScoreMyTeam2")) {
+							preset.colorScoreMyTeam2 = {
+								value["colorScoreMyTeam2"][0],
+								value["colorScoreMyTeam2"][1],
+								value["colorScoreMyTeam2"][2],
+								value["colorScoreMyTeam2"][3]
+							};
+						}
 
-					//	if (value.contains("colorScoreOppositeTeam2")) {
-					//		preset.colorScoreOppositeTeam2 = {
-					//			value["colorScoreOppositeTeam2"][0],
-					//			value["colorScoreOppositeTeam2"][1],
-					//			value["colorScoreOppositeTeam2"][2],
-					//			value["colorScoreOppositeTeam2"][3]
-					//		};
-					//	}
+						if (value.contains("colorScoreOppositeTeam2")) {
+							preset.colorScoreOppositeTeam2 = {
+								value["colorScoreOppositeTeam2"][0],
+								value["colorScoreOppositeTeam2"][1],
+								value["colorScoreOppositeTeam2"][2],
+								value["colorScoreOppositeTeam2"][3]
+							};
+						}
 
-					//	if (value.contains("colorGameTime2")) {
-					//		preset.colorGameTime2 = {
-					//			value["colorGameTime2"][0],
-					//			value["colorGameTime2"][1],
-					//			value["colorGameTime2"][2],
-					//			value["colorGameTime2"][3]
-					//		};
-					//	}
-					//}
+						if (value.contains("colorGameTime2")) {
+							preset.colorGameTime2 = {
+								value["colorGameTime2"][0],
+								value["colorGameTime2"][1],
+								value["colorGameTime2"][2],
+								value["colorGameTime2"][3]
+							};
+						}
+					}
+					else {
+						LOG("value non");
+
+						preset.colorBoost2 = preset.colorBoost;
+						preset.colorGameTime2 = preset.colorGameTime;
+						preset.colorScoreMyTeam2 = preset.colorScoreMyTeam;
+						preset.colorScoreOppositeTeam2 = preset.colorScoreOppositeTeam;
+					}
 
 
 					// Ajout du preset à la map
@@ -746,52 +682,6 @@ string CustomUI::getStringSettingsColor(string nameSettings) {
 		throw std::invalid_argument("Invalid field name: " + nameSettings);
 	}
 }
-//
-//void CustomUI::updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue) {
-//	
-//	auto basePath = gameWrapper->GetDataFolder() / "CustomUI" / "Presets";
-//
-//	// Chercher le fichier correspondant au preset
-//	string presetPath = (basePath / presetKey / "preset.json").string();
-//
-//	
-//	if (jsonData["presets"].contains(presetKey)) {
-//		// Mise à jour du JSON
-//		//newValue = round(newValue * 1000.0f) / 1000.0f;
-//		//std::string truncatedValueStr = floatToStringWithPrecision(newValue);
-//
-//		jsonData["presets"][presetKey][field][positionScale] = newValue;
-//		LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
-//		try {
-//			SettingsItems& settings = getSettings(currentPreset, field);				
-//			if (positionScale == "positionX") {
-//				settings.positionX = newValue;
-//			}
-//			else if (positionScale == "positionY") {
-//				settings.positionY = newValue;
-//			}
-//			else if (positionScale == "sizeX") {
-//				settings.sizeX = newValue;
-//			}
-//			else if (positionScale == "sizeY") {
-//				settings.sizeY = newValue;
-//			}
-//		}
-//		catch (const std::invalid_argument& e) {
-//			LOG(e.what());
-//		}
-//
-//		saveJsonToFile(presetPath);
-//	}
-//	else {
-//		LOG("Preset " + presetKey + " introuvable !");
-//	}
-//
-//	if (jsonData.is_discarded()) {
-//		LOG("Erreur : jsonData est corrompu !");
-//		return;
-//	}
-//}
 
 void CustomUI::updateJsonColor(const string presetKey, const string& field, array<int, 4>& newValues) {
 	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
@@ -1064,55 +954,159 @@ int CustomUI::getGameTime()
 
 	return localServer.GetSecondsRemaining();
 }
-//
-//string CustomUI::getColorTeamByBool() {
-//	if (colorTeamBool) {
-//		return "blue";
-//	}
-//	else {
-//		return "orange";
-//	}
-//
-//}
-//
-//bool CustomUI::getColorTeamInGame() {
-//	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
-//	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
-//	CarWrapper car = gameWrapper->GetLocalCar();
-//
-//	if (gameWrapper->IsInGame() && !localServer.IsNull())
-//	{
-//		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
-//
-//		if (!localServerLocalPrimaryPlayer.IsNull()) {
-//			if (car.GetTeamNum2() == 0) {
-//				return true;
-//			}
-//			else {
-//				return false;
-//			}
-//		}
-//			
-//
-//	}
-//	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
-//	{
-//		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
-//
-//		if (!onlineServerLocalPrimaryPlayer.IsNull()) {
-//			if (car.GetTeamNum2() == 0) {
-//				return true;
-//			}
-//			else {
-//				return false;
-//			}
-//		}
-//			
-//	}
-//	else {
-//		return NULL;
-//	}
-//}
+
+shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWrapper>> imageDisplay, map<string, shared_ptr<ImageWrapper>> imageDisplay2, string keyPreset) {
+	if (getColorTeamInGame() == 0) {
+		return imageDisplay[keyPreset];
+	}
+	else if (getColorTeamInGame() == 1) {
+		return imageDisplay2[keyPreset];
+	}
+	else {
+		return imageDisplay[keyPreset];
+	}
+	
+}
+
+string CustomUI::getColorTeamByBool() {
+	if (colorTeamBool) {
+		return "blue";
+	}
+	else {
+		return "orange";
+	}
+
+}
+
+int CustomUI::getColorTeamInGame() {
+	if (isInFreeplay()) {
+		if (currentPreset.differentTeam) {
+			if (colorTeamBool) {
+				LOG("freeplay 0");
+
+				return 0;
+			}
+			else {
+				LOG("freeplay 1");
+				return 1;
+			}
+		}
+		else {
+			LOG("freeplay other");
+
+			return -1;
+		}
+		
+	}
+	else if (isInGame()) {
+		if (isMainPlayerSpectator()) {
+
+
+
+
+			//LOG("spectator");
+
+
+
+
+			/*CameraWrapper camera = gameWrapper->GetCamera();
+			if (!camera) return -1;
+
+			ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+			if (!onlineServer.IsNull()) {
+
+				for (CarWrapper cars : onlineServer.GetCars()) {
+					LOG("for");
+					if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+						LOG("online");
+						if (cars.GetTeamNum2() == 0) {
+							return 0;
+						}
+						else {
+							return 1;
+						}
+					}
+				}
+			}
+			else {
+				LOG("onlineServerNull");
+			}*/
+
+		}
+		else {
+			CarWrapper car = gameWrapper->GetLocalCar();
+			if (!car) {
+				LOG("not car");
+				return -1;
+			}
+			else {
+				if (currentPreset.differentTeam) {
+					if (car.GetTeamNum2() == 0) {
+						return 0;
+					}
+					else {
+						return 1;
+					}
+				}
+			}
+			LOG("isInGame");
+			return -1;
+		}
+		
+	}
+	//else if (isInGame()) {
+	//	/*if (isMainPlayerSpectator()) {
+	//		CameraWrapper camera = gameWrapper->GetCamera();
+	//		if (!camera) return -1;
+
+	//		ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+	//		if (!onlineServer) {
+	//			return -1;
+	//		}
+	//		else {
+	//			if (!onlineServer.IsNull()) {
+	//				for (CarWrapper cars : onlineServer.GetCars()) {
+	//					if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+	//						if (cars.GetTeamNum2() == 0) {
+	//							return 0;
+	//						}
+	//						else {
+	//							return 1;
+	//						}
+	//					}
+	//				}
+	//			}
+	//		}
+	//		
+	//	}
+	//	else {*/
+	//		CarWrapper car = gameWrapper->GetLocalCar();
+	//		if (!car) {
+	//			LOG("not car");
+	//			return -1;
+	//		}
+	//		else {
+	//			if (currentPreset.differentTeam) {
+	//				if (car.GetTeamNum2() == 0) {
+	//					return 0;
+	//				}
+	//				else {
+	//					return 1;
+	//				}
+	//			}
+	//		}
+	//	//}
+	//
+	//	
+	//}
+	else {
+		LOG("others");
+
+		return -1;
+	}
+	
+}
 
 int CustomUI::getTeamScore(int teamNumber)
 {
@@ -1349,6 +1343,8 @@ TeamWrapper CustomUI::getOpposingTeam()
 	}
 
 }
+
+
 
 inline std::string CustomUI::lead_zeros(int n, int len)
 {

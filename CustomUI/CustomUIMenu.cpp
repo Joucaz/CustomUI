@@ -322,13 +322,24 @@ void CustomUI::RenderMenu() {
 			for (const auto& str : stringItems) {
 				cStringItems.push_back(str.c_str());
 			}
-
-			/*if (currentPreset.differentFiles) {
-				string buttonLabel = getColorTeamByBool() + "##ButtonChangeTeamColor";
-				if (ImGui::Button(buttonLabel.c_str())) {
-					colorTeamBool = !colorTeamBool;
+			try {
+				if (currentPreset.differentTeam) {
+					LOG("different");
+					std::string buttonLabel = getColorTeamByBool() + "##ButtonChangeTeamColor";
+					if (ImGui::Button(buttonLabel.c_str())) {
+						colorTeamBool = !colorTeamBool;
+					}
 				}
-			}*/
+			}
+			catch (const std::exception& e) {
+				// Capture les exceptions standard
+				LOG(std::string("Exception caught: ") + e.what());
+			}
+			catch (...) {
+				// Capture toutes les autres exceptions
+				LOG("Unknown exception caught");
+			}
+
 
 			ImGui::Text("Choose Items to move and resize");
 			ImGui::SetNextItemWidth(400.0f);
