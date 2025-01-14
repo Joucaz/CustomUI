@@ -323,6 +323,13 @@ void CustomUI::RenderMenu() {
 				cStringItems.push_back(str.c_str());
 			}
 
+			/*if (currentPreset.differentFiles) {
+				string buttonLabel = getColorTeamByBool() + "##ButtonChangeTeamColor";
+				if (ImGui::Button(buttonLabel.c_str())) {
+					colorTeamBool = !colorTeamBool;
+				}
+			}*/
+
 			ImGui::Text("Choose Items to move and resize");
 			ImGui::SetNextItemWidth(400.0f);
 			if (ImGui::Combo("##ItemsToModify", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
@@ -715,10 +722,10 @@ Date: DD/MM/AAAA:
 -------------------
 
 New Features:
-	- Introduced a button to enable/disable the plugin's UI directly from the plugin window for easier control.
+	- Added a button to enable/disable the plugin's UI directly from the plugin window.
 	- Added detection of scores and boost amount in spectate mode.
 	- Added the detection of score and the boost amount in spectate mode.
-	- Added the button to enable/disable the UI of the plugin directly inside the plugin window.
+	- Added the "Patch Notes" tab item.
 
 Improvements and Changes:
 	-

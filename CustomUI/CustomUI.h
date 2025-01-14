@@ -46,6 +46,14 @@ struct Preset {
 	SettingsItems settingsScoreMyTeam;
 	SettingsItems settingsScoreOppositeTeam;
 	SettingsItems settingsGameTime;
+	/*string boostDisplayImage2;
+	string boostTextureImage2;
+	string scoreImage2;
+	array<int, 4> colorBoost2;
+	array<int, 4> colorScoreMyTeam2;
+	array<int, 4> colorScoreOppositeTeam2;
+	array<int, 4> colorGameTime2;
+	bool differentFiles;*/
 };
 
 // Définir une structure pour les patch notes
@@ -119,6 +127,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	int getMyTeamScore();
 	int getOpposingTeamScore();
 	int getTeamScore(int teamNumber);
+	bool getColorTeamInGame();
+	string getColorTeamByBool();
 
 	bool isMainPlayerSpectator();
 
@@ -203,6 +213,9 @@ private:
 	json jsonData;
 
 	bool pluginEnabled = true;
+	bool differentFiles = false;
+
+	bool colorTeamBool = true;
 
 	bool isMenuOpened = false;
 	bool isOnPause = false;
@@ -275,6 +288,9 @@ private:
 	map<string, shared_ptr<ImageWrapper>> imageDisplayBoost;
 	map<string, shared_ptr<ImageWrapper>> imageTextureBoost;
 	map<string, shared_ptr<ImageWrapper>> imageScore;
+	map<string, shared_ptr<ImageWrapper>> imageDisplayBoost2;
+	map<string, shared_ptr<ImageWrapper>> imageTextureBoost2;
+	map<string, shared_ptr<ImageWrapper>> imageScore2;
 	map<string, shared_ptr<ImageWrapper>> imageReplay;
 	map<string, shared_ptr<ImageWrapper>> imageEnd;
 
