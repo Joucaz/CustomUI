@@ -219,12 +219,12 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	auto& settingsScoreOppositeTeam = currentPreset.settingsScoreOppositeTeam;
 	auto& settingsGameTime = currentPreset.settingsGameTime;
 
-	if (!imageScore[keyPreset]->IsLoadedForImGui()) {
+	if (!getImageRender(imageScore, imageScore2, keyPreset)->IsLoadedForImGui()) {
 		return;
 	}
 
-	if (auto renderImageScore = imageScore[keyPreset]->GetImGuiTex()) {
-		auto size = imageScore[keyPreset]->GetSizeF();
+	if (auto renderImageScore = getImageRender(imageScore, imageScore2, keyPreset)->GetImGuiTex()) {
+		auto size = getImageRender(imageScore, imageScore2, keyPreset)->GetSizeF();
 
 		ImVec2 position;
 		ImVec2 fullSize;
@@ -415,12 +415,12 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 	auto& settingsBoostTexture = currentPreset.settingsBoostTexture;
 	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
 
-	if (!imageTextureBoost[keyPreset]->IsLoadedForImGui()) {
+	if (!getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->IsLoadedForImGui()) {
 		return;
 	}
 
-	if (auto renderImageBoost = imageTextureBoost[keyPreset]->GetImGuiTex()) {
-		auto size = imageTextureBoost[keyPreset]->GetSizeF();
+	if (auto renderImageBoost = getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->GetImGuiTex()) {
+		auto size = getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->GetSizeF();
 
 		// Calcul des ratios et paramètres
 		float boostRatio = boost / 100.0f;

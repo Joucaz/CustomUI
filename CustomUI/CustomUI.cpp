@@ -318,16 +318,26 @@ void CustomUI::UpdateVars()
 	if (isMainPlayerSpectator()) {
 		isSpectator = true;
 		//LOG("spectator");
-		//intFileImage = getIntTeamSpectator();
+		if (currentPreset.differentTeam) {
+			intFileImage = getIntTeamSpectator();
+		}
+		else {
+			intFileImage = -1;
+		}
 		boost = getBoostAmountSpectator();
 	}
 	else {
 		isSpectator = false;
 		//LOG("notspectator");
-		//intFileImage = getIntTeamPlayer();
+		if (currentPreset.differentTeam) {
+			intFileImage = getIntTeamPlayer();
+		}
+		else {
+			intFileImage = -1;
+		}
+		
 		boost = getBoostAmount();
 	}
-	//LOG("intFileImage : " + to_string(intFileImage));
 	
 
 }
@@ -1292,61 +1302,11 @@ int CustomUI::getColorTeamInGame() {
 		if (currentPreset.differentTeam) {
 			if (!isSpectator) {
 				LOG("Not spectator");
-				CarWrapper car = gameWrapper->GetLocalCar();
-				if (!car) return -1;
-
-				if (car.GetTeamNum2() == 0) {
-					LOG("blue");
-					return 0;
-				}
-				else {
-					LOG("orange");
-					return 1;
-				}
+				return intFileImage;
 			}
 			else {
 				LOG("spectator");
-				CameraWrapper camera = gameWrapper->GetCamera();
-				if (!camera) return -1;
-
-				ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
-				ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
-
-
-				if (!localServer.IsNull()) {
-					for (CarWrapper cars : localServer.GetCars()) {
-						if (!cars.IsNull()) {
-							if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
-								if (cars.GetTeamNum2() == 0) {
-									return 0;
-								}
-								else {
-									return 1;
-								}
-							}
-						}
-						
-					}
-				}
-
-				if (!onlineServer.IsNull()) {
-					for (CarWrapper cars : onlineServer.GetCars()) {
-						if (!cars.IsNull()) {
-							if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
-								if (cars.GetTeamNum2() == 0) {
-									return 0;
-								}
-								else {
-									return 1;
-								}
-							}
-						}
-						
-					}
-				}
-				else {
-					return -1;
-				}
+				return intFileImage;
 			}
 		}
 		else {
