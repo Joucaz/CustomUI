@@ -134,6 +134,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	bool isMainPlayerSpectator();
 
+	int getIntTeamSpectator();
+	int getIntTeamPlayer();
+
 	bool isInFreeplay();
 	bool isInGame();
 	void onGameStart();
@@ -217,6 +220,7 @@ private:
 	bool pluginEnabled = true;
 
 	bool colorTeamBool = true;
+	bool isSpectator = false;
 
 	bool isMenuOpened = false;
 	bool isOnPause = false;
@@ -237,6 +241,8 @@ private:
 	bool changingBeginSize = false;
 
 	int countdownPauseSpectate = 0;
+
+	int intFileImage = -1;
 
 	// ImGui Shabananagans
 	ImGuiStyle UserStyle;
@@ -294,6 +300,8 @@ private:
 	map<string, shared_ptr<ImageWrapper>> imageScore2;
 	map<string, shared_ptr<ImageWrapper>> imageReplay;
 	map<string, shared_ptr<ImageWrapper>> imageEnd;
+
+	shared_ptr<ImageWrapper> imageRenderBoost;
 
 	shared_ptr<ImageWrapper> imageLogo;
 	shared_ptr<ImageWrapper> imageLogoText;

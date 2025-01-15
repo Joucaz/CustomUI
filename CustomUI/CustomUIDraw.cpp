@@ -349,6 +349,19 @@ void CustomUI::drawBoostDisplay(ImDrawList* drawList) {
 
 	auto& settingsBoostDisplayArray = currentPreset.settingsBoostDisplay;
 	auto& settingsBoostAllItemsArray = currentPreset.settingsBoostAllItems;
+
+	/*shared_ptr<ImageWrapper> imageRender;
+	gameWrapper->Execute([&, imageRender](GameWrapper* gw) mutable {
+		imageRender = getImageRender(imageDisplayBoost, imageDisplayBoost2, keyPreset);
+		});
+
+
+	if (!imageRender->IsLoadedForImGui()) {
+		return;
+	}
+
+	if (auto renderImageBoost = imageRender->GetImGuiTex()) {
+		auto size = imageRender->GetSizeF();*/
 	
 	if (!getImageRender(imageDisplayBoost, imageDisplayBoost2, keyPreset)->IsLoadedForImGui()) {
 		return;

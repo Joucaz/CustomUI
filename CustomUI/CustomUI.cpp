@@ -316,13 +316,68 @@ void CustomUI::UpdateVars()
 	}*/
 
 	if (isMainPlayerSpectator()) {
+		isSpectator = true;
+		//LOG("spectator");
+		//intFileImage = getIntTeamSpectator();
 		boost = getBoostAmountSpectator();
 	}
 	else {
+		isSpectator = false;
+		//LOG("notspectator");
+		//intFileImage = getIntTeamPlayer();
 		boost = getBoostAmount();
 	}
+	//LOG("intFileImage : " + to_string(intFileImage));
 	
 
+}
+int CustomUI::getIntTeamPlayer() {
+	CarWrapper car = gameWrapper->GetLocalCar();
+	if (!car) return -1;
+
+	if (car.GetTeamNum2() == 0) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
+}
+int CustomUI::getIntTeamSpectator() {
+	CameraWrapper camera = gameWrapper->GetCamera();
+	if (!camera) return -1;
+
+	ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+	ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+
+	if (!localServer.IsNull()) {
+		for (CarWrapper cars : localServer.GetCars()) {
+			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+				if (cars.GetTeamNum2() == 0) {
+					return 0;
+				}
+				else {
+					return 1;
+				}
+			}
+		}
+	}
+
+	if (!onlineServer.IsNull()) {
+		for (CarWrapper cars : onlineServer.GetCars()) {
+			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+				if (cars.GetTeamNum2() == 0) {
+					return 0;
+				}
+				else {
+					return 1;
+				}
+			}
+		}
+	}
+	else {
+		return -1;
+	}
 }
 
 bool CustomUI::isInGame() {
@@ -1234,21 +1289,69 @@ int CustomUI::getColorTeamInGame() {
 
 	}
 	else {
-		ServerWrapper server = gameWrapper->GetOnlineGame();
-		if (!server) { LOG("SERVER DOWN");  return -1; } else{ LOG("SERVER"); }
-		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = server.GetLocalPrimaryPlayer();
-		if (!onlineServerLocalPrimaryPlayer) { 
-			LOG("primary player DOWN");  
-			return -1; 
-		}
-		else { 
-			LOG("primary player"); 
+		if (currentPreset.differentTeam) {
+			if (!isSpectator) {
+				LOG("Not spectator");
+				CarWrapper car = gameWrapper->GetLocalCar();
+				if (!car) return -1;
 
-		}
-		
-		LOG("others");
+				if (car.GetTeamNum2() == 0) {
+					LOG("blue");
+					return 0;
+				}
+				else {
+					LOG("orange");
+					return 1;
+				}
+			}
+			else {
+				LOG("spectator");
+				CameraWrapper camera = gameWrapper->GetCamera();
+				if (!camera) return -1;
 
-		return -1;
+				ServerWrapper localServer = gameWrapper->GetGameEventAsServer();
+				ServerWrapper onlineServer = gameWrapper->GetOnlineGame();
+
+
+				if (!localServer.IsNull()) {
+					for (CarWrapper cars : localServer.GetCars()) {
+						if (!cars.IsNull()) {
+							if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+								if (cars.GetTeamNum2() == 0) {
+									return 0;
+								}
+								else {
+									return 1;
+								}
+							}
+						}
+						
+					}
+				}
+
+				if (!onlineServer.IsNull()) {
+					for (CarWrapper cars : onlineServer.GetCars()) {
+						if (!cars.IsNull()) {
+							if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+								if (cars.GetTeamNum2() == 0) {
+									return 0;
+								}
+								else {
+									return 1;
+								}
+							}
+						}
+						
+					}
+				}
+				else {
+					return -1;
+				}
+			}
+		}
+		else {
+			return -1;
+		}
 	}
 
 }
