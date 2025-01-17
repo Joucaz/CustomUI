@@ -32,16 +32,16 @@ void CustomUI::onLoad()
 
 	//auto cvar = cvarManager->registerCvar("CustomUI_positionBoostBar", "left", "the position of the boost bar");
 
-	cvarManager->registerCvar("CustomUI_enabled", "1", "Enable CustomUI Plugin", true, true, 0, true, 1)
-		.addOnValueChanged([this](std::string oldValue, CVarWrapper cvar) {
-		pluginEnabled = cvar.getBoolValue();
-			});
+
+	auto cvarEnableDisable = cvarManager->registerCvar("CustomUI_enabled", "1", "Enable CustomUI Plugin", true, true, 0, true, 1);
 
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine Corp", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition2 = cvarManager->registerCvar("CustomUI_itemsNamePosition2", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition3 = cvarManager->registerCvar("CustomUI_itemsNamePosition3", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition4 = cvarManager->registerCvar("CustomUI_itemsNamePosition4", "", "item selected to move and resize", true, false, 0, false);
+
+	auto cvarTeamColor = cvarManager->registerCvar("CustomUI_TeamColor", "0", "Color of the team choosen", true, true, 0, true, 1);
 
 	auto cvarCustomizationWindow = cvarManager->registerCvar("CustomUI_enableCustomizationWindow", "0", "enable the window to edit items", true, true, 0, true, 1);
 
@@ -113,6 +113,8 @@ void CustomUI::onLoad()
 	gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
 		cvarManager->executeCommand("togglemenu " + GetMenuName());
 		}, 1);
+
+	LOG("testtt");
 }
 
 
@@ -145,7 +147,10 @@ void CustomUI::initValues() {
 	changeBoostDisplay(boostFormCvar);
 	loadThemeFont();
 	appendFont();
-
+	/*LOG("before plugin enable" + to_string(pluginEnabled));
+	LOG("before cvar" + to_string(getCvarBool("CustomUI_enabled")));*/
+	/*LOG("after cvar" + to_string(getCvarBool("CustomUI_enabled")));
+	LOG("after plugin enable" + to_string(pluginEnabled));*/
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
 	initFonts();
@@ -284,6 +289,16 @@ void CustomUI::writeCvar() {
 
 string CustomUI::getCvarString(string cVarName) {
 	return cvarManager->getCvar(cVarName).getStringValue();
+}
+bool CustomUI::getCvarBool(string cVarName) {
+	/*if (cvarManager->getCvar(cVarName).getStringValue() == "0") {
+		return false;
+	}
+	else {
+		return true;
+	}*/
+	return cvarManager->getCvar(cVarName).getBoolValue();
+
 }
 void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 	cVarName.setValue(cVarValue);
@@ -695,53 +710,76 @@ SettingsItems& CustomUI::getSettings(Preset& preset, const std::string& fieldNam
 	}
 }
 array<int, 4>& CustomUI::getSettingsSettingsColor(Preset& preset, const std::string& fieldName) {
+	bool useAlternateColors;
+	if (isInFreeplay()) {
+		useAlternateColors = (preset.differentTeam && !colorTeamBool);
+	}
+	else {
+		useAlternateColors = (preset.differentTeam && intFileImage == 1);
+	}
 
 	if (fieldName == "settingsBoostText") {
-		return preset.colorBoost;
+		return useAlternateColors ? preset.colorBoost2 : preset.colorBoost;
 	}
 	else if (fieldName == "settingsScoreMyTeam") {
-		return preset.colorScoreMyTeam;
+		return useAlternateColors ? preset.colorScoreMyTeam2 : preset.colorScoreMyTeam;
 	}
 	else if (fieldName == "settingsScoreOppositeTeam") {
-		return preset.colorScoreOppositeTeam;
+		return useAlternateColors ? preset.colorScoreOppositeTeam2 : preset.colorScoreOppositeTeam;
 	}
 	else if (fieldName == "settingsGameTime") {
-		return preset.colorGameTime;
+		return useAlternateColors ? preset.colorGameTime2 : preset.colorGameTime;
 	}
 	else {
 		throw std::invalid_argument("Invalid field name: " + fieldName);
 	}
 }
 array<int, 4>& CustomUI::getSettingsColor(Preset& preset, const std::string& fieldName) {
+	bool useAlternateColors;
+	if (isInFreeplay()) {
+		useAlternateColors = (preset.differentTeam && !colorTeamBool);
+	}
+	else {
+		useAlternateColors = (preset.differentTeam && intFileImage == 1);
+	}
+	
 
-	if (fieldName == "colorBoost") {
-		return preset.colorBoost;
+	if (fieldName == "colorBoost" || fieldName == "colorBoost2") {
+		return useAlternateColors ? preset.colorBoost2 : preset.colorBoost;
 	}
-	else if (fieldName == "colorScoreMyTeam") {
-		return preset.colorScoreMyTeam;
+	else if (fieldName == "colorScoreMyTeam" || fieldName == "colorScoreMyTeam2") {
+		return useAlternateColors ? preset.colorScoreMyTeam2 : preset.colorScoreMyTeam;
 	}
-	else if (fieldName == "colorScoreOppositeTeam") {
-		return preset.colorScoreOppositeTeam;
+	else if (fieldName == "colorScoreOppositeTeam" || fieldName == "colorScoreOppositeTeam2") {
+		return useAlternateColors ? preset.colorScoreOppositeTeam2 : preset.colorScoreOppositeTeam;
 	}
-	else if (fieldName == "colorGameTime") {
-		return preset.colorGameTime;
+	else if (fieldName == "colorGameTime" || fieldName == "colorGameTime2") {
+		return useAlternateColors ? preset.colorGameTime2 : preset.colorGameTime;
 	}
 	else {
 		throw std::invalid_argument("Invalid field name: " + fieldName);
 	}
 }
 string CustomUI::getStringSettingsColor(string nameSettings) {
+	bool useAlternateColors;
+	if (isInFreeplay()) {
+		useAlternateColors = (currentPreset.differentTeam && !colorTeamBool);
+	}
+	else {
+		useAlternateColors = (currentPreset.differentTeam && intFileImage == 1);
+	}
+
 	if (nameSettings == "settingsBoostText") {
-		return "colorBoost";
+		return useAlternateColors ? "colorBoost2" : "colorBoost";
 	}
 	else if (nameSettings == "settingsScoreMyTeam") {
-		return "colorScoreMyTeam";
+		return useAlternateColors ? "colorScoreMyTeam2" : "colorScoreMyTeam";
 	}
 	else if (nameSettings == "settingsScoreOppositeTeam") {
-		return "colorScoreOppositeTeam";
+		return useAlternateColors ? "colorScoreOppositeTeam2" : "colorScoreOppositeTeam";
 	}
 	else if (nameSettings == "settingsGameTime") {
-		return "colorGameTime";
+		return useAlternateColors ? "colorGameTime2" : "colorGameTime";
 	}
 	else {
 		throw std::invalid_argument("Invalid field name: " + nameSettings);
@@ -779,9 +817,11 @@ void CustomUI::updateJsonColor(const string presetKey, const string& field, arra
 					array<int, 4>& settingsColor = getSettingsColor(currentPreset, field);
 					for (int i = 0; i < 4; ++i) {
 						settingsColor[i] = newValues[i];
+						LOG(to_string(newValues[i]));
 					}
 				}
 				catch (const std::invalid_argument& e) {
+					LOG("error la ou tu pensais ");
 					LOG(e.what());
 				}
 				
@@ -1274,11 +1314,11 @@ inline std::string CustomUI::lead_zeros(int n, int len)
 
 
 string CustomUI::getColorTeamByBool() {
-	if (colorTeamBool) {
-		return "blue";
+	if (!colorTeamBool) {
+		return "Blue";
 	}
 	else {
-		return "orange";
+		return "Orange";
 	}
 
 }
@@ -1301,11 +1341,9 @@ int CustomUI::getColorTeamInGame() {
 	else {
 		if (currentPreset.differentTeam) {
 			if (!isSpectator) {
-				LOG("Not spectator");
 				return intFileImage;
 			}
 			else {
-				LOG("spectator");
 				return intFileImage;
 			}
 		}

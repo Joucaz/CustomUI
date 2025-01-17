@@ -80,6 +80,9 @@ void CustomUI::RenderMenu() {
 		return;
 	}
 
+	CVarWrapper enableCvar = cvarManager->getCvar("CustomUI_enabled");
+	if (!enableCvar) { return; }
+
 	CVarWrapper boostFormCvar = cvarManager->getCvar("CustomUI_boostForm");
 	if (!boostFormCvar) { return; }
 	//string boostBarCvarValue = boostBarCvar.getStringValue();
@@ -193,13 +196,21 @@ void CustomUI::RenderMenu() {
 			ImGui::Spacing();
 			ImGui::Indent(20.0f);
 
-			ImGui::Checkbox("Use CustomUI", &pluginEnabled);
+			//LOG(to_string(currentPreset.differentTeam));
+			//LOG(to_string(pluginEnabled));
+			pluginEnabled = getCvarBool("CustomUI_enabled");
+			if (ImGui::Checkbox("Use CustomUI", &pluginEnabled)) {
+				setCvarString(enableCvar, to_string(pluginEnabled));
+			}
+
 			//ImGui::Spacing();
 
 			static vector<const char*> itemsPreset;
 			static int currentChoosenPreset = 0;
 
 			if (presetReload) {
+
+				currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 				// Lire le CVar contenant le nom du preset sélectionné
 				string savedPresetName = presetChoosenCvar.getStringValue();
 
@@ -217,6 +228,7 @@ void CustomUI::RenderMenu() {
 			}
 
 			ImGui::Text("Choose a Preset");
+
 			ImGui::SetNextItemWidth(400.0f);
 			if (!itemsPreset.empty() && ImGui::Combo("##ChoosePreset", &currentChoosenPreset, itemsPreset.data(), itemsPreset.size())) {
 				// Appliquer le preset sélectionné
@@ -322,23 +334,8 @@ void CustomUI::RenderMenu() {
 			for (const auto& str : stringItems) {
 				cStringItems.push_back(str.c_str());
 			}
-			try {
-				if (currentPreset.differentTeam) {
-					LOG("different");
-					std::string buttonLabel = getColorTeamByBool() + "##ButtonChangeTeamColor";
-					if (ImGui::Button(buttonLabel.c_str())) {
-						colorTeamBool = !colorTeamBool;
-					}
-				}
-			}
-			catch (const std::exception& e) {
-				// Capture les exceptions standard
-				LOG(std::string("Exception caught: ") + e.what());
-			}
-			catch (...) {
-				// Capture toutes les autres exceptions
-				LOG("Unknown exception caught");
-			}
+
+			
 
 
 			ImGui::Text("Choose Items to move and resize");
@@ -442,7 +439,28 @@ void CustomUI::RenderMenu() {
 					}
 				}
 			}
+			if (currentPreset.differentTeam) {
+				// Définir la couleur du bouton en fonction de colorTeamBool
+				if (!colorTeamBool) {
+					ImGui::PushStyleColor(ImGuiCol_Button, blueRL);
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, blueRLHovered);
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, blueRLActive);
+				}
+				else {
+					ImGui::PushStyleColor(ImGuiCol_Button, orangeRL);
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, orangeRLHovered);
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, orangeRLActive);
+				}
 
+				string buttonLabel = getColorTeamByBool() + " Preset##ButtonChangeTeamColor";
+				ImGui::SameLine();
+				if (ImGui::Button(buttonLabel.c_str())) {
+					colorTeamBool = !colorTeamBool;
+				}
+
+				// Réinitialiser la couleur par défaut
+				ImGui::PopStyleColor(3);
+			}
 			if (showError) {
 				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Select an item before editing on the droplist");
 				errorTimer -= ImGui::GetIO().DeltaTime;
@@ -1153,11 +1171,12 @@ void CustomUI::showRenderEditColor() {
 		for (const auto& settingsItem : settingsItemsList) {
 			try {
 				string colorSettingsJson = getStringSettingsColor(settingsItem);
+				LOG(colorSettingsJson);
 				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
 				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
 			}
 			catch (const std::exception& e) {
-				LOG("Erreur lors du traitement de '" + settingsItem + "': " + std::string(e.what()));
+				LOG("Erreur lors du caca traitement de '" + settingsItem + "': " + std::string(e.what()));
 			}
 		}
 

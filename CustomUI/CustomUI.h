@@ -173,6 +173,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	ImFont* basicFontTitle;
 
 	string getCvarString(string cVarName);
+	bool getCvarBool(string cVarName);
 	void setCvarString(CVarWrapper cVarName, string cVarValue);
 
 public:
@@ -213,11 +214,18 @@ public:
 	static inline const ImVec4 sucreDorgeColor = ImVec4{ 178 / 255.0f, 166 / 255.0f, 40 / 255.0f, 1.0f };
 	static inline const ImVec4 krogezoColor = ImVec4{ 1 / 255.0f, 130 / 255.0f, 129 / 255.0f, 1.0f };
 	static inline const ImVec4 kcColor = ImVec4{ 0 / 255.0f, 189 / 255.0f, 255 / 255.0f, 1.0f };
+	static inline const ImVec4 blueRL = ImVec4{ 10 / 255.0f, 71 / 255.0f, 204 / 255.0f, 1.0f };
+	static inline const ImVec4 blueRLHovered = ImVec4(10 / 255.0f, 59 / 255.0f, 164 / 255.0f, 1.0f);
+	static inline const ImVec4 blueRLActive = ImVec4(12 / 255.0f, 87 / 255.0f, 253 / 255.0f, 1.0f);
+	static inline const ImVec4 orangeRL = ImVec4{ 230 / 255.0f, 136 / 255.0f, 24 / 255.0f, 1.0f };
+	static inline const ImVec4 orangeRLHovered = ImVec4(196 / 255.0f, 120 / 255.0f, 29 / 255.0f, 1.0f);
+	static inline const ImVec4 orangeRLActive = ImVec4(255 / 255.0f, 139 / 255.0f, 0 / 255.0f, 1.0f);
+
 
 private:
 	json jsonData;
 
-	bool pluginEnabled = true;
+	bool pluginEnabled;
 
 	bool colorTeamBool = true;
 	bool isSpectator = false;

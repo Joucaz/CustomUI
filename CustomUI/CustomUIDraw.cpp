@@ -287,14 +287,10 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	{
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
-
-	//ImU32 color = changeColorText(currentPreset.colorScoreMyTeam, "settingsScoreMyTeam");
-	//ImU32 color = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
-	//ImU32 color = changeColorText(currentPreset.colorGameTime, "settingsScoreOppositeTeam");
-
-	ImU32 colorScoreMyTeam = changeColorText(currentPreset.colorScoreMyTeam, "settingsScoreMyTeam");
-	ImU32 colorScoreOppositeTeam = changeColorText(currentPreset.colorScoreOppositeTeam, "settingsScoreOppositeTeam");
-	ImU32 colorGameTime = changeColorText(currentPreset.colorGameTime, "settingsGameTime"); 
+	
+	ImU32 colorScoreMyTeam = changeColorText(getSettingsColor(currentPreset, "colorScoreMyTeam"), "settingsScoreMyTeam");
+	ImU32 colorScoreOppositeTeam = changeColorText(getSettingsColor(currentPreset, "colorScoreOppositeTeam"), "settingsScoreOppositeTeam");
+	ImU32 colorGameTime = changeColorText(getSettingsColor(currentPreset, "colorGameTime"), "settingsGameTime");
 
 	drawTextScore(drawList, PositionScoreA, 160, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 160, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
@@ -514,7 +510,7 @@ void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, in
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = changeColorText(currentPreset.colorBoost, "settingsBoostText");
+	ImU32 color = changeColorText(getSettingsColor(currentPreset, "colorBoost"), "settingsBoostText");
 	//ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
 
 	//auto& preset = allPresets[keyPreset];
