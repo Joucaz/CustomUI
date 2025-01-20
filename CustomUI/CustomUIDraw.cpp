@@ -219,12 +219,22 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	auto& settingsScoreOppositeTeam = currentPreset.settingsScoreOppositeTeam;
 	auto& settingsGameTime = currentPreset.settingsGameTime;
 
-	if (!getImageRender(imageScore, imageScore2, keyPreset)->IsLoadedForImGui()) {
+	auto renderImage = getImageRender(imageScore, imageScore2, keyPreset);
+	auto basicRenderImage = imageScore[keyPreset];
+	shared_ptr<ImageWrapper> choosenImage;
+	if (isSpectator) {
+		choosenImage = basicRenderImage;
+	}
+	else {
+		choosenImage = renderImage;
+	}
+
+	if (!choosenImage->IsLoadedForImGui()) {
 		return;
 	}
 
-	if (auto renderImageScore = getImageRender(imageScore, imageScore2, keyPreset)->GetImGuiTex()) {
-		auto size = getImageRender(imageScore, imageScore2, keyPreset)->GetSizeF();
+	if (auto renderImageScore = choosenImage->GetImGuiTex()) {
+		auto size = choosenImage->GetSizeF();
 
 		ImVec2 position;
 		ImVec2 fullSize;
@@ -287,10 +297,44 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	{
 		PositionScoreB = { PositionScoreB.X - 8 , PositionScoreB.Y };
 	}
-	
-	ImU32 colorScoreMyTeam = changeColorText(getSettingsColor(currentPreset, "colorScoreMyTeam"), "settingsScoreMyTeam");
-	ImU32 colorScoreOppositeTeam = changeColorText(getSettingsColor(currentPreset, "colorScoreOppositeTeam"), "settingsScoreOppositeTeam");
-	ImU32 colorGameTime = changeColorText(getSettingsColor(currentPreset, "colorGameTime"), "settingsGameTime");
+
+	array<int, 4> choosenColorMyTeam;
+	auto renderColorMyTeam = getSettingsColor(currentPreset, "colorScoreMyTeam");
+	auto basicRenderColorMyTeam = currentPreset.colorScoreMyTeam;
+
+	if (isSpectator) {
+		choosenColorMyTeam = basicRenderColorMyTeam;
+	}
+	else {
+		choosenColorMyTeam = renderColorMyTeam;
+	}
+
+	array<int, 4> choosenColorOppositeTeam;
+	auto renderColorOppositeTeam = getSettingsColor(currentPreset, "colorScoreOppositeTeam");
+	auto basicRenderColorOppositeTeam = currentPreset.colorScoreOppositeTeam;
+
+	if (isSpectator) {
+		choosenColorOppositeTeam = basicRenderColorOppositeTeam;
+	}
+	else {
+		choosenColorOppositeTeam = renderColorOppositeTeam;
+	}
+
+	array<int, 4> choosenColorGameTime;
+	auto renderColorGameTime = getSettingsColor(currentPreset, "colorGameTime");
+	auto basicRenderColorGameTime = currentPreset.colorGameTime;
+
+	if (isSpectator) {
+		choosenColorGameTime = basicRenderColorGameTime;
+	}
+	else {
+		choosenColorGameTime = renderColorGameTime;
+	}
+
+	ImU32 colorScoreMyTeam = changeColorText(choosenColorMyTeam, "settingsScoreMyTeam");
+	ImU32 colorScoreOppositeTeam = changeColorText(choosenColorOppositeTeam, "settingsScoreOppositeTeam");
+	ImU32 colorGameTime = changeColorText(choosenColorGameTime, "settingsGameTime");
+
 
 	drawTextScore(drawList, PositionScoreA, 160, colorScoreMyTeam, settingsScoreAllItems, settingsScoreMyTeam, "settingsScoreMyTeam", to_string(scoreA).c_str());
 	drawTextScore(drawList, PositionScoreB, 160, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
@@ -466,7 +510,9 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = IM_COL32(currentPreset.colorBoost[0], currentPreset.colorBoost[1], currentPreset.colorBoost[2], currentPreset.colorBoost[3]);
+	ImU32 color = changeColorText(getSettingsColor(currentPreset, "colorBoostCircle"), "settingsBoostCircle");
+
+	//ImU32 color = IM_COL32(currentPreset.colorBoostCircle[0], currentPreset.colorBoostCircle[1], currentPreset.colorBoostCircle[2], currentPreset.colorBoostCircle[3]);
 
 	ImVec2 center = { 0,0 };
 	float radius;

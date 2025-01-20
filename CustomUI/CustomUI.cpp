@@ -345,7 +345,9 @@ void CustomUI::UpdateVars()
 		isSpectator = false;
 		//LOG("notspectator");
 		if (currentPreset.differentTeam) {
-			intFileImage = getIntTeamPlayer();
+			if (!replayDisplay) {
+				intFileImage = getIntTeamPlayer();
+			}
 		}
 		else {
 			intFileImage = -1;
@@ -553,6 +555,18 @@ map<string, Preset> CustomUI::loadPresets() {
 						value["colorBoost"][2],
 						value["colorBoost"][3]
 					};
+					if (value.contains("colorBoostCircle")) {
+						preset.colorBoostCircle = {
+							value["colorBoostCircle"][0],
+							value["colorBoostCircle"][1],
+							value["colorBoostCircle"][2],
+							value["colorBoostCircle"][3]
+						};
+					}
+					else {
+						preset.colorBoostCircle = preset.colorBoost;
+					}
+					
 					preset.boostForm = value["boostForm"];
 					preset.scoreImage = value["scoreImage"];
 					preset.colorScoreMyTeam = {
@@ -588,8 +602,7 @@ map<string, Preset> CustomUI::loadPresets() {
 					loadImageFromJson(basePath, key, preset.boostTextureImage, imageTextureBoost, "Boost Texture");
 					loadImageFromJson(basePath, key, preset.scoreImage, imageScore, "Score");
 
-					
-
+						
 					if (value.contains("differentTeam")) {
 						LOG("value oui");
 						preset.differentTeam = value["differentTeam"];
@@ -611,6 +624,15 @@ map<string, Preset> CustomUI::loadPresets() {
 								value["colorBoost2"][1],
 								value["colorBoost2"][2],
 								value["colorBoost2"][3]
+							};
+						}
+
+						if (value.contains("colorBoostCircle2")) {
+							preset.colorBoostCircle2 = {
+								value["colorBoostCircle2"][0],
+								value["colorBoostCircle2"][1],
+								value["colorBoostCircle2"][2],
+								value["colorBoostCircle2"][3]
 							};
 						}
 
@@ -650,6 +672,7 @@ map<string, Preset> CustomUI::loadPresets() {
 						LOG("value non");
 
 						preset.colorBoost2 = preset.colorBoost;
+						preset.colorBoostCircle2 = preset.colorBoostCircle;
 						preset.colorGameTime2 = preset.colorGameTime;
 						preset.colorScoreMyTeam2 = preset.colorScoreMyTeam;
 						preset.colorScoreOppositeTeam2 = preset.colorScoreOppositeTeam;
@@ -721,6 +744,9 @@ array<int, 4>& CustomUI::getSettingsSettingsColor(Preset& preset, const std::str
 	if (fieldName == "settingsBoostText") {
 		return useAlternateColors ? preset.colorBoost2 : preset.colorBoost;
 	}
+	else if (fieldName == "settingsBoostCircle") {
+		return useAlternateColors ? preset.colorBoostCircle2 : preset.colorBoostCircle;
+	}
 	else if (fieldName == "settingsScoreMyTeam") {
 		return useAlternateColors ? preset.colorScoreMyTeam2 : preset.colorScoreMyTeam;
 	}
@@ -747,6 +773,9 @@ array<int, 4>& CustomUI::getSettingsColor(Preset& preset, const std::string& fie
 	if (fieldName == "colorBoost" || fieldName == "colorBoost2") {
 		return useAlternateColors ? preset.colorBoost2 : preset.colorBoost;
 	}
+	else if (fieldName == "colorBoostCircle" || fieldName == "colorBoostCircle2") {
+		return useAlternateColors ? preset.colorBoostCircle2 : preset.colorBoostCircle;
+	}
 	else if (fieldName == "colorScoreMyTeam" || fieldName == "colorScoreMyTeam2") {
 		return useAlternateColors ? preset.colorScoreMyTeam2 : preset.colorScoreMyTeam;
 	}
@@ -771,6 +800,9 @@ string CustomUI::getStringSettingsColor(string nameSettings) {
 
 	if (nameSettings == "settingsBoostText") {
 		return useAlternateColors ? "colorBoost2" : "colorBoost";
+	}
+	else if (nameSettings == "settingsBoostCircle") {
+		return useAlternateColors ? "colorBoostCircle2" : "colorBoostCircle";
 	}
 	else if (nameSettings == "settingsScoreMyTeam") {
 		return useAlternateColors ? "colorScoreMyTeam2" : "colorScoreMyTeam";

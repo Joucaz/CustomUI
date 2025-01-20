@@ -255,7 +255,8 @@ void CustomUI::RenderMenu() {
 				itemsPosition = { "", "settingsBoostAllItems", "settingsScoreAllItems" };
 			}
 			else {
-				itemsPositionCombo = {
+				if (isTexture) {
+					itemsPositionCombo = {
 					"",
 					"Background Image Boost",
 					"Texture Image Boost",
@@ -264,17 +265,43 @@ void CustomUI::RenderMenu() {
 					"Text Score My Team",
 					"Text Score Opposite Team",
 					"Text Gametime"
-				};
-				itemsPosition = {
-					"",
-					"settingsBoostDisplay",
-					"settingsBoostTexture",
-					"settingsBoostText",
-					"settingsScoreDisplay",
-					"settingsScoreMyTeam",
-					"settingsScoreOppositeTeam",
-					"settingsGameTime"
-				};
+					};
+					itemsPosition = {
+						"",
+						"settingsBoostDisplay",
+						"settingsBoostTexture",
+						"settingsBoostText",
+						"settingsScoreDisplay",
+						"settingsScoreMyTeam",
+						"settingsScoreOppositeTeam",
+						"settingsGameTime"
+					};
+				}
+				else {
+					itemsPositionCombo = {
+						"",
+						"Background Image Boost",
+						"Texture Image Boost",
+						"Text Boost",
+						"Circle Color Boost",
+						"Background Image Score",
+						"Text Score My Team",
+						"Text Score Opposite Team",
+						"Text Gametime"
+					};
+					itemsPosition = {
+						"",
+						"settingsBoostDisplay",
+						"settingsBoostTexture",
+						"settingsBoostText",
+						"settingsBoostCircle",
+						"settingsScoreDisplay",
+						"settingsScoreMyTeam",
+						"settingsScoreOppositeTeam",
+						"settingsGameTime"
+					};
+				}
+				
 			}
 			std::vector<std::string> settingsItemsList = {
 				getCvarString("CustomUI_itemsNamePosition"),
@@ -452,7 +479,7 @@ void CustomUI::RenderMenu() {
 					ImGui::PushStyleColor(ImGuiCol_ButtonActive, orangeRLActive);
 				}
 
-				string buttonLabel = getColorTeamByBool() + " Preset##ButtonChangeTeamColor";
+				string buttonLabel = "Switch to " + getColorTeamByBool() + " Preset##ButtonChangeTeamColor";
 				ImGui::SameLine();
 				if (ImGui::Button(buttonLabel.c_str())) {
 					colorTeamBool = !colorTeamBool;
@@ -752,7 +779,9 @@ Date: DD/MM/AAAA:
 
 New Features:
 	- Added a button to enable/disable the plugin's UI directly from the plugin window.
-	- Added detection of scores and boost amount in spectate mode.
+	- Added the ability to create distinct images for the blue and orange teams.
+		- Added the option to switch between the blue and orange teams in freeplay for presets that support this functionality.
+		- Added the ability to customize text colors for each team (blue and orange).
 	- Added the detection of score and the boost amount in spectate mode.
 	- Added the "Patch Notes" tab item.
 
@@ -765,7 +794,7 @@ Bug Fixes:
 
 					)"
 				},
-				{
+				/*{
 					"v1.3.0", R"(
 Patch Notes v1.2.0:
 -------------------
@@ -777,7 +806,7 @@ Patch Notes v1.2.0:
 Known Issues:
 - Minor visual glitches on high DPI screens.
 					)"
-				},
+				},*/
 			};
 
 			static int selected_patch = 0;
@@ -845,6 +874,7 @@ bool CustomUI::cvarIsText(CVarWrapper cvar) {
 	const std::vector<std::string> validValues = {
 		"",
 		"settingsBoostText",
+		"settingsBoostCircle",
 		"settingsScoreMyTeam",
 		"settingsScoreOppositeTeam",
 		"settingsGameTime"

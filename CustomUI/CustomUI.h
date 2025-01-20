@@ -37,6 +37,7 @@ struct Preset {
 	SettingsItems settingsBoostTexture;
 	SettingsItems settingsBoostText;
 	array<int, 4> colorBoost;
+	array<int, 4> colorBoostCircle;
 	string boostForm;
 	string scoreImage;
 	array<int, 4> colorScoreMyTeam;
@@ -53,6 +54,7 @@ struct Preset {
 	array<int, 4> colorScoreMyTeam2;
 	array<int, 4> colorScoreOppositeTeam2;
 	array<int, 4> colorGameTime2;
+	array<int, 4> colorBoostCircle2;
 	bool differentTeam = false;
 };
 
