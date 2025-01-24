@@ -281,7 +281,7 @@ void CustomUI::RenderMenu() {
 					itemsPositionCombo = {
 						"",
 						"Background Image Boost",
-						"Texture Image Boost",
+						"Texture Circle Boost",
 						"Text Boost",
 						"Circle Color Boost",
 						"Background Image Score",
@@ -294,7 +294,6 @@ void CustomUI::RenderMenu() {
 						"settingsBoostDisplay",
 						"settingsBoostTexture",
 						"settingsBoostText",
-						"settingsBoostCircle",
 						"settingsScoreDisplay",
 						"settingsScoreMyTeam",
 						"settingsScoreOppositeTeam",
@@ -874,7 +873,7 @@ bool CustomUI::cvarIsText(CVarWrapper cvar) {
 	const std::vector<std::string> validValues = {
 		"",
 		"settingsBoostText",
-		"settingsBoostCircle",
+		"settingsBoostTexture",
 		"settingsScoreMyTeam",
 		"settingsScoreOppositeTeam",
 		"settingsGameTime"

@@ -744,7 +744,7 @@ array<int, 4>& CustomUI::getSettingsSettingsColor(Preset& preset, const std::str
 	if (fieldName == "settingsBoostText") {
 		return useAlternateColors ? preset.colorBoost2 : preset.colorBoost;
 	}
-	else if (fieldName == "settingsBoostCircle") {
+	else if (fieldName == "settingsBoostTexture") {
 		return useAlternateColors ? preset.colorBoostCircle2 : preset.colorBoostCircle;
 	}
 	else if (fieldName == "settingsScoreMyTeam") {
@@ -801,7 +801,7 @@ string CustomUI::getStringSettingsColor(string nameSettings) {
 	if (nameSettings == "settingsBoostText") {
 		return useAlternateColors ? "colorBoost2" : "colorBoost";
 	}
-	else if (nameSettings == "settingsBoostCircle") {
+	else if (nameSettings == "settingsBoostTexture") {
 		return useAlternateColors ? "colorBoostCircle2" : "colorBoostCircle";
 	}
 	else if (nameSettings == "settingsScoreMyTeam") {

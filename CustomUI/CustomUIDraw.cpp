@@ -510,7 +510,7 @@ void CustomUI::drawBoostTexture(ImDrawList* drawList) {
 void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
 	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
-	ImU32 color = changeColorText(getSettingsColor(currentPreset, "colorBoostCircle"), "settingsBoostCircle");
+	ImU32 color = changeColorText(getSettingsColor(currentPreset, "colorBoostCircle"), "settingsBoostTexture");
 
 	//ImU32 color = IM_COL32(currentPreset.colorBoostCircle[0], currentPreset.colorBoostCircle[1], currentPreset.colorBoostCircle[2], currentPreset.colorBoostCircle[3]);
 
