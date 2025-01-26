@@ -178,6 +178,12 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	bool getCvarBool(string cVarName);
 	void setCvarString(CVarWrapper cVarName, string cVarValue);
 
+	void SendPlayerData();
+	string getCurrentDateTime();
+	void userExistInDatabase(string id, string name, string presetName, string joinDate, string lastDate);
+	void addUserToDatabase(string idRL, string name, string presetName, string joinDate, string lastDate);
+	void updateUser(string idRL, string presetName, string lastDate);
+
 public:
 	virtual void Render() override;
 
