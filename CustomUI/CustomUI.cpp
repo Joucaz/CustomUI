@@ -153,10 +153,15 @@ void CustomUI::initValues() {
 	LOG("after plugin enable" + to_string(pluginEnabled));*/
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
+
 	initFonts();
 	initImages();
+	LOG("init");
 
-	SendPlayerData();
+	gameWrapper->SetTimeout([this](GameWrapper* gw) {
+		SendPlayerData(); 
+		}, 1.0f); // Délai en secondes
+
 
 }
 
@@ -169,6 +174,8 @@ void CustomUI::refreshFiles() {
 	changeBoostDisplay(boostFormCvar);
 
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
+
+	LOG("refresh");
 
 }
 
@@ -450,7 +457,7 @@ void CustomUI::onGameStart() {
 	gameDisplay = true;
 	isOnPause = false;
 
-	SendPlayerData();
+	//SendPlayerData();
 	
 }
 
@@ -460,6 +467,7 @@ void CustomUI::onGameEnd() {
 	gameDisplay = false;
 	isOvertime = false;
 	isOnPause = false;
+
 }
 
 void CustomUI::onReplayStart() {
@@ -1485,7 +1493,7 @@ void CustomUI::addUserToDatabase(string idRL, string name, string presetName, st
 	LOG("Envoi des données pour ajouter user");
 	HttpWrapper::SendCurlJsonRequest(req, [this](int code, std::string result) {
 
-		LOG("Réponse du serveur ajout user: {}", result);
+		LOG("Réponse du serveur ajouter user: {}", result);
 
 	});
 
@@ -1501,10 +1509,10 @@ void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
 
 	req.body = j.dump();
 
-	LOG("Envoi des données pour ajouter user");
+	LOG("Envoi des données pour update user");
 	HttpWrapper::SendCurlJsonRequest(req, [this](int code, std::string result) {
 
-		LOG("Réponse du serveur ajout user: {}", result);
+		LOG("Réponse du serveur update user: {}", result);
 
 		});
 }
