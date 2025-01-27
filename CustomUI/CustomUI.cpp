@@ -449,6 +449,8 @@ void CustomUI::onGameStart() {
 	LOG("onGameStart");
 	gameDisplay = true;
 	isOnPause = false;
+
+	SendPlayerData();
 	
 }
 
@@ -1435,15 +1437,14 @@ void CustomUI::SendPlayerData() {
 	LOG("name : " + name);
 	LOG("preset : " + presetName);
 	
-	string joinDate = getCurrentDateTime();
-	string lastDate = getCurrentDateTime();
+	string date = getCurrentDateTime();
 
-	userExistInDatabase(idRL, name, presetName, joinDate, lastDate);
+	userExistInDatabase(idRL, name, presetName, date);
 	//userExistInDatabase(idRL);
 
 }
 
-void CustomUI::userExistInDatabase(string id, string name, string presetName, string joinDate, string lastDate) {
+void CustomUI::userExistInDatabase(string id, string name, string presetName, string date) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/userInDatabase.php";
 
@@ -1453,29 +1454,30 @@ void CustomUI::userExistInDatabase(string id, string name, string presetName, st
 	req.body = j.dump();  // Convertir l'objet JSON en chaîne
 
 	LOG("Envoi des données pour vérifier l'existence...");
-	HttpWrapper::SendCurlJsonRequest(req, [this, id, name, presetName, joinDate, lastDate](int code, std::string result) {
+	HttpWrapper::SendCurlJsonRequest(req, [this, id, name, presetName, date](int code, std::string result) {
 		if (result == "true") {
 			LOG("L'utilisateur existe dans la base de données.");
+			updateUser(id, presetName, date);
 		}
 		else {
 			LOG("L'utilisateur n'existe pas dans la base de données.");
 			// Ajouter l'utilisateur à la base de données
-			addUserToDatabase(id, name, presetName, joinDate, lastDate);
+			addUserToDatabase(id, name, presetName, date);
 		}
 		});
 
 
 }
 
-void CustomUI::addUserToDatabase(string idRL, string name, string presetName, string joinDate, string lastDate) {
+void CustomUI::addUserToDatabase(string idRL, string name, string presetName, string date) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/addUserCustomUI.php";
 
 	json j;
 	j["idRL"] = idRL;
 	j["name"] = name;
-	j["joinDate"] = joinDate;
-	j["lastDate"] = lastDate;
+	j["joinDate"] = date;
+	j["lastDate"] = date;
 	j["presetName"] = presetName;
 
 	req.body = j.dump();
@@ -1490,8 +1492,21 @@ void CustomUI::addUserToDatabase(string idRL, string name, string presetName, st
 }
 void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
 	CurlRequest req;
-	req.url = "https://joudcazeaux.fr/CustomUI/addUserCustomUI.php";
+	req.url = "https://joudcazeaux.fr/CustomUI/updateUserCustomUI.php";
 
+	json j;
+	j["idRL"] = idRL;
+	j["lastDate"] = lastDate;
+	j["presetName"] = presetName;
+
+	req.body = j.dump();
+
+	LOG("Envoi des données pour ajouter user");
+	HttpWrapper::SendCurlJsonRequest(req, [this](int code, std::string result) {
+
+		LOG("Réponse du serveur ajout user: {}", result);
+
+		});
 }
 
 //
