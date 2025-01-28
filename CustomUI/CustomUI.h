@@ -148,6 +148,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onReplayStart();
 	void onReplayEnd();
 
+	void onGameReplayStart();
+	void onGameReplayEnd();
+
 	void onPauseOpen();
 	void onPauseOpenGame();
 	void onPauseClose();
@@ -231,6 +234,8 @@ private:
 
 	bool colorTeamBool = true;
 	bool isSpectator = false;
+
+	bool isGameReplay = false;
 
 	bool isMenuOpened = false;
 	bool isOnPause = false;

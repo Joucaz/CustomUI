@@ -76,6 +76,9 @@ void CustomUI::onLoad()
 
 	gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
 
+	gameWrapper->HookEvent("Function TAGame.ReplayManager_TA.PlayReplay", bind(&CustomUI::onGameReplayStart, this));
+	gameWrapper->HookEvent("Function TAGame.Replay_TA.StopPlayback", bind(&CustomUI::onGameReplayEnd, this));
+
 
 	//gameWrapper->HookEvent("Function TAGame.NetworkInputBuffer_TA.ClientAckFrame", bind(&CustomUI::onBoostStart, this));
 	//gameWrapper->HookEvent("Function VehiclePickup_Boost_TA.Idle.EndState", bind(&CustomUI::onBoostEnd, this));
@@ -308,52 +311,51 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 
 void CustomUI::UpdateVars()
 {
-	//LOG(" test + " + to_string(isSettingsOpen));
-	if (isInGame()) {
-		gameTime = (getGameTime() != -1)
-			? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
-			: std::to_string(-1);
-		
-		if (isMainPlayerSpectator()) {
+	if (!isGameReplay) {
 
-			scoreA = getTeamScore(0);
-			scoreB = getTeamScore(1);
-		}
-		else {
-			scoreA = getMyTeamScore();
-			scoreB = getOpposingTeamScore();
-		}
+		//LOG(" test + " + to_string(isSettingsOpen));
+		if (isInGame()) {
+			gameTime = (getGameTime() != -1)
+				? ((isOvertime ? "+" : "") + std::to_string(getGameTime() / 60) + ":" + lead_zeros(getGameTime() % 60, 2))
+				: std::to_string(-1);
 		
-	}
-	
-	/*else if (isInFreeplay()) {
-		boost = getBoostAmount();
-	}*/
+			if (isMainPlayerSpectator()) {
 
-	if (isMainPlayerSpectator()) {
-		isSpectator = true;
-		//LOG("spectator");
-		if (currentPreset.differentTeam) {
-			intFileImage = getIntTeamSpectator();
-		}
-		else {
-			intFileImage = -1;
-		}
-		boost = getBoostAmountSpectator();
-	}
-	else {
-		isSpectator = false;
-		//LOG("notspectator");
-		if (currentPreset.differentTeam) {
-			if (!replayDisplay) {
-				intFileImage = getIntTeamPlayer();
+				scoreA = getTeamScore(0);
+				scoreB = getTeamScore(1);
 			}
+			else {
+				scoreA = getMyTeamScore();
+				scoreB = getOpposingTeamScore();
+			}
+		
+		}
+	
+		if (isMainPlayerSpectator()) {
+			isSpectator = true;
+			//LOG("spectator");
+			if (currentPreset.differentTeam) {
+				intFileImage = getIntTeamSpectator();
+			}
+			else {
+				intFileImage = -1;
+			}
+			boost = getBoostAmountSpectator();
 		}
 		else {
-			intFileImage = -1;
+			isSpectator = false;
+			//LOG("notspectator");
+			if (currentPreset.differentTeam) {
+				if (!replayDisplay) {
+					intFileImage = getIntTeamPlayer();
+				}
+			}
+			else {
+				intFileImage = -1;
+			}
+
+			boost = getBoostAmount();
 		}
-		
-		boost = getBoostAmount();
 	}
 	
 
@@ -480,8 +482,20 @@ void CustomUI::onOvertime() {
 	isOvertime = true;
 }
 
+void CustomUI::onGameReplayStart() {
+	//isOnPause = false;
+	LOG("onGameReplayStart");
+	isGameReplay = true;
+}
+
+void CustomUI::onGameReplayEnd() {
+	//isOnPause = false;
+	LOG("onGameReplayEnd");
+	isGameReplay = false;
+}
+
 void CustomUI::onPauseOpenGame() {
-	if (isInGame()) {
+	if (isInGame() && !isGameReplay) {
 		if (!isMainPlayerSpectator()) {
 			LOG("not spectator");
 			isOnPause = !isOnPause;
