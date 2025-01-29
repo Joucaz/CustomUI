@@ -1429,7 +1429,6 @@ string CustomUI::getCurrentDateTime() {
 void CustomUI::SendPlayerData() {
 
 	string idRL;
-	string name;
 	string presetName;
 
 	if (gameWrapper->IsUsingEpicVersion()) {
@@ -1438,21 +1437,19 @@ void CustomUI::SendPlayerData() {
 	else {
 		idRL = to_string(gameWrapper->GetSteamID());
 	}
-	name = gameWrapper->GetPlayerName().ToString();
 	presetName = getCvarString("CustomUI_choosenPresets");
 
 	LOG("idRL : " + idRL);
-	LOG("name : " + name);
 	LOG("preset : " + presetName);
 	
 	string date = getCurrentDateTime();
 
-	userExistInDatabase(idRL, name, presetName, date);
+	userExistInDatabase(idRL, presetName, date);
 	//userExistInDatabase(idRL);
 
 }
 
-void CustomUI::userExistInDatabase(string id, string name, string presetName, string date) {
+void CustomUI::userExistInDatabase(string id, string presetName, string date) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/userInDatabase.php";
 
@@ -1462,7 +1459,7 @@ void CustomUI::userExistInDatabase(string id, string name, string presetName, st
 	req.body = j.dump();  // Convertir l'objet JSON en chaîne
 
 	LOG("Envoi des données pour vérifier l'existence...");
-	HttpWrapper::SendCurlJsonRequest(req, [this, id, name, presetName, date](int code, std::string result) {
+	HttpWrapper::SendCurlJsonRequest(req, [this, id, presetName, date](int code, std::string result) {
 		if (result == "true") {
 			LOG("L'utilisateur existe dans la base de données.");
 			updateUser(id, presetName, date);
@@ -1470,20 +1467,19 @@ void CustomUI::userExistInDatabase(string id, string name, string presetName, st
 		else {
 			LOG("L'utilisateur n'existe pas dans la base de données.");
 			// Ajouter l'utilisateur à la base de données
-			addUserToDatabase(id, name, presetName, date);
+			addUserToDatabase(id, presetName, date);
 		}
 		});
 
 
 }
 
-void CustomUI::addUserToDatabase(string idRL, string name, string presetName, string date) {
+void CustomUI::addUserToDatabase(string idRL, string presetName, string date) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/addUserCustomUI.php";
 
 	json j;
 	j["idRL"] = idRL;
-	j["name"] = name;
 	j["joinDate"] = date;
 	j["lastDate"] = date;
 	j["presetName"] = presetName;

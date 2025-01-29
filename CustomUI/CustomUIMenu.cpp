@@ -773,7 +773,7 @@ void CustomUI::RenderMenu() {
 				{
 					"v1.0.1 (latest)", R"(
 Patch Notes v1.0.1 
-Date: DD/MM/AAAA:
+Date: 29/01/2025:
 -------------------
 
 New Features:
@@ -785,7 +785,7 @@ New Features:
 	- Added the "Patch Notes" tab item.
 
 Improvements and Changes:
-	-
+	- Integrated database connectivity to track statistics, including the number of users and the presets used.
 
 Bug Fixes:
 	- Fixed the bug where the Circle boost was not moving in the same way as the background boost image.
