@@ -796,7 +796,7 @@ void CustomUI::RenderMenu() {
 				{
 					"v1.0.1 (latest)", R"(
 Patch Notes v1.0.1 
-Date: DD/MM/AAAA:
+Date: 29/01/2025
 
 -------------------
 
@@ -811,7 +811,7 @@ New Features:
 
 Improvements and Changes:
 
-- Added the ability to connect data to a database for tracking statistics, such as the selected preset, the last time the plugin was used, and your in-game ID and name in Rocket League.
+- Integrated database connectivity to track statistics, including the number of users and the presets used.
 
 Bug Fixes:
 
