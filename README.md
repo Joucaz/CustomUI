@@ -40,7 +40,6 @@ A: Yes, presets can be easily exported and imported.
 This plugin collects usage statistics, including user IDs, to track the number of users and the presets used. This data helps improve the plugin and provide better insights.
 
 ## 🔗 Links
-
 ### Presets Artists:
 [Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz)
 
