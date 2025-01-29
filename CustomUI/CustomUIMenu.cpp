@@ -717,7 +717,7 @@ void CustomUI::RenderMenu() {
 				system("Start https://x.com/Krogezo");
 			}
 			ImGui::Spacing();
-			ImGui::TextColored(white, "Tanderiz");
+			ImGui::TextColored(whiteGrey, "Tanderiz");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
 				auto size = xLogo->GetSizeF();
