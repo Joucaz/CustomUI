@@ -156,8 +156,15 @@ void CustomUI::initValues() {
 	LOG("after plugin enable" + to_string(pluginEnabled));*/
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
 
+
 	initFonts();
 	initImages();
+	LOG("init");
+
+	gameWrapper->SetTimeout([this](GameWrapper* gw) {
+		SendPlayerData(); 
+		}, 1.0f); // Délai en secondes
+
 
 }
 
@@ -170,6 +177,8 @@ void CustomUI::refreshFiles() {
 	changeBoostDisplay(boostFormCvar);
 
 	currentPreset = loadCurrentPreset(getCvarString("CustomUI_choosenPresets"));
+
+	LOG("refresh");
 
 }
 
@@ -449,6 +458,8 @@ void CustomUI::onGameStart() {
 	LOG("onGameStart");
 	gameDisplay = true;
 	isOnPause = false;
+
+	//SendPlayerData();
 	
 }
 
@@ -458,6 +469,7 @@ void CustomUI::onGameEnd() {
 	gameDisplay = false;
 	isOvertime = false;
 	isOnPause = false;
+
 }
 
 void CustomUI::onReplayStart() {
@@ -1411,6 +1423,108 @@ shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWr
 		return imageDisplay[keyPreset];
 	}
 
+}
+
+string CustomUI::getCurrentDateTime() {
+	// Obtenir l'heure actuelle en utilisant chrono
+	auto now = std::chrono::system_clock::now();
+
+	// Convertir en un format de temps struct tm
+	std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+	std::tm now_tm = *std::localtime(&now_time_t);
+
+	// Formater la date et l'heure au format YYYY-MM-DD HH:MM:SS
+	std::stringstream datetime_stream;
+	datetime_stream << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+
+	return datetime_stream.str();
+}
+
+void CustomUI::SendPlayerData() {
+
+	string idRL;
+	string presetName;
+
+	if (gameWrapper->IsUsingEpicVersion()) {
+		idRL = gameWrapper->GetEpicID();
+	}
+	else {
+		idRL = to_string(gameWrapper->GetSteamID());
+	}
+	presetName = getCvarString("CustomUI_choosenPresets");
+
+	LOG("idRL : " + idRL);
+	LOG("preset : " + presetName);
+	
+	string date = getCurrentDateTime();
+
+	userExistInDatabase(idRL, presetName, date);
+	//userExistInDatabase(idRL);
+
+}
+
+void CustomUI::userExistInDatabase(string id, string presetName, string date) {
+	CurlRequest req;
+	req.url = "https://joudcazeaux.fr/CustomUI/userInDatabase.php";
+
+	json j;
+	j["idRL"] = id;  // Ajouter l'idRL dans la requête JSON
+
+	req.body = j.dump();  // Convertir l'objet JSON en chaîne
+
+	LOG("Envoi des données pour vérifier l'existence...");
+	HttpWrapper::SendCurlJsonRequest(req, [this, id, presetName, date](int code, std::string result) {
+		if (result == "true") {
+			LOG("L'utilisateur existe dans la base de données.");
+			updateUser(id, presetName, date);
+		}
+		else {
+			LOG("L'utilisateur n'existe pas dans la base de données.");
+			// Ajouter l'utilisateur à la base de données
+			addUserToDatabase(id, presetName, date);
+		}
+		});
+
+
+}
+
+void CustomUI::addUserToDatabase(string idRL, string presetName, string date) {
+	CurlRequest req;
+	req.url = "https://joudcazeaux.fr/CustomUI/addUserCustomUI.php";
+
+	json j;
+	j["idRL"] = idRL;
+	j["joinDate"] = date;
+	j["lastDate"] = date;
+	j["presetName"] = presetName;
+
+	req.body = j.dump();
+
+	LOG("Envoi des données pour ajouter user");
+	HttpWrapper::SendCurlJsonRequest(req, [this](int code, std::string result) {
+
+		LOG("Réponse du serveur ajouter user: {}", result);
+
+	});
+
+}
+void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
+	CurlRequest req;
+	req.url = "https://joudcazeaux.fr/CustomUI/updateUserCustomUI.php";
+
+	json j;
+	j["idRL"] = idRL;
+	j["lastDate"] = lastDate;
+	j["presetName"] = presetName;
+
+	req.body = j.dump();
+
+	LOG("Envoi des données pour update user");
+	HttpWrapper::SendCurlJsonRequest(req, [this](int code, std::string result) {
+
+		LOG("Réponse du serveur update user: {}", result);
+
+		});
 }
 
 //
