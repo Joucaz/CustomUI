@@ -283,7 +283,6 @@ void CustomUI::RenderMenu() {
 						"Background Image Boost",
 						"Texture Circle Boost",
 						"Text Boost",
-						"Circle Color Boost",
 						"Background Image Score",
 						"Text Score My Team",
 						"Text Score Opposite Team",
@@ -671,7 +670,8 @@ void CustomUI::RenderMenu() {
 			}
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Kisute3");
-			}ImGui::Spacing();
+			}
+			ImGui::Spacing();
 			ImGui::TextColored(kcColor, "Emmy");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
@@ -715,6 +715,29 @@ void CustomUI::RenderMenu() {
 			}
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Krogezo");
+			}
+			ImGui::Spacing();
+			ImGui::TextColored(white, "Tanderiz");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
+				auto size = xLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@Tanderiz");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://x.com/Tanderiz");
 			}
 			ImGui::Spacing();
 			ImGui::Spacing();
@@ -774,22 +797,26 @@ void CustomUI::RenderMenu() {
 					"v1.0.1 (latest)", R"(
 Patch Notes v1.0.1 
 Date: DD/MM/AAAA:
+
 -------------------
 
 New Features:
-	- Added a button to enable/disable the plugin's UI directly from the plugin window.
-	- Added the ability to create distinct images for the blue and orange teams.
-		- Added the option to switch between the blue and orange teams in freeplay for presets that support this functionality.
-		- Added the ability to customize text colors for each team (blue and orange).
-	- Added the detection of score and the boost amount in spectate mode.
-	- Added the "Patch Notes" tab item.
+
+- Added a button to enable/disable the plugin's UI directly from the plugin window.
+- Added the ability to create distinct images for the blue and orange teams.
+- Added the option to switch between the blue and orange teams in freeplay for presets that support this functionality.
+- Added the ability to customize text and circle texture boost colors for each team (blue and orange).
+- Added the detection of score and the boost amount in spectate mode.
+- Added the "Patch Notes" tab item.
 
 Improvements and Changes:
-	-
+
+- Added the ability to connect data to a database for tracking statistics, such as the selected preset, the last time the plugin was used, and your in-game ID and name in Rocket League.
 
 Bug Fixes:
-	- Fixed the bug where the Circle boost was not moving in the same way as the background boost image.
-	- Fixed the bug where the boost component was not showing in spectate mode due to the pause menu.
+
+- Fixed the bug where the Circle boost was not moving in the same way as the background boost image.
+- Fixed the bug where the boost component was not showing in spectate mode due to the pause menu.
 
 					)"
 				},
