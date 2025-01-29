@@ -42,7 +42,7 @@ This plugin collects usage statistics, including user IDs, to track the number o
 ## 🔗 Links
 
 ### Presets Artists:
-[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo)
+[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
