@@ -1,11 +1,11 @@
-![CustomUI Logo](src/LogoTextCustomUI1.0.1.png)
+![CustomUI Logo](src/LogoTextCustomUI.png)
 
 # Rocket League Plugin
 
 ## 🚀 Introduction  
 [**CustomUI**](https://bakkesplugins.com/plugins/view/503) is a plugin that allows players to create and display their own custom user interface (UI) directly inside [**Rocket League**](https://www.rocketleague.com/fr). This plugin gives players the freedom to design unique visual elements by adding a personal touch to the interface.
 
-![Images](src/MiniaCustomUI.png)
+![Images](src/MiniaCustomUI1.0.1.png)
 
 ## ✨ Features  
 - **Easy to use**: Intuitive interface for configuring your designs.  
