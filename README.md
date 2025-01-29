@@ -36,10 +36,12 @@ A: Yes, the plugin is compatible with all match types in Rocket League.
 **Q: Can I share my UI designs with friends?**  
 A: Yes, presets can be easily exported and imported.  
 
-## 🔗 Links
+## ℹ️ Additional Information  
+This plugin collects usage statistics, including user IDs, to track the number of users and the presets used. This data helps improve the plugin and provide better insights.
 
+## 🔗 Links
 ### Presets Artists:
-[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo)
+[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
