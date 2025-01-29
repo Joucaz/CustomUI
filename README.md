@@ -1,4 +1,4 @@
-![CustomUI Logo](src/LogoTextCustomUI.png)
+![CustomUI Logo](src/LogoTextCustomUI1.0.1.png)
 
 # Rocket League Plugin
 
