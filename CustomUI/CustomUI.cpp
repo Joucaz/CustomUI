@@ -1426,6 +1426,50 @@ shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWr
 }
 
 string CustomUI::getCurrentDateTime() {
+
+	
+
+	// Obtenir l'heure actuelle en UTC
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+    std::tm now_tm = *std::gmtime(&now_time_t); // Convertir en UTC
+
+    // Ajouter le décalage horaire pour Paris
+    now_tm.tm_hour += 1; // UTC+1 par défaut (hiver)
+
+    // Vérifier si on est en heure d'été en France
+    std::tm temp = now_tm;
+    temp.tm_mon = 2;  // Mars (mois 2 car indexé à 0)
+    temp.tm_mday = 31; // Commencer par le dernier jour possible
+    temp.tm_hour = 2;  // Heure de bascule
+    std::mktime(&temp); // Normalisation
+
+    while (temp.tm_wday != 0) { // Trouver le dernier dimanche de mars
+        temp.tm_mday--;
+        std::mktime(&temp);
+    }
+
+    if (now_tm.tm_mon > 2 && now_tm.tm_mon < 9) {
+        // Entre avril et septembre -> heure d'été
+        now_tm.tm_hour += 1; // UTC+2
+    } else if (now_tm.tm_mon == 2 && now_tm.tm_mday >= temp.tm_mday) {
+        // Si on est après le dernier dimanche de mars -> heure d'été
+        now_tm.tm_hour += 1; // UTC+2
+    }
+
+    // Normaliser après modification
+    std::mktime(&now_tm);
+
+    // Formater la date et l'heure
+    std::stringstream datetime_stream;
+    datetime_stream << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+
+    return datetime_stream.str();
+
+
+
+	/*
+
 	// Obtenir l'heure actuelle en utilisant chrono
 	auto now = std::chrono::system_clock::now();
 
@@ -1438,6 +1482,10 @@ string CustomUI::getCurrentDateTime() {
 	datetime_stream << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
 
 	return datetime_stream.str();
+
+	*/
+
+	
 }
 
 void CustomUI::SendPlayerData() {

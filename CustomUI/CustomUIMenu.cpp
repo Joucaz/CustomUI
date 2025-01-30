@@ -794,9 +794,9 @@ void CustomUI::RenderMenu() {
 			// Tableau des patch notes (titre et contenu)
 			PatchNote patch_notes[] = {
 				{
-					"v1.0.1 (latest)", R"(
-Patch Notes v1.0.1 
-Date: 29/01/2025
+					"v1.1.0 (latest)", R"(
+Patch Notes v1.1.0 
+Date: 30/01/2025
 
 -------------------
 
@@ -809,14 +809,19 @@ New Features:
 - Added the detection of score and the boost amount in spectate mode.
 - Added the "Patch Notes" tab item.
 
+-------------------
+
 Improvements and Changes:
 
 - Integrated database connectivity to track statistics, including the number of users and the presets used.
+
+-------------------
 
 Bug Fixes:
 
 - Fixed the bug where the Circle boost was not moving in the same way as the background boost image.
 - Fixed the bug where the boost component was not showing in spectate mode due to the pause menu.
+- Fixed the bug where the "+" and "-" buttons could not be used to precisely position items, ensuring they now stay in the correct place when saving.
 
 					)"
 				},
