@@ -50,7 +50,7 @@ This plugin collects usage statistics, including user IDs, to track the number o
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
 
 ### Creator & Developer:
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://joudcazeaux.fr)
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=linkedin&color=yellow&logoColor=yellow)](https://joudcazeaux.fr)
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/joudcazeaux/)
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/JoucazJC?style=for-the-badge&logo=x&label=%40JoucazJC&labelColor=black&color=black)](https://twitter.com/JoucazJC)
 
