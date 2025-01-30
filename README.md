@@ -20,7 +20,9 @@
 4. Start a freeplay session or any game mode to view your custom UI in action.
 
 ## 📚 Full Documentation  
-Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!
+Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all available features, watch tutorials, and get support!  
+  
+[![Discord](https://img.shields.io/discord/1312004754813091904?style=for-the-badge&logo=discord&logoColor=white&label=CustomUI%20Server&labelColor=%235865f2&color=white)](https://discord.gg/NQ8Qw4Mw2w)
 
 #### Wiki:
 - [Step-by-step guide](https://github.com/Joucaz/CustomUI/wiki/CustomUI-Tutorial)
@@ -40,6 +42,7 @@ A: Yes, presets can be easily exported and imported.
 This plugin collects usage statistics, including user IDs, to track the number of users and the presets used. This data helps improve the plugin and provide better insights.
 
 ## 🔗 Links
+
 ### Presets Artists:
 [Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz)
 
@@ -49,4 +52,5 @@ This plugin collects usage statistics, including user IDs, to track the number o
 ### Creator & Developer:
 [![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://joudcazeaux.fr)
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/joudcazeaux/)
-[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/JoucazJC)
+[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/JoucazJC?style=for-the-badge&logo=x&label=%40JoucazJC&labelColor=black&color=black)](https://twitter.com/JoucazJC)
+
