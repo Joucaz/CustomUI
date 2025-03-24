@@ -213,6 +213,7 @@ void CustomUI::initImages() {
 	imageLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "LogoCustomUI.png", false, true);
 	imageLogoText = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "LogoTextCustomUI.png", false, true);
 	discordLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "JoinDiscordLogo.png", false, true);
+	supportDev = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "SupportButtonSmall.png", false, true);
 	wesbiteLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "WebsiteLogo.png", false, true);
 	githubLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "GithubLogo.png", false, true);
 	xLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "XLogo.png", false, true);

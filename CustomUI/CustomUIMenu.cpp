@@ -186,7 +186,87 @@ void CustomUI::RenderMenu() {
 		if (ImGui::IsItemClicked()) {
 			isSettingsOpen = false;
 		}
+
 	}
+	
+
+	if (auto renderImageSupport = supportDev->GetImGuiTex()) {
+		
+		auto sizeSupport = supportDev->GetSizeF();
+		ImVec2 supportImageSize(sizeSupport.X, sizeSupport.Y);
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		ImVec2 cursorStartPos = ImGui::GetCursorPos(); // Sauvegarde de la position initiale du curseur
+
+		// Calculer la position en bas à droite
+		float posX = windowSize.x - supportImageSize.x - 20.0f;
+		float posY = windowSize.y - supportImageSize.y - 20.0f;
+
+		// Placer le curseur à la bonne position
+		ImGui::SetCursorPos(ImVec2(posX, posY));
+
+
+		// Dessiner l'image Discord
+		ImGui::Image(
+			renderImageSupport,
+			supportImageSize,
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		);
+
+		// Ajouter les interactions pour l'image Discord
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			ImGui::BeginTooltip();
+			ImGui::Text("Make a donation to support the developer and help improve this plugin (Get a special role for your donation on Discord)");
+			ImGui::EndTooltip();
+		}
+		if (ImGui::IsItemClicked()) {
+			system("Start https://www.paypal.com/donate/?hosted_button_id=DQTCWR5ZRBH46");
+		}
+		ImGui::SetCursorPos(cursorStartPos);
+	}
+	//ImVec2 cursorPosAfterSupport = ImGui::GetCursorPos();	
+
+	//availableWidth = ImGui::GetContentRegionAvail().x;
+
+
+	//if (auto renderImageSupport = supportDev->GetImGuiTex()) {
+
+	//	auto sizeSupport = supportDev->GetSizeF();
+	//	ImVec2 supportImageSize(sizeSupport.X, sizeSupport.Y);
+
+	//	// Calculer le décalage horizontal pour aligner l'image à droite
+	//	float offsetX = availableWidth - supportImageSize.x - textSizeTextX.x - 20.0f;
+	//	if (offsetX > 0) {
+	//		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+	//	}
+
+	//	// Dessiner l'image Discord
+	//	ImGui::Image(
+	//		renderImageSupport,
+	//		supportImageSize,
+	//		ImVec2(0, 0),
+	//		ImVec2(1, 1),
+	//		ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+	//	);
+
+	//	// Ajouter les interactions pour l'image Discord
+	//	if (ImGui::IsItemHovered()) {
+	//		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+	//		ImGui::BeginTooltip();
+	//		ImGui::Text("Make a donation to support the developer and help improve this plugin");
+	//		ImGui::EndTooltip();
+	//	}
+	//	if (ImGui::IsItemClicked()) {
+	//		system("Start https://www.paypal.com/donate/?hosted_button_id=DQTCWR5ZRBH46");
+	//	}
+	//}
+	//ImGui::SetCursorPos(cursorPosAfterSupport);
+
+	//ImGui::Spacing();
+	//ImGui::Spacing();
 	
 
 	if (ImGui::BeginTabBar("MainTabBar"))
@@ -786,7 +866,6 @@ void CustomUI::RenderMenu() {
 			ImGui::EndTabItem();
 		}
 		ImGui::SameLine();
-		ImGui::Text("test");
 		
 		if (ImGui::BeginTabItem("Patch Notes")) {
 			ImGui::Spacing();
@@ -794,7 +873,32 @@ void CustomUI::RenderMenu() {
 			// Tableau des patch notes (titre et contenu)
 			PatchNote patch_notes[] = {
 				{
-					"v1.1.0 (latest)", R"(
+					"v1.2.0 (latest)", R"(
+Patch Notes v1.2.0 
+Date: 30/01/2025
+
+-------------------
+
+New Features:
+
+- 
+
+-------------------
+
+Improvements and Changes:
+
+- 
+
+-------------------
+
+Bug Fixes:
+
+- 
+
+					)"
+				},
+				{
+					"v1.1.0", R"(
 Patch Notes v1.1.0 
 Date: 30/01/2025
 

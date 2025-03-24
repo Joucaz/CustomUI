@@ -328,7 +328,8 @@ private:
 
 	shared_ptr<ImageWrapper> imageLogo;
 	shared_ptr<ImageWrapper> imageLogoText;
-	shared_ptr<ImageWrapper> discordLogo;
+	shared_ptr<ImageWrapper> discordLogo; 
+	shared_ptr<ImageWrapper> supportDev;
 	shared_ptr<ImageWrapper> wesbiteLogo;
 	shared_ptr<ImageWrapper> xLogo;
 	shared_ptr<ImageWrapper> githubLogo;
