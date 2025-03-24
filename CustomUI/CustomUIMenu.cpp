@@ -219,7 +219,7 @@ void CustomUI::RenderMenu() {
 		if (ImGui::IsItemHovered()) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 			ImGui::BeginTooltip();
-			ImGui::Text("Make a donation to support the developer and help improve this plugin (Get a special role for your donation on Discord)");
+			ImGui::Text("Support CustomUI and help bring more features (Get a special role for your donation on Discord)");
 			ImGui::EndTooltip();
 		}
 		if (ImGui::IsItemClicked()) {
@@ -227,6 +227,8 @@ void CustomUI::RenderMenu() {
 		}
 		ImGui::SetCursorPos(cursorStartPos);
 	}
+
+
 	//ImVec2 cursorPosAfterSupport = ImGui::GetCursorPos();	
 
 	//availableWidth = ImGui::GetContentRegionAvail().x;
@@ -267,6 +269,7 @@ void CustomUI::RenderMenu() {
 
 	//ImGui::Spacing();
 	//ImGui::Spacing();
+	
 	
 
 	if (ImGui::BeginTabBar("MainTabBar"))
@@ -865,7 +868,6 @@ void CustomUI::RenderMenu() {
 			}
 			ImGui::EndTabItem();
 		}
-		ImGui::SameLine();
 		
 		if (ImGui::BeginTabItem("Patch Notes")) {
 			ImGui::Spacing();
@@ -963,9 +965,23 @@ Known Issues:
 			ImGui::EndTabItem();
 		}
 
+		ImGui::SameLine();
+
+		availableWidth = ImGui::GetContentRegionAvail().x;
+
+		string numberUser = "Total User : " + to_string(numberUserInt);
+
+		ImVec2 textSizeNumberUser = ImGui::CalcTextSize(numberUser.c_str());
+		float offsetX = availableWidth - textSizeNumberUser.x - 20.0f;
+
+		if (offsetX > 0) {
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+		}
+		ImGui::Text(numberUser.c_str());
 
 		ImGui::EndTabBar();
 	}
+	
 	if (basicFontMenu) {
 		ImGui::PopFont();
 	}

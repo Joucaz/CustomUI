@@ -1508,6 +1508,8 @@ void CustomUI::SendPlayerData() {
 	string date = getCurrentDateTime();
 
 	userExistInDatabase(idRL, presetName, date);
+
+	getTotalUser();
 	//userExistInDatabase(idRL);
 
 }
@@ -1573,6 +1575,18 @@ void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
 
 		LOG("Réponse du serveur update user: {}", result);
 
+		});
+}
+
+void CustomUI::getTotalUser() {
+	CurlRequest req;
+	req.url = "https://joudcazeaux.fr/CustomUI/getNumberUserCustomUI.php";
+
+	req.body = "testing with number";
+
+	LOG("sending number request");
+	HttpWrapper::SendCurlRequest(req, [this](int code, std::string result){
+		numberUserInt = stoi(result);
 		});
 }
 

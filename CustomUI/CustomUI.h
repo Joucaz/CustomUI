@@ -186,6 +186,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void userExistInDatabase(string id, string presetName, string date);
 	void addUserToDatabase(string idRL, string presetName, string date);
 	void updateUser(string idRL, string presetName, string lastDate);
+	void getTotalUser();
 
 public:
 	virtual void Render() override;
@@ -333,5 +334,7 @@ private:
 	shared_ptr<ImageWrapper> wesbiteLogo;
 	shared_ptr<ImageWrapper> xLogo;
 	shared_ptr<ImageWrapper> githubLogo;
+
+	int numberUserInt = 0;
 
 };
