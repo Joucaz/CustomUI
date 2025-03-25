@@ -458,7 +458,7 @@ void CustomUI::onGameStart() {
 	}*/
 	LOG("onGameStart");
 	gameDisplay = true;
-	isOnPause = false;
+	//isOnPause = false;
 
 	//SendPlayerData();
 	
