@@ -83,15 +83,27 @@ void CustomUI::onLoad()
 
 	/*gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
 	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));*/
-	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.AddPauser", bind(&CustomUI::onPauseOpen, this));
-	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));
+	/*gameWrapper->HookEvent("Function ProjectX.GameInfo_X.AddPauser", bind(&CustomUI::onPauseOpen, this));
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&CustomUI::onPauseClose, this));*/
 	//gameWrapper->HookEvent("Function TAGame.GFxHUD_TA.OpenMidgameMenu", bind(&CustomUI::onPauseOpen, this));
 	//gameWrapper->HookEvent("Function ProjectX.OnlineMessageComponent_X.RemoveMessageHandler", bind(&CustomUI::onPauseClose, this));
 
-	gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
+	
+		
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Countdown.EndState", bind(&CustomUI::onCountdownEnd, this));
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Countdown.BeginState", bind(&CustomUI::onStartKickoff, this));
 
+
+	gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
+	//gameWrapper->HookEvent("Function TAGame.GFxShell_TA.PopUISoundState", bind(&CustomUI::onPauseClose, this));
+	//gameWrapper->HookEvent("Function Engine.ControllerLayoutStack.Pop", bind(&CustomUI::onPauseClose, this));
+	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", bind(&CustomUI::onPauseClose, this));
+
+	//gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
+
+	/*
 	gameWrapper->HookEvent("Function TAGame.ReplayManager_TA.PlayReplay", bind(&CustomUI::onGameReplayStart, this));
-	gameWrapper->HookEvent("Function TAGame.Replay_TA.StopPlayback", bind(&CustomUI::onGameReplayEnd, this));
+	gameWrapper->HookEvent("Function TAGame.Replay_TA.StopPlayback", bind(&CustomUI::onGameReplayEnd, this));*/
 
 
 	//gameWrapper->HookEvent("Function TAGame.NetworkInputBuffer_TA.ClientAckFrame", bind(&CustomUI::onBoostStart, this));
@@ -381,7 +393,6 @@ void CustomUI::UpdateVars()
 			boost = getBoostAmount();
 		}
 	}
-	
 
 }
 int CustomUI::getIntTeamPlayer() {
@@ -451,6 +462,13 @@ bool CustomUI::isInFreeplay() {
 	return false;
 }
 
+bool CustomUI::isInPause() {
+	if (gameWrapper->IsPaused()) {
+		return true;
+	}
+	return false;
+}
+
 void CustomUI::onGameStart() {
 
 	if (isInFreeplay()) {
@@ -508,59 +526,84 @@ void CustomUI::onReplayEnd() {
 }
 
 void CustomUI::onOvertime() {
+	LOG("onOvertime");
 	appearUI();
 	isOvertime = true;
 }
 
-void CustomUI::onGameReplayStart() {
-	//isOnPause = false;
-	LOG("onGameReplayStart");
-	isGameReplay = true;
-}
+//void CustomUI::onGameReplayStart() {
+//	//isOnPause = false;
+//	LOG("onGameReplayStart");
+//	isGameReplay = true;
+//}
+//
+//void CustomUI::onGameReplayEnd() {
+//	//isOnPause = false;
+//	LOG("onGameReplayEnd");
+//	isGameReplay = false;
+//}
+//
+//void CustomUI::onPauseOpenGame() {
+//	if (isInGame() && !isGameReplay) {
+//		if (!isMainPlayerSpectator()) {
+//			LOG("not spectator");
+//			isOnPause = !isOnPause;
+//		}
+//		else {
+//			if (countdownPauseSpectate == 0) {
+//				LOG("countdown != 0");
+//				countdownPauseSpectate = 1;
+//				
+//			}
+//			else {
+//				isOnPause = !isOnPause;
+//				LOG("countdown == 0");
+//			}
+//		}
+//		
+//	}
+//}
 
-void CustomUI::onGameReplayEnd() {
-	//isOnPause = false;
-	LOG("onGameReplayEnd");
-	isGameReplay = false;
-}
-
-void CustomUI::onPauseOpenGame() {
-	if (isInGame() && !isGameReplay) {
-		if (!isMainPlayerSpectator()) {
-			LOG("not spectator");
-			isOnPause = !isOnPause;
-		}
-		else {
-			if (countdownPauseSpectate == 0) {
-				LOG("countdown != 0");
-				countdownPauseSpectate = 1;
-				
-			}
-			else {
-				isOnPause = !isOnPause;
-				LOG("countdown == 0");
-			}
-		}
-		
-	}
-}
 void CustomUI::onPauseOpen() {
-	LOG("pauseOpen");
+	LOG("onpauseOpen");
+	appearUI();
 	isOnPause = true;
 }
 void CustomUI::onPauseClose() {
-	LOG("pauseClose");
+	LOG("onpauseClose");
+	MenuStackWrapper menuPause = gameWrapper->GetMenuStack();
+	if (!menuPause) { return; }
 
-	isOnPause = false;
+	if (menuPause.GetTopMenu() == "MidGameMenuMovie") {
+		isOnPause = false;
+
+		if (hideOriginalUI && !replayDisplay && !isOnKickoff) {
+
+			disappearUI();
+		}
+	}
+}
+
+void CustomUI::onStartKickoff() {
+	LOG("onStartKickOff");
+	isOnKickoff = true;
+}
+
+void CustomUI::onCountdownEnd() {
+	LOG("onCountdownEnd");
+	isOnKickoff = false;
 }
 
 void CustomUI::disappearUI() {
+	LOG("DISAPPEAR");
 	if (hideOriginalUI) {
 		cvarManager->executeCommand("cl_rendering_scaleform_disabled 1");
 	}
 }
 
 void CustomUI::appearUI() {
+	LOG("APPEAR");
+
 	cvarManager->executeCommand("cl_rendering_scaleform_disabled 0");
 }
 

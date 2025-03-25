@@ -140,6 +140,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	int getIntTeamSpectator();
 	int getIntTeamPlayer();
 
+	bool isInPause();
 	bool isInFreeplay();
 	bool isInGame();
 	void onGameStart();
@@ -156,8 +157,10 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void appearUI();
 
 	void onPauseOpen();
-	void onPauseOpenGame();
 	void onPauseClose();
+
+	void onCountdownEnd();
+	void onStartKickoff();
 
 	//void Render(CanvasWrapper canvas);
 
@@ -256,6 +259,8 @@ private:
 	bool isOnPause = false;
 	bool isArtistMode = false;
 	bool isDisableBasicUI = false;
+
+	bool isOnKickoff = false;
 
 	bool presetReload = true;
 
