@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CustomUI.h"
 #include <cmath>
+#include <unordered_set>
+
 
 using namespace std;
 
@@ -312,23 +314,78 @@ void CustomUI::RenderMenu() {
 
 			ImGui::Text("Choose a Preset");
 
+			
 			ImGui::SetNextItemWidth(400.0f);
-			if (!itemsPreset.empty() && ImGui::Combo("##ChoosePreset", &currentChoosenPreset, itemsPreset.data(), itemsPreset.size())) {
-				// Appliquer le preset sélectionné
-				auto selectedPreset = allPresets.begin();
-				std::advance(selectedPreset, currentChoosenPreset);  // Aller au preset correspondant
-				currentPosition = 0;
+			if (!itemsPreset.empty() && ImGui::BeginCombo("##ChoosePreset", itemsPreset[currentChoosenPreset])) {
 
-				setCvarString(presetChoosenCvar, selectedPreset->first);
-				setCvarString(boostFormCvar, selectedPreset->second.boostForm);
-				currentPreset = loadCurrentPreset(selectedPreset->first);
-				loadThemeFont();
-				appendFont();
+				unordered_set<std::string> categoriesHandled; // Pour éviter les doublons de catégories
+
+				for (size_t i = 0; i < itemsPreset.size(); i++) {
+					const auto& presetName = itemsPreset[i];
+					const auto& presetData = allPresets[presetName];
+
+					if (!presetData.group.empty()) { // Si le preset appartient à une catégorie
+						if (categoriesHandled.find(presetData.group) == categoriesHandled.end()) {
+							if (ImGui::BeginMenu(presetData.group.c_str())) { // Ouvre le menu pour la catégorie
+								for (size_t j = 0; j < itemsPreset.size(); j++) {
+									const auto& otherPreset = itemsPreset[j];
+									const auto& otherData = allPresets[otherPreset];
+
+									if (otherData.group == presetData.group) {
+										if (ImGui::MenuItem(otherPreset, nullptr, currentChoosenPreset == j)) {
+											currentChoosenPreset = j;
+											auto selectedPreset = allPresets.find(otherPreset);
+											currentPosition = 0;
+											setCvarString(presetChoosenCvar, selectedPreset->first);
+											setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+											currentPreset = loadCurrentPreset(selectedPreset->first);
+											loadThemeFont();
+											appendFont();
+										}
+									}
+								}
+								ImGui::EndMenu();
+							}
+							categoriesHandled.insert(presetData.group);
+						}
+					}
+					else { // Si le preset n'a pas de catégorie, l'afficher directement
+						if (ImGui::Selectable(presetName, currentChoosenPreset == i)) {
+							currentChoosenPreset = i;
+							auto selectedPreset = allPresets.find(presetName);
+							currentPosition = 0;
+							setCvarString(presetChoosenCvar, selectedPreset->first);
+							setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+							currentPreset = loadCurrentPreset(selectedPreset->first);
+							loadThemeFont();
+							appendFont();
+						}
+					}
+				}
+
+				ImGui::EndCombo();
 			}
 
-			if (ImGui::IsItemHovered()) {
-				ImGui::SetTooltip("Choose the preset to apply");
-			}
+			
+
+
+			//ImGui::SetNextItemWidth(400.0f);
+			//if (!itemsPreset.empty() && ImGui::Combo("##ChoosePreset", &currentChoosenPreset, itemsPreset.data(), itemsPreset.size())) {
+			//	// Appliquer le preset sélectionné
+			//	auto selectedPreset = allPresets.begin();
+			//	std::advance(selectedPreset, currentChoosenPreset);  // Aller au preset correspondant
+			//	currentPosition = 0;
+
+			//	setCvarString(presetChoosenCvar, selectedPreset->first);
+			//	setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+			//	currentPreset = loadCurrentPreset(selectedPreset->first);
+			//	loadThemeFont();
+			//	appendFont();
+			//}
+
+			//if (ImGui::IsItemHovered()) {
+			//	ImGui::SetTooltip("Choose the preset to apply");
+			//}
 
 			std::vector<const char*> itemsPositionCombo;
 			std::vector<const char*> itemsPosition;

@@ -57,6 +57,11 @@ void CustomUI::onLoad()
 
 	initValues();
 
+		
+	/*gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.StartRound", std::bind(&CustomUI::disappearUI, this));
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::appearUI, this));*/
+
+
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
 
 	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnOvertimeUpdated", std::bind(&CustomUI::onOvertime, this));
@@ -574,6 +579,9 @@ map<string, Preset> CustomUI::loadPresets() {
 					preset.font = value["font"].is_null()
 						? ""
 						: value["font"].get<string>();
+					preset.group = value["group"].is_null()
+						? ""
+						: value["group"].get<string>();
 					preset.boostDisplayImage = value["boostDisplayImage"];
 					preset.boostTextureImage = value["boostTextureImage"];
 					preset.colorBoost = {

@@ -56,6 +56,7 @@ struct Preset {
 	array<int, 4> colorGameTime2;
 	array<int, 4> colorBoostCircle2;
 	bool differentTeam = false;
+	string group;
 };
 
 // Définir une structure pour les patch notes
