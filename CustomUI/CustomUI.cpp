@@ -35,6 +35,15 @@ void CustomUI::onLoad()
 
 	auto cvarEnableDisable = cvarManager->registerCvar("CustomUI_enabled", "1", "Enable CustomUI Plugin", true, true, 0, true, 1);
 
+	auto cvarOriginalUI = cvarManager->registerCvar("CustomUI_originalUI", "0", "Disable the original RL UI", true, true, 0, true, 1);
+	cvarOriginalUI.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
+		LOG("changecvar");
+		gameWrapper->Execute([&](GameWrapper* gw) {
+			appearUI();
+			});
+		
+		});
+
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine Corp", "preset choosen to show", true, true, 0, false);
 	auto cvarItemsNamePosition = cvarManager->registerCvar("CustomUI_itemsNamePosition", "", "item selected to move and resize", true, false, 0, false);
 	auto cvarItemsNamePosition2 = cvarManager->registerCvar("CustomUI_itemsNamePosition2", "", "item selected to move and resize", true, false, 0, false);
@@ -58,8 +67,8 @@ void CustomUI::onLoad()
 	initValues();
 
 		
-	/*gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.StartRound", std::bind(&CustomUI::disappearUI, this));
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::appearUI, this));*/
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.StartRound", std::bind(&CustomUI::disappearUI, this));
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::appearUI, this));
 
 
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
@@ -470,6 +479,7 @@ void CustomUI::onGameStart() {
 }
 
 void CustomUI::onGameEnd() {
+	appearUI();
 	countdownPauseSpectate = 0;
 	LOG("onGameEnd");
 	gameDisplay = false;
@@ -479,6 +489,7 @@ void CustomUI::onGameEnd() {
 }
 
 void CustomUI::onReplayStart() {
+	appearUI();
 	//isOnPause = false;
 	LOG("onReplayStart");
 	replayDisplay = true;
@@ -497,6 +508,7 @@ void CustomUI::onReplayEnd() {
 }
 
 void CustomUI::onOvertime() {
+	appearUI();
 	isOvertime = true;
 }
 
@@ -540,6 +552,16 @@ void CustomUI::onPauseClose() {
 	LOG("pauseClose");
 
 	isOnPause = false;
+}
+
+void CustomUI::disappearUI() {
+	if (hideOriginalUI) {
+		cvarManager->executeCommand("cl_rendering_scaleform_disabled 1");
+	}
+}
+
+void CustomUI::appearUI() {
+	cvarManager->executeCommand("cl_rendering_scaleform_disabled 0");
 }
 
 map<string, Preset> CustomUI::loadPresets() {

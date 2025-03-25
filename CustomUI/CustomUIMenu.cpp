@@ -85,6 +85,9 @@ void CustomUI::RenderMenu() {
 	CVarWrapper enableCvar = cvarManager->getCvar("CustomUI_enabled");
 	if (!enableCvar) { return; }
 
+	CVarWrapper originalUICvar = cvarManager->getCvar("CustomUI_originalUI");
+	if (!originalUICvar) { return; }
+
 	CVarWrapper boostFormCvar = cvarManager->getCvar("CustomUI_boostForm");
 	if (!boostFormCvar) { return; }
 	//string boostBarCvarValue = boostBarCvar.getStringValue();
@@ -286,6 +289,11 @@ void CustomUI::RenderMenu() {
 			pluginEnabled = getCvarBool("CustomUI_enabled");
 			if (ImGui::Checkbox("Use CustomUI", &pluginEnabled)) {
 				setCvarString(enableCvar, to_string(pluginEnabled));
+			}
+
+			hideOriginalUI = getCvarBool("CustomUI_originalUI");
+			if (ImGui::Checkbox("Auto disable of the original UI", &hideOriginalUI)) {
+				setCvarString(originalUICvar, to_string(hideOriginalUI));
 			}
 
 			//ImGui::Spacing();

@@ -152,6 +152,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onGameReplayStart();
 	void onGameReplayEnd();
 
+	void disappearUI();
+	void appearUI();
+
 	void onPauseOpen();
 	void onPauseOpenGame();
 	void onPauseClose();
@@ -241,6 +244,8 @@ private:
 	json jsonData;
 
 	bool pluginEnabled;
+
+	bool hideOriginalUI;
 
 	bool colorTeamBool = true;
 	bool isSpectator = false;
