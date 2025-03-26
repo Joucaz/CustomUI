@@ -233,8 +233,21 @@ void CustomUI::RenderMenu() {
 		ImGui::SetCursorPos(cursorStartPos);
 	}
 
+	//availableWidth = ImGui::GetContentRegionAvail().x;
 
-	//ImVec2 cursorPosAfterSupport = ImGui::GetCursorPos();	
+	string numberUser = "Total User : " + to_string(numberUserInt);
+
+	/*ImVec2 textSizeNumberUser = ImGui::CalcTextSize(numberUser.c_str());
+	float offsetX = availableWidth - textSizeNumberUser.x - 20.0f;
+
+	if (offsetX > 0) {
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+	}*/
+	ImGui::Text(numberUser.c_str());
+
+	//ImGui::SameLine();
+
+	////ImVec2 cursorPosAfterSupport = ImGui::GetCursorPos();	
 
 	//availableWidth = ImGui::GetContentRegionAvail().x;
 
@@ -263,7 +276,7 @@ void CustomUI::RenderMenu() {
 	//	if (ImGui::IsItemHovered()) {
 	//		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	//		ImGui::BeginTooltip();
-	//		ImGui::Text("Make a donation to support the developer and help improve this plugin");
+	//		ImGui::Text("Support CustomUI and help bring more features (Get a special role for your donation on Discord)");
 	//		ImGui::EndTooltip();
 	//	}
 	//	if (ImGui::IsItemClicked()) {
@@ -291,10 +304,15 @@ void CustomUI::RenderMenu() {
 				setCvarString(enableCvar, to_string(pluginEnabled));
 			}
 
+			//ImGui::SameLine();
 			hideOriginalUI = getCvarBool("CustomUI_originalUI");
 			if (ImGui::Checkbox("Auto disable of the original UI", &hideOriginalUI)) {
 				setCvarString(originalUICvar, to_string(hideOriginalUI));
 			}
+
+			//ImGui::PushStyleColor(ImGuiCol_Text, redCaution); // Rouge vif
+			//ImGui::TextWrapped("Warning: Be careful, this command hides everything, including the main menu, pause menu, quick chat, etc... during the game, use it with caution!");
+			//ImGui::PopStyleColor();
 
 			//ImGui::Spacing();
 
@@ -373,6 +391,7 @@ void CustomUI::RenderMenu() {
 
 				ImGui::EndCombo();
 			}
+
 
 			
 
@@ -796,7 +815,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/SucreDorgePSD");
 			}
-			ImGui::Spacing(); 
+
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
+
 			ImGui::TextColored(kisuteColor, "Kisute");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
@@ -819,7 +842,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Kisute3");
 			}
-			ImGui::Spacing();
+
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
+
 			ImGui::TextColored(kcColor, "Emmy");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
@@ -841,7 +868,8 @@ void CustomUI::RenderMenu() {
 			}
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/CaptainArteis");
-			}ImGui::Spacing();
+			}
+			ImGui::Spacing();
 			ImGui::TextColored(krogezoColor, "Krogezo");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
@@ -864,7 +892,11 @@ void CustomUI::RenderMenu() {
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Krogezo");
 			}
-			ImGui::Spacing();
+
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
+
 			ImGui::TextColored(whiteGrey, "Tanderiz");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = xLogo->GetImGuiTex()) {
@@ -886,6 +918,33 @@ void CustomUI::RenderMenu() {
 			}
 			if (ImGui::IsItemClicked()) {
 				system("Start https://x.com/Tanderiz");
+			}
+
+			ImGui::SameLine();
+			ImGui::Text(" | ");
+			ImGui::SameLine();
+
+			ImGui::TextColored(whiteGrey, "Jo$h");
+			ImGui::SameLine();
+			if (auto renderImageLogoText = instagramLogo->GetImGuiTex()) {
+				auto size = instagramLogo->GetSizeF();
+
+				ImGui::Image(
+					renderImageLogoText,
+					ImVec2(size.X / 1.7f, size.Y / 1.7f),
+					ImVec2(0, 0),
+					ImVec2(1, 1),
+					ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+				);
+			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+				ImGui::BeginTooltip();
+				ImGui::Text("@j0sh.psd");
+				ImGui::EndTooltip();
+			}
+			if (ImGui::IsItemClicked()) {
+				system("Start https://www.instagram.com/j0sh.psd/");
 			}
 			ImGui::Spacing();
 			ImGui::Spacing();
@@ -1030,22 +1089,14 @@ Known Issues:
 			ImGui::EndTabItem();
 		}
 
-		ImGui::SameLine();
-
-		availableWidth = ImGui::GetContentRegionAvail().x;
-
-		string numberUser = "Total User : " + to_string(numberUserInt);
-
-		ImVec2 textSizeNumberUser = ImGui::CalcTextSize(numberUser.c_str());
-		float offsetX = availableWidth - textSizeNumberUser.x - 20.0f;
-
-		if (offsetX > 0) {
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-		}
-		ImGui::Text(numberUser.c_str());
-
 		ImGui::EndTabBar();
+
+		
 	}
+
+	//ImGui::SameLine();
+
+	
 	
 	if (basicFontMenu) {
 		ImGui::PopFont();

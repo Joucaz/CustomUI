@@ -345,6 +345,7 @@ private:
 	shared_ptr<ImageWrapper> wesbiteLogo;
 	shared_ptr<ImageWrapper> xLogo;
 	shared_ptr<ImageWrapper> githubLogo;
+	shared_ptr<ImageWrapper> instagramLogo;
 
 	int numberUserInt = 0;
 

@@ -68,7 +68,7 @@ void CustomUI::onLoad()
 
 		
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.StartRound", std::bind(&CustomUI::disappearUI, this));
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::appearUI, this));
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::onReplayStart, this));
 
 
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
@@ -78,7 +78,7 @@ void CustomUI::onLoad()
 	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&CustomUI::onGameEnd, this));
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", std::bind(&CustomUI::onGameEnd, this));
 
-	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
+	//gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", bind(&CustomUI::onReplayEnd, this));
 
 	/*gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
@@ -94,10 +94,17 @@ void CustomUI::onLoad()
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Countdown.BeginState", bind(&CustomUI::onStartKickoff, this));
 
 
-	gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
+	//gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
+	gameWrapper->HookEvent("Function TAGame.GFxHUD_TA.OpenMidgameMenu", bind(&CustomUI::onPauseOpen, this));
+	//gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PushMenu", bind(&CustomUI::onPauseOpen, this));
+
 	//gameWrapper->HookEvent("Function TAGame.GFxShell_TA.PopUISoundState", bind(&CustomUI::onPauseClose, this));
 	//gameWrapper->HookEvent("Function Engine.ControllerLayoutStack.Pop", bind(&CustomUI::onPauseClose, this));
 	gameWrapper->HookEvent("Function TAGame.GFxData_MenuStack_TA.PopMenu", bind(&CustomUI::onPauseClose, this));
+	//gameWrapper->HookEvent("Function TAGame.GFxData_TourCheckInError_TA.EndUpdate", bind(&CustomUI::onPauseClose, this));
+
+
+	
 
 	//gameWrapper->HookEvent("Function ProjectX.GFxShell_X.SetGamePaused", bind(&CustomUI::onPauseOpenGame, this));
 
@@ -242,6 +249,7 @@ void CustomUI::initImages() {
 	supportDev = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "SupportButtonSmall.png", false, true);
 	wesbiteLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "WebsiteLogo.png", false, true);
 	githubLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "GithubLogo.png", false, true);
+	instagramLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "InstagramLogo.png", false, true);
 	xLogo = std::make_shared<ImageWrapper>(gameWrapper->GetDataFolder() / "CustomUI" / "Images" / "XLogo.png", false, true);
 }
 
@@ -503,6 +511,8 @@ void CustomUI::onGameEnd() {
 	gameDisplay = false;
 	isOvertime = false;
 	isOnPause = false;
+	isOnKickoff = false;
+	replayDisplay = false;
 
 }
 
@@ -566,8 +576,8 @@ void CustomUI::onOvertime() {
 
 void CustomUI::onPauseOpen() {
 	LOG("onpauseOpen");
-	appearUI();
 	isOnPause = true;
+	appearUI();
 }
 void CustomUI::onPauseClose() {
 	LOG("onpauseClose");
@@ -575,10 +585,11 @@ void CustomUI::onPauseClose() {
 	if (!menuPause) { return; }
 
 	if (menuPause.GetTopMenu() == "MidGameMenuMovie") {
+		LOG("midgamemenu");
 		isOnPause = false;
 
 		if (hideOriginalUI && !replayDisplay && !isOnKickoff) {
-
+			LOG("hide OUI");
 			disappearUI();
 		}
 	}
@@ -597,14 +608,24 @@ void CustomUI::onCountdownEnd() {
 void CustomUI::disappearUI() {
 	LOG("DISAPPEAR");
 	if (hideOriginalUI) {
-		cvarManager->executeCommand("cl_rendering_scaleform_disabled 1");
+		LOG("bool Hide : " + to_string(hideOriginalUI));
+		gameWrapper->Execute([&](GameWrapper* gw) {
+			gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+				cvarManager->executeCommand("cl_rendering_scaleform_disabled 1");
+			}, 0.2);
+		});
+		
 	}
 }
 
 void CustomUI::appearUI() {
 	LOG("APPEAR");
-
-	cvarManager->executeCommand("cl_rendering_scaleform_disabled 0");
+	gameWrapper->Execute([&](GameWrapper* gw) {
+		gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+			cvarManager->executeCommand("cl_rendering_scaleform_disabled 0");
+		}, 0.2);
+	});
+	
 }
 
 map<string, Preset> CustomUI::loadPresets() {
