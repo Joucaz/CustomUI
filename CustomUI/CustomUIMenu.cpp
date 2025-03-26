@@ -195,44 +195,6 @@ void CustomUI::RenderMenu() {
 	}
 	
 
-	if (auto renderImageSupport = supportDev->GetImGuiTex()) {
-		
-		auto sizeSupport = supportDev->GetSizeF();
-		ImVec2 supportImageSize(sizeSupport.X, sizeSupport.Y);
-
-		ImVec2 windowSize = ImGui::GetWindowSize();
-		ImVec2 cursorStartPos = ImGui::GetCursorPos(); // Sauvegarde de la position initiale du curseur
-
-		// Calculer la position en bas à droite
-		float posX = windowSize.x - supportImageSize.x - 20.0f;
-		float posY = windowSize.y - supportImageSize.y - 20.0f;
-
-		// Placer le curseur à la bonne position
-		ImGui::SetCursorPos(ImVec2(posX, posY));
-
-
-		// Dessiner l'image Discord
-		ImGui::Image(
-			renderImageSupport,
-			supportImageSize,
-			ImVec2(0, 0),
-			ImVec2(1, 1),
-			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
-		);
-
-		// Ajouter les interactions pour l'image Discord
-		if (ImGui::IsItemHovered()) {
-			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-			ImGui::BeginTooltip();
-			ImGui::Text("Support CustomUI and help bring more features (Get a special role for your donation on Discord)");
-			ImGui::EndTooltip();
-		}
-		if (ImGui::IsItemClicked()) {
-			system("Start https://www.paypal.com/donate/?hosted_button_id=DQTCWR5ZRBH46");
-		}
-		ImGui::SetCursorPos(cursorStartPos);
-	}
-
 	//availableWidth = ImGui::GetContentRegionAvail().x;
 
 	string numberUser = "Total User : " + to_string(numberUserInt);
@@ -1091,7 +1053,50 @@ Known Issues:
 
 		ImGui::EndTabBar();
 
+
+
 		
+	}
+
+
+
+	if (auto renderImageSupport = supportDev->GetImGuiTex()) {
+
+		auto sizeSupport = supportDev->GetSizeF();
+		ImVec2 supportImageSize(sizeSupport.X, sizeSupport.Y);
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		ImVec2 cursorStartPos = ImGui::GetCursorPos(); // Sauvegarde de la position initiale du curseur
+		float scrollY = ImGui::GetScrollY();
+
+		// Calculer la position en bas à droite
+		float posX = windowSize.x - supportImageSize.x - 20.0f;
+		float posY = windowSize.y - supportImageSize.y - 20.0f + scrollY;
+
+		// Placer le curseur à la bonne position
+		ImGui::SetCursorPos(ImVec2(posX, posY));
+
+
+		// Dessiner l'image Discord
+		ImGui::Image(
+			renderImageSupport,
+			supportImageSize,
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f)
+		);
+
+		// Ajouter les interactions pour l'image Discord
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			ImGui::BeginTooltip();
+			ImGui::Text("Support CustomUI and help bring more features (Get a special role for your donation on Discord)");
+			ImGui::EndTooltip();
+		}
+		if (ImGui::IsItemClicked()) {
+			system("Start https://www.paypal.com/donate/?hosted_button_id=DQTCWR5ZRBH46");
+		}
+		ImGui::SetCursorPos(cursorStartPos);
 	}
 
 	//ImGui::SameLine();
