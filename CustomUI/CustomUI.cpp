@@ -1136,7 +1136,7 @@ int CustomUI::getBoostAmountSpectator()
 
 	if (!localServer.IsNull()) {
 		for (CarWrapper cars : localServer.GetCars()) {
-			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+			if (!cars.IsNull() && reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
 				BoostWrapper boostComponent = cars.GetBoostComponent();
 				if (boostComponent.IsNull())
 					return -1;
@@ -1148,7 +1148,7 @@ int CustomUI::getBoostAmountSpectator()
 
 	if (!onlineServer.IsNull()) {
 		for (CarWrapper cars : onlineServer.GetCars()) {
-			if (reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
+			if (!cars.IsNull() && reinterpret_cast<uintptr_t>(camera.GetViewTarget().Target) == cars.memory_address) {
 				BoostWrapper boostComponent = cars.GetBoostComponent();
 				if (boostComponent.IsNull())
 					return -1;
@@ -1232,7 +1232,7 @@ int CustomUI::getTeamScore(int teamNumber)
 
 		if (!localServerTeams.IsNull())
 			for (TeamWrapper team : localServerTeams) {
-				if (team.GetTeamNum2() == teamNumber) {
+				if (!team.IsNull() && team.GetTeamNum2() == teamNumber) {
 					return team.GetScore();
 				}
 
@@ -1274,7 +1274,8 @@ int CustomUI::getTeamScore(int teamNumber)
 
 		if (!onlineServerTeams.IsNull())
 			for (TeamWrapper team : onlineServerTeams) {
-				if (team.GetTeamNum2() == teamNumber) {
+
+				if (!team.IsNull() && team.GetTeamNum2() == teamNumber) {
 					return team.GetScore();
 				}
 
@@ -1336,13 +1337,15 @@ int CustomUI::getMyTeamScore()
 		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
 		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
 
-		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull()) {
 			for (TeamWrapper team : localServerTeams) {
-				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
+				if (!team.IsNull() && localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
 					return team.GetScore();
 				}
-					
+			
 			}
+		}
+			
 
 	}
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
@@ -1350,13 +1353,15 @@ int CustomUI::getMyTeamScore()
 		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
 		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
 
-		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull()) {
 			for (TeamWrapper team : onlineServerTeams) {
-				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
+				if (!team.IsNull() && onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
 					return team.GetScore();
 				}
-									
+						
 			}
+		}
+			
 	}
 	else {
 		return -1;
@@ -1374,20 +1379,29 @@ int CustomUI::getOpposingTeamScore()
 		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
 		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
 
-		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : localServerTeams)
-				if (localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : localServerTeams) {
+				if (!team.IsNull() && localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2()) {
 					return team.GetScore();
+				}
+					
+			}
+				
+		}
+			
 	}
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
 	{
 		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
 		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
 
-		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : onlineServerTeams)
-				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : onlineServerTeams) {
+				if (!team.IsNull() && onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2()) {
 					return team.GetScore();
+				}
+			}
+		}
 	}
 	else {
 		return -1;
@@ -1405,20 +1419,29 @@ TeamWrapper CustomUI::getMyTeam()
 		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
 		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
 
-		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : localServerTeams)
-				if (localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : localServerTeams) {
+				if (!team.IsNull() && localServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
 					return team;
+				}
+			}
+		}
+			
 	}
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
 	{
 		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
 		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
 
-		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : onlineServerTeams)
-				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2())
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : onlineServerTeams) {
+				if (!team.IsNull() && onlineServerLocalPrimaryPlayer.GetTeamNum2() == team.GetTeamNum2()) {
 					return team;
+				}
+			}
+			
+		}
+			
 	}
 }
 
@@ -1432,20 +1455,31 @@ TeamWrapper CustomUI::getOpposingTeam()
 		ArrayWrapper<TeamWrapper> localServerTeams = localServer.GetTeams();
 		PlayerControllerWrapper localServerLocalPrimaryPlayer = localServer.GetLocalPrimaryPlayer();
 
-		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : localServerTeams)
-				if (localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+		if (!localServerTeams.IsNull() && !localServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : localServerTeams) {
+				if (!team.IsNull() && localServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2()) {
 					return team;
+				}
+					
+			}
+				
+		}
+			
 	}
 	else if (gameWrapper->IsInOnlineGame() && !onlineServer.IsNull())
 	{
 		ArrayWrapper<TeamWrapper> onlineServerTeams = onlineServer.GetTeams();
 		PlayerControllerWrapper onlineServerLocalPrimaryPlayer = onlineServer.GetLocalPrimaryPlayer();
 
-		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull())
-			for (TeamWrapper team : onlineServerTeams)
-				if (onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2())
+		if (!onlineServerTeams.IsNull() && !onlineServerLocalPrimaryPlayer.IsNull()) {
+			for (TeamWrapper team : onlineServerTeams) {
+				if (!team.IsNull() && onlineServerLocalPrimaryPlayer.GetTeamNum2() != team.GetTeamNum2()) {
 					return team;
+				}
+			}
+				
+		}
+			
 	}
 
 }
