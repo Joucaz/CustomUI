@@ -197,7 +197,15 @@ void CustomUI::RenderMenu() {
 
 	//availableWidth = ImGui::GetContentRegionAvail().x;
 
-	string numberUser = "Total User : " + to_string(numberUserInt);
+	//string numberUser = "Total CustomUI User : " + to_string(numberUserInt);
+
+	std::string text = "Total CustomUI Users: ";
+	std::string numberStr = std::to_string(numberUserInt);
+
+	ImGui::Text("%s", text.c_str());
+	ImGui::SameLine(); 
+	ImGui::TextColored(baseYellow, "%s", numberStr.c_str());
+
 
 	/*ImVec2 textSizeNumberUser = ImGui::CalcTextSize(numberUser.c_str());
 	float offsetX = availableWidth - textSizeNumberUser.x - 20.0f;
@@ -205,7 +213,7 @@ void CustomUI::RenderMenu() {
 	if (offsetX > 0) {
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 	}*/
-	ImGui::Text(numberUser.c_str());
+	//ImGui::Text(numberUser.c_str());
 
 	//ImGui::SameLine();
 
@@ -271,6 +279,32 @@ void CustomUI::RenderMenu() {
 			if (ImGui::Checkbox("Auto disable of the original UI", &hideOriginalUI)) {
 				setCvarString(originalUICvar, to_string(hideOriginalUI));
 			}
+			if (ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 30);
+
+				ImGui::Text("This option hides the original Rocket League UI while in-game");
+				ImGui::Text("When the match starts, the UI disappear");
+				ImGui::Text("If you pause or score a goal, the UI re appear automatically");
+				ImGui::Text("Everything happens seamlessly, no action required");
+
+				ImGui::Spacing();
+				ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f), "/!\\ Caution:");
+				ImGui::Text("The only way to hide the original UI with BakkesMod is to disable everything");
+				ImGui::Text("This includes the scoreboard, chat, notifications, etc...");
+
+				ImGui::Spacing();
+				ImGui::TextColored(ImVec4(0.3f, 1.0f, 0.3f, 1.0f), ":)) Benefits:");
+				ImGui::Text("Have only your own design UI");
+				ImGui::Text("Avoid TILTING");
+				ImGui::Text("No chat means no distractions & trash talk");
+				ImGui::Text("If a teammate concedes, you won't see it unless you pause or the UI appear again");
+
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
+
+
 
 			//ImGui::PushStyleColor(ImGuiCol_Text, redCaution); // Rouge vif
 			//ImGui::TextWrapped("Warning: Be careful, this command hides everything, including the main menu, pause menu, quick chat, etc... during the game, use it with caution!");
