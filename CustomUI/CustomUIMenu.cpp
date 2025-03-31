@@ -199,7 +199,7 @@ void CustomUI::RenderMenu() {
 
 	//string numberUser = "Total CustomUI User : " + to_string(numberUserInt);
 
-	std::string text = "Total CustomUI Users: ";
+	std::string text = "Total CustomUI Users:";
 	std::string numberStr = std::to_string(numberUserInt);
 
 	ImGui::Text("%s", text.c_str());

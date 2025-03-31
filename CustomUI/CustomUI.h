@@ -190,9 +190,9 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 
 	void SendPlayerData();
 	string getCurrentDateTime();
-	void userExistInDatabase(string id, string presetName, string date);
-	void addUserToDatabase(string idRL, string presetName, string date);
-	void updateUser(string idRL, string presetName, string lastDate);
+	void userExistInDatabase(string id, string presetName, string date, bool isUsed);
+	void addUserToDatabase(string idRL, string presetName, string date, bool isUsed);
+	void updateUser(string idRL, string presetName, string lastDate, bool isUsed);
 	void getTotalUser();
 
 public:

@@ -1554,9 +1554,9 @@ shared_ptr<ImageWrapper> CustomUI::getImageRender(map<string, shared_ptr<ImageWr
 
 }
 
+
 string CustomUI::getCurrentDateTime() {
 
-	
 
 	// Obtenir l'heure actuelle en UTC
     auto now = std::chrono::system_clock::now();
@@ -1595,32 +1595,16 @@ string CustomUI::getCurrentDateTime() {
 
     return datetime_stream.str();
 
-
-
-	/*
-
-	// Obtenir l'heure actuelle en utilisant chrono
-	auto now = std::chrono::system_clock::now();
-
-	// Convertir en un format de temps struct tm
-	std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
-	std::tm now_tm = *std::localtime(&now_time_t);
-
-	// Formater la date et l'heure au format YYYY-MM-DD HH:MM:SS
-	std::stringstream datetime_stream;
-	datetime_stream << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
-
-	return datetime_stream.str();
-
-	*/
-
 	
 }
+
+
 
 void CustomUI::SendPlayerData() {
 
 	string idRL;
 	string presetName;
+	bool isUsed;
 
 	if (gameWrapper->IsUsingEpicVersion()) {
 		idRL = gameWrapper->GetEpicID();
@@ -1629,20 +1613,22 @@ void CustomUI::SendPlayerData() {
 		idRL = to_string(gameWrapper->GetSteamID());
 	}
 	presetName = getCvarString("CustomUI_choosenPresets");
+	isUsed = getCvarBool("CustomUI_enabled");
 
 	LOG("idRL : " + idRL);
 	LOG("preset : " + presetName);
+	LOG("bool is used : " + string(isUsed ? "1" : "0"));
 	
 	string date = getCurrentDateTime();
 
-	userExistInDatabase(idRL, presetName, date);
+	userExistInDatabase(idRL, presetName, date, isUsed);
 
 	getTotalUser();
 	//userExistInDatabase(idRL);
 
 }
 
-void CustomUI::userExistInDatabase(string id, string presetName, string date) {
+void CustomUI::userExistInDatabase(string id, string presetName, string date, bool isUsed) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/userInDatabase.php";
 
@@ -1652,22 +1638,22 @@ void CustomUI::userExistInDatabase(string id, string presetName, string date) {
 	req.body = j.dump();  // Convertir l'objet JSON en chaîne
 
 	LOG("Envoi des données pour vérifier l'existence...");
-	HttpWrapper::SendCurlJsonRequest(req, [this, id, presetName, date](int code, std::string result) {
+	HttpWrapper::SendCurlJsonRequest(req, [this, id, presetName, date, isUsed](int code, std::string result) {
 		if (result == "true") {
 			LOG("L'utilisateur existe dans la base de données.");
-			updateUser(id, presetName, date);
+			updateUser(id, presetName, date, isUsed);
 		}
 		else {
 			LOG("L'utilisateur n'existe pas dans la base de données.");
 			// Ajouter l'utilisateur à la base de données
-			addUserToDatabase(id, presetName, date);
+			addUserToDatabase(id, presetName, date, isUsed);
 		}
 		});
 
 
 }
 
-void CustomUI::addUserToDatabase(string idRL, string presetName, string date) {
+void CustomUI::addUserToDatabase(string idRL, string presetName, string date, bool isUsed) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/addUserCustomUI.php";
 
@@ -1676,6 +1662,7 @@ void CustomUI::addUserToDatabase(string idRL, string presetName, string date) {
 	j["joinDate"] = date;
 	j["lastDate"] = date;
 	j["presetName"] = presetName;
+	j["isUsed"] = isUsed;
 
 	req.body = j.dump();
 
@@ -1687,7 +1674,7 @@ void CustomUI::addUserToDatabase(string idRL, string presetName, string date) {
 	});
 
 }
-void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
+void CustomUI::updateUser(string idRL, string presetName, string lastDate, bool isUsed) {
 	CurlRequest req;
 	req.url = "https://joudcazeaux.fr/CustomUI/updateUserCustomUI.php";
 
@@ -1695,6 +1682,7 @@ void CustomUI::updateUser(string idRL, string presetName, string lastDate) {
 	j["idRL"] = idRL;
 	j["lastDate"] = lastDate;
 	j["presetName"] = presetName;
+	j["isUsed"] = isUsed;
 
 	req.body = j.dump();
 
