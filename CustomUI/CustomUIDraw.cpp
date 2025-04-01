@@ -623,6 +623,36 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 
 
 
+
+//
+//void CustomUI::drawBoostCircle(ImDrawList* drawList) {
+//	string keyPreset = getCvarString("CustomUI_choosenPresets");
+//	if (!getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->IsLoadedForImGui()) {
+//		return;
+//	}
+//
+//	ImTextureID texture = getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->GetImGuiTex();
+//	auto size = getImageRender(imageTextureBoost, imageTextureBoost2, keyPreset)->GetSizeF();
+//
+//	ImVec2 position = ImVec2(400, 300);  // Position centrale de l’image
+//	ImVec2 fullSize = ImVec2(size.X, size.Y);  // Taille complète de l’image
+//
+//	// Gestion du boost (réduction progressive de l’arc visible)
+//	float boostRatio = boost / 100.0f;
+//	ImVec2 uv_min = ImVec2(0.0f, 1.0f - boostRatio);  // On cache la partie basse de l’image
+//	ImVec2 uv_max = ImVec2(1.0f, 1.0f);
+//
+//	// Dessiner l’image en respectant le ratio du boost
+//	drawList->AddImage(texture,
+//		position, ImVec2(position.x + fullSize.x, position.y + fullSize.y * boostRatio),
+//		uv_min, uv_max,
+//		IM_COL32(255, 255, 255, 255));
+//}
+
+
+
+
+
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
 
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
