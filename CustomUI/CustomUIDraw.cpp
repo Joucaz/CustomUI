@@ -92,6 +92,32 @@ ImU32 CustomUI::changeColorText(array<int, 4> settingsColor, string settingsName
 	return color;
 }
 
+int CustomUI::changeCircleAngle(Angle angle, string which, string settingsName) {
+	std::vector<std::string> settingsItems = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+	if (std::find(settingsItems.begin(), settingsItems.end(), settingsName) != settingsItems.end()) {
+		if (showCircleEditor) {
+			if (which == "start") {
+				return changeCircleStartAngle;
+			}
+			else {
+				return changeCircleMaxAngle;
+			}
+		}
+	}
+	if (which == "start") {
+		return angle.startAngle;
+	}
+	else {
+		return angle.maxAngle;
+	}
+}
+
 void CustomUI::Render() {
 	
 
@@ -542,8 +568,15 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 
 	}
 
-	float startAngle = IM_PI / 2.0f; // Début de l'arc (à 3h sur un cadran)
-	float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
+	/*float startAngle = IM_PI / 2.0f + (currentPreset.circleAngle.startAngle / 100.0f) * (IM_PI * 2.0f);
+	float maxAngle = (currentPreset.circleAngle.maxAngle / 100.0f) * (IM_PI * 2.0f);*/
+	float startAngle = IM_PI / 2.0f + (changeCircleAngle(currentPreset.circleAngle, "start", "settingsBoostTexture") / 100.0f) * (IM_PI * 2.0f);
+	float maxAngle = (changeCircleAngle(currentPreset.circleAngle, "max", "settingsBoostTexture") / 100.0f) * (IM_PI * 2.0f);
+
+	//float startAngle = 5.0f * IM_PI / 2.0f; // Debut de l'arc (3h sur un cadran)
+	//float maxAngle = IM_PI * 2.0f * 0.65f; // 75% du cercle entier
+
+
 	float endAngle = startAngle + (maxAngle * (boost / 100.0f)); // Calculer l'angle final en fonction du boost
 
 	drawList->PathClear();

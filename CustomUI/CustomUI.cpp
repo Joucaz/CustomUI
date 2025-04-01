@@ -687,6 +687,13 @@ map<string, Preset> CustomUI::loadPresets() {
 					else {
 						preset.colorBoostCircle = preset.colorBoost;
 					}
+					if (value.contains("circleAngle")) {
+						preset.circleAngle = loadAngleBoost(value["circleAngle"]);
+					}
+					else {
+						preset.circleAngle.startAngle = 0;
+						preset.circleAngle.maxAngle = 65;
+					}
 					
 					preset.boostForm = value["boostForm"];
 					preset.scoreImage = value["scoreImage"];
@@ -812,6 +819,12 @@ map<string, Preset> CustomUI::loadPresets() {
 
 Preset CustomUI::loadCurrentPreset(string keyPreset) {
 	return allPresets[keyPreset];
+}
+Angle CustomUI::loadAngleBoost(const json& value) {
+	return {
+		value["startAngle"].get<int>(),
+		value["maxAngle"].get<int>()
+	};
 }
 SettingsItems CustomUI::loadSettingsBoostDisplay(const json& value) {
 	return {
@@ -1062,6 +1075,122 @@ void CustomUI::updateJsonFieldFloat(const string presetKey, const string& field,
 		LOG("Fichier preset.json introuvable pour " + presetKey);
 	}
 }
+
+
+//
+//void CustomUI::updateJsonCircleAngle(string presetKey, const string& field, const string which, int newValue) {
+//	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
+//
+//	// Chercher le fichier correspondant au preset
+//	fs::path presetPath = basePath / presetKey / "preset.json";
+//	LOG(presetPath.string());
+//
+//	if (fs::exists(presetPath)) {
+//		// Charger le fichier JSON
+//		ifstream file(presetPath);
+//		if (!file.is_open()) {
+//			LOG("Impossible d'ouvrir le fichier JSON : " + presetPath.string());
+//			return;
+//		}
+//
+//		json jsonData;
+//		file >> jsonData;
+//		file.close();
+//
+//		// Vérifier si le preset existe dans le fichier JSON
+//		if (jsonData["presets"].contains(presetKey)) {
+//			// Mise à jour du champ dans le JSON
+//			json& preset = jsonData["presets"][presetKey];
+//			if (preset.contains(field)) {
+//				preset[field][which] = newValue; // Mise à jour de la valeur
+//
+//				LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
+//
+//				try {
+//					Angle& angle = currentPreset.circleAngle;
+//					if (which == "start") {
+//						angle.startAngle = newValue;
+//					}
+//					else if (which == "max") {
+//						angle.maxAngle = newValue;
+//					}
+//				}
+//				catch (const std::invalid_argument& e) {
+//					LOG(e.what());
+//				}
+//				saveJsonToFile(presetPath.string(), jsonData);
+//			}
+//			else {
+//				LOG("Le champ " + field + " n'existe pas dans le preset " + presetKey);
+//			}
+//		}
+//		else {
+//			LOG("Preset " + presetKey + " introuvable dans le fichier JSON.");
+//		}
+//	}
+//	else {
+//		LOG("Fichier preset.json introuvable pour " + presetKey);
+//	}
+//}
+
+
+void CustomUI::updateJsonCircleAngle(string presetKey, const string& field, int newValueStart, int newValueMax) {
+	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
+
+	// Chercher le fichier correspondant au preset
+	fs::path presetPath = basePath / presetKey / "preset.json";
+	LOG(presetPath.string());
+
+	if (fs::exists(presetPath)) {
+		// Charger le fichier JSON
+		ifstream file(presetPath);
+		if (!file.is_open()) {
+			LOG("Impossible d'ouvrir le fichier JSON : " + presetPath.string());
+			return;
+		}
+
+		json jsonData;
+		file >> jsonData;
+		file.close();
+
+		// Vérifier si le preset existe dans le fichier JSON
+		if (jsonData["presets"].contains(presetKey)) {
+			// Mise à jour du champ dans le JSON
+			json& preset = jsonData["presets"][presetKey];
+			if (!preset.contains(field)) {
+				// Si le champ n'existe pas, on l'initialise avec l'objet contenant startAngle et maxAngle
+				preset[field] = { {"startAngle", 0}, {"maxAngle", 65} };
+				LOG("Ajout du champ " + field + " avec circleAngle dans " + presetKey);
+			}
+
+			// Mise à jour des valeurs
+			preset[field]["startAngle"] = newValueStart;
+			preset[field]["maxAngle"] = newValueMax;
+
+			// LOG("Mise à jour de " + field + " dans " + presetKey + " à " + std::to_string(newValue));
+
+			try {
+				Angle& angle = currentPreset.circleAngle;
+				angle.startAngle = newValueStart;
+				angle.maxAngle = newValueMax;
+			}
+			catch (const std::invalid_argument& e) {
+				LOG(e.what());
+			}
+
+			saveJsonToFile(presetPath.string(), jsonData);
+
+		}
+		else {
+			LOG("Preset " + presetKey + " introuvable dans le fichier JSON.");
+		}
+	}
+	else {
+		LOG("Fichier preset.json introuvable pour " + presetKey);
+	}
+}
+
+
 void CustomUI::saveJsonToFile(const string jsonFilePath, const json& jsonData) {
 	try {
 		// Ouvrir le fichier en mode écriture

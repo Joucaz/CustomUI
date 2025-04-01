@@ -581,6 +581,8 @@ void CustomUI::RenderMenu() {
 			static float errorTimer = 0.0f;
 			static bool showErrorColor = false;
 			static float errorTimerColor = 0.0f;
+			static bool showErrorCircle = false;
+			static float errorTimerCircle = 0.0f;
 
 			if (ImGui::Button("Edit position"))
 			{
@@ -588,6 +590,7 @@ void CustomUI::RenderMenu() {
 					showPositionEditor = true;
 					showSizeEditor = false;
 					showColorEditor = false;
+					showCircleEditor = false;
 					showError = false;
 				}
 				else {
@@ -603,6 +606,7 @@ void CustomUI::RenderMenu() {
 					showPositionEditor = false;
 					showSizeEditor = true;
 					showColorEditor = false;
+					showCircleEditor = false;
 					showError = false;
 				}
 				else {
@@ -619,11 +623,28 @@ void CustomUI::RenderMenu() {
 						showColorEditor = true;
 						showPositionEditor = false;
 						showSizeEditor = false;
+						showCircleEditor = false;
 						showErrorColor = false;
 					}
 					else {
 						showErrorColor = true;
 						errorTimerColor = 2.0f;
+					}
+				}
+
+				ImGui::SameLine();
+				if (ImGui::Button("Edit Circle Angle"))
+				{
+					if (currentPosition != 0 && cvarIsCircleBoost(itemsPositionSelected) && cvarIsCircleBoost(itemsPositionSelected2) && cvarIsCircleBoost(itemsPositionSelected3) && cvarIsCircleBoost(itemsPositionSelected4)) {
+						showCircleEditor = true;
+						showColorEditor = false;
+						showPositionEditor = false;
+						showSizeEditor = false;
+						showErrorCircle = false;
+					}
+					else {
+						showErrorCircle = true;
+						errorTimerCircle = 2.0f;
 					}
 				}
 			}
@@ -665,7 +686,14 @@ void CustomUI::RenderMenu() {
 					showErrorColor = false;
 				}
 			}
+			if (showErrorCircle) {
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Select only the Circle Texture to modify his start and end angle");
+				errorTimerCircle -= ImGui::GetIO().DeltaTime;
 
+				if (errorTimerCircle <= 0.0f) {
+					showErrorCircle = false;
+				}
+			}
 
 			if (showPositionEditor) {
 				showRenderEditPosition();
@@ -675,6 +703,9 @@ void CustomUI::RenderMenu() {
 			}
 			if (showColorEditor) {
 				showRenderEditColor();
+			}
+			if (showCircleEditor) {
+				showRenderEditCircle();
 			}
 			/*if (ImGui::Checkbox("Disable Base UI", &isDisableBasicUI)) {
 			
@@ -1199,6 +1230,26 @@ bool CustomUI::cvarIsText(CVarWrapper cvar) {
 	return false;
 }
 
+bool CustomUI::cvarIsCircleBoost(CVarWrapper cvar) {
+	// Liste des valeurs attendues
+	const std::vector<std::string> validValues = {
+		"",
+		"settingsBoostTexture",
+	};
+
+	// Récupérer la chaîne du CVar
+	std::string value = getCvarString(cvar.getCVarName());
+
+	// Parcourir les valeurs attendues
+	for (const auto& validValue : validValues) {
+		if (value == validValue) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 //void CustomUI::addNewItemCombo(string nameCombo) {
 //	if (ImGui::Combo("##ItemsToModify", &currentPosition, itemsPositionCombo.data(), itemsPositionCombo.size())) {
@@ -1283,6 +1334,8 @@ void CustomUI::showRenderEditPosition() {
 		}
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginPosition = false;
 	}
 	ImGui::PopStyleColor(3);
@@ -1318,6 +1371,8 @@ void CustomUI::showRenderEditPosition() {
 		}
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginPosition = false;
 	}
 	ImGui::PopStyleColor(3);
@@ -1335,6 +1390,8 @@ void CustomUI::showRenderEditPosition() {
 		changePositionY = 0;
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginPosition = false;
 	}
 	ImGui::SameLine();
@@ -1343,6 +1400,8 @@ void CustomUI::showRenderEditPosition() {
 		changePositionY = 0;
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginPosition = false;
 	}
 }
@@ -1407,6 +1466,8 @@ void CustomUI::showRenderEditSize() {
 		}
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginSize = false;
 	}
 	ImGui::PopStyleColor(3);
@@ -1424,6 +1485,8 @@ void CustomUI::showRenderEditSize() {
 		changeSizeY = 1;
 		showPositionEditor = false;
 		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		changingBeginSize = false;
 	}
 	ImGui::SameLine();
@@ -1432,6 +1495,8 @@ void CustomUI::showRenderEditSize() {
 		changeSizeX = 1;
 		changeSizeY = 1;
 		showPositionEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
 		showSizeEditor = false;
 		changingBeginSize = false;
 	}
@@ -1452,7 +1517,7 @@ void CustomUI::showRenderEditColor() {
 	
 	array<int, 4>& settings = getSettingsSettingsColor(currentPreset, settingsItems);
 
-	if (!changingBeginSize) {
+	if (!changingBeginColor) {
 		baseColor[0] = settings[0] / 255.0f;
 		baseColor[1] = settings[1] / 255.0f;
 		baseColor[2] = settings[2] / 255.0f;
@@ -1461,7 +1526,7 @@ void CustomUI::showRenderEditColor() {
 		changeColorG = settings[1];
 		changeColorB = settings[2];
 		changeColorA = settings[3];
-		changingBeginSize = true;
+		changingBeginColor = true;
 	}
 
 	ImGui::SetNextItemWidth(300);
@@ -1498,8 +1563,9 @@ void CustomUI::showRenderEditColor() {
 		changeColorA = 0;
 		showPositionEditor = false;
 		showColorEditor = false;
+		showCircleEditor = false;
 		showSizeEditor = false;
-		changingBeginSize = false;
+		changingBeginColor = false;
 	}
 	ImGui::PopStyleColor(3);
 	if (ImGui::Button("Save Color")) {
@@ -1522,8 +1588,9 @@ void CustomUI::showRenderEditColor() {
 		changeColorA = 0;
 		showPositionEditor = false;
 		showColorEditor = false;
+		showCircleEditor = false;
 		showSizeEditor = false;
-		changingBeginSize = false;
+		changingBeginColor = false;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Cancel")) {
@@ -1534,7 +1601,134 @@ void CustomUI::showRenderEditColor() {
 		changeColorA = 0;
 		showPositionEditor = false;
 		showColorEditor = false;
+		showCircleEditor = false;
 		showSizeEditor = false;
-		changingBeginSize = false;
+		changingBeginColor = false;
+	}
+}
+
+void CustomUI::showRenderEditCircle() {
+	string keyPreset = getCvarString("CustomUI_choosenPresets");
+	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+	std::vector<std::string> settingsItemsList = {
+		getCvarString("CustomUI_itemsNamePosition"),
+		getCvarString("CustomUI_itemsNamePosition2"),
+		getCvarString("CustomUI_itemsNamePosition3"),
+		getCvarString("CustomUI_itemsNamePosition4")
+	};
+
+
+	static int sliderStart = 0;
+	static int sliderMax = 65;
+
+	Angle& circleAngle = currentPreset.circleAngle;
+
+	if (!changingBeginCircle) {
+		
+		changeCircleStartAngle = circleAngle.startAngle;
+		changeCircleMaxAngle = circleAngle.maxAngle;
+		sliderStart = circleAngle.startAngle;
+		sliderMax = circleAngle.maxAngle;
+		changingBeginCircle = true;
+	}
+
+	ImGui::Text("Start Angle");
+	ImGui::SetNextItemWidth(300.0f);
+	if (ImGui::SliderInt("##StartAngle", &sliderStart, 0, 100, "%d"))
+	{
+		changeCircleStartAngle = sliderStart;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(" - ##StartAngle-"))
+	{
+		changeCircleStartAngle -= 1;
+		sliderStart -= 1;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(" + ##StartAngle+"))
+	{
+		changeCircleStartAngle += 1;
+		sliderStart += 1;
+	}
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Start Angle"))
+	{
+		changeCircleStartAngle = 0;
+		sliderStart = 0;
+		for (const auto& settingsItem : settingsItemsList) {			
+			updateJsonCircleAngle(keyPreset, "circleAngle", sliderStart, sliderMax);
+		}
+		showPositionEditor = false;
+		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
+		changingBeginCircle = false;
+	}
+	ImGui::PopStyleColor(3);
+
+	ImGui::Text("Max Angle");
+	ImGui::SetNextItemWidth(300.0f);
+	if (ImGui::SliderInt("##MaxAngle", &sliderMax, 0, 100, "%d"))
+	{
+		changeCircleMaxAngle = sliderMax;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(" - ##MaxAngle-"))
+	{
+		changeCircleMaxAngle -= 1;
+		sliderMax -= 1;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(" + ##MaxAngle+"))
+	{
+		changeCircleMaxAngle += 1;
+		sliderMax += 1;
+	}
+	ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Max Angle"))
+	{
+		changeCircleMaxAngle = 0;
+		sliderMax = 65;
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonCircleAngle(keyPreset, "circleAngle", sliderStart, sliderMax);
+		}
+		showPositionEditor = false;
+		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
+		changingBeginCircle = false;
+	}
+	ImGui::PopStyleColor(3);
+
+
+	if (ImGui::Button("Save Angle"))
+	{
+		for (const auto& settingsItem : settingsItemsList) {
+			updateJsonCircleAngle(keyPreset, "circleAngle", sliderStart, sliderMax);
+		}
+		changeCircleStartAngle = 0;
+		changeCircleMaxAngle = 0;
+		showPositionEditor = false;
+		showSizeEditor = false;
+		showCircleEditor = false;
+		showColorEditor = false;
+		changingBeginCircle = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+
+		changeCircleStartAngle = 0;
+		changeCircleMaxAngle = 0;
+		showPositionEditor = false;
+		showColorEditor = false;
+		showSizeEditor = false;
+		showCircleEditor = false;
+		changingBeginCircle = false;
 	}
 }

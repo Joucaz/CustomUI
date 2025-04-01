@@ -21,6 +21,10 @@ struct SettingsItems {
 	float sizeX; 
 	float sizeY;
 };
+struct Angle {
+	int startAngle;
+	int maxAngle;
+};
 //struct Font {
 //	string nameFont;
 //	int sizeFont;
@@ -57,6 +61,7 @@ struct Preset {
 	array<int, 4> colorBoostCircle2;
 	bool differentTeam = false;
 	string group;
+	Angle circleAngle;
 };
 
 // Définir une structure pour les patch notes
@@ -89,12 +94,14 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	//void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
 	void updateJsonColor(string presetKey, const string& field, array<int, 4>& newValues);
+	void updateJsonCircleAngle(string presetKey, const string& field, int newValueStart, int newValueMax);
 	void saveJsonToFile(const string jsonFilePath, const json& jsonData);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	array<int, 4>& getSettingsColor(Preset& preset, const std::string& fieldName);
 	array<int, 4>& getSettingsSettingsColor(Preset& preset, const std::string& fieldName);
 	string getStringSettingsColor(string nameSettings);
 	SettingsItems loadSettingsBoostDisplay(const json& value);
+	Angle loadAngleBoost(const json& value);
 
 	void refreshFiles();
 
@@ -108,9 +115,11 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	float floatChangeSizeX(SettingsItems settings, string settingsName);
 	float floatChangeSizeY(SettingsItems settings, string settingsName);
 	ImU32 changeColorText(array<int, 4> settingsColor, string settingsName);
+	int changeCircleAngle(Angle angle, string which, string settingsName);
 
 	//void drawPositionSizeMenu(int currentPosition, string keyPreset, CVarWrapper itemsPositionSelected, CVarWrapper itemsPositionSelected2, CVarWrapper itemsPositionSelected3, CVarWrapper itemsPositionSelected4);
 	bool cvarIsText(CVarWrapper cvar);
+	bool cvarIsCircleBoost(CVarWrapper cvar);
 
 	float intToFloatPosition(int position, int screenSize);
 	int floatToIntPosition(float position, int screenSize);
@@ -215,6 +224,7 @@ public:
 	void showRenderEditPosition();
 	void showRenderEditSize();
 	void showRenderEditColor();
+	void showRenderEditCircle();
 	bool escape_state = false;
 	bool isSettingsOpen = false;
 	string menuName_ = "customui";
@@ -274,8 +284,12 @@ private:
 	int changeColorG = 0;
 	int changeColorB = 0;
 	int changeColorA = 0;
+	int changeCircleStartAngle = 0;
+	int changeCircleMaxAngle = 0;
 	bool changingBeginPosition = false;
 	bool changingBeginSize = false;
+	bool changingBeginColor = false;
+	bool changingBeginCircle = false;
 
 	int countdownPauseSpectate = 0;
 
@@ -296,6 +310,7 @@ private:
 	bool showPositionEditor = false;
 	bool showSizeEditor = false;
 	bool showColorEditor = false;
+	bool showCircleEditor = false;
 
 	string fontNameLoad;
 
