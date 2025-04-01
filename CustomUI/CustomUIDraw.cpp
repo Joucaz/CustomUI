@@ -551,6 +551,77 @@ void CustomUI::drawBoostCircle(ImDrawList* drawList) {
 	drawList->PathStroke(color, false, strokeThickness);
 }
 
+//void CustomUI::drawBoostCircle(ImDrawList* drawList) {
+//	string keyPreset = getCvarString("CustomUI_choosenPresets");
+//	string settingsItems = getCvarString("CustomUI_itemsNamePosition");
+//
+//	// Couleurs pour le dégradé
+//	ImU32 startColor = IM_COL32(255, 0, 0, 255);   // Rouge (plein boost)
+//	ImU32 endColor = IM_COL32(255, 255, 0, 255);   // Jaune (boost faible)
+//
+//	ImVec2 center = { 0,0 };
+//	float radius;
+//	float strokeThickness;
+//
+//	auto& settingsBoostTexture = currentPreset.settingsBoostTexture;
+//	auto& settingsBoostAllItems = currentPreset.settingsBoostAllItems;
+//
+//	if (isArtistMode) {
+//		center = ImVec2((200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + intChangePositionX(settingsBoostTexture, "settingsBoostTexture")),
+//			(198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + intChangePositionY(settingsBoostTexture, "settingsBoostTexture")));
+//		radius = 140.0f * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture");
+//		strokeThickness = 26.0f * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture");
+//	}
+//	else {
+//		float centerX = (200 * floatChangeSizeX(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionX, screenSize.X)
+//			+ intChangePositionX(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+//		float centerY = (198 * floatChangeSizeY(settingsBoostTexture, "settingsBoostTexture") + floatToIntPosition(settingsBoostTexture.positionY, screenSize.Y)
+//			+ intChangePositionY(settingsBoostAllItems, "settingsBoostAllItems")) * floatChangeSizeY(settingsBoostAllItems, "settingsBoostAllItems");
+//
+//		center = ImVec2(centerX, centerY);
+//		radius = 140.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+//		strokeThickness = 26.0f * settingsBoostTexture.sizeX * floatChangeSizeX(settingsBoostAllItems, "settingsBoostAllItems");
+//	}
+//
+//	float startAngle = IM_PI / 2.0f; // Début de l'arc (en bas)
+//	float maxAngle = IM_PI * 2.0f * 0.65f; // 65% du cercle entier
+//	float endAngle = startAngle + (maxAngle * (boost / 100.0f)); // Calcul de l'angle en fonction du boost
+//
+//	int numSegments = 100;
+//
+//	for (int i = 0; i < numSegments; i++) {
+//		float t1 = i / (float)numSegments;
+//		float t2 = (i + 1) / (float)numSegments;
+//
+//		float angle1 = startAngle + (maxAngle * t1);
+//		float angle2 = startAngle + (maxAngle * t2);
+//
+//		// Si l'angle dépasse endAngle, on arrête de dessiner
+//		if (angle1 >= endAngle) break;
+//
+//		ImVec2 p1 = ImVec2(center.x + cos(angle1) * radius, center.y + sin(angle1) * radius);
+//		ImVec2 p2 = ImVec2(center.x + cos(angle2) * radius, center.y + sin(angle2) * radius);
+//		ImVec2 p3 = ImVec2(center.x + cos(angle2) * (radius - strokeThickness), center.y + sin(angle2) * (radius - strokeThickness));
+//		ImVec2 p4 = ImVec2(center.x + cos(angle1) * (radius - strokeThickness), center.y + sin(angle1) * (radius - strokeThickness));
+//
+//		ImU32 color1 = LerpColor(startColor, endColor, t1); // Couleur selon le dégradé du cercle complet
+//		ImU32 color2 = LerpColor(startColor, endColor, t2);
+//
+//		drawList->AddQuadFilled(p1, p2, p3, p4, color1);
+//	}
+//}
+//
+//// Fonction pour interpoler deux couleurs ImU32
+//ImU32 CustomUI::LerpColor(ImU32 startColor, ImU32 endColor, float t) {
+//	int r = (1 - t) * ((startColor >> 0) & 0xFF) + t * ((endColor >> 0) & 0xFF);
+//	int g = (1 - t) * ((startColor >> 8) & 0xFF) + t * ((endColor >> 8) & 0xFF);
+//	int b = (1 - t) * ((startColor >> 16) & 0xFF) + t * ((endColor >> 16) & 0xFF);
+//	int a = (1 - t) * ((startColor >> 24) & 0xFF) + t * ((endColor >> 24) & 0xFF);
+//
+//	return IM_COL32(r, g, b, a);
+//}
+
+
 
 void CustomUI::drawBoostText(ImDrawList* drawList, int v1x, int v1y, int v2x, int v2y, int v3x, int v3y) {
 

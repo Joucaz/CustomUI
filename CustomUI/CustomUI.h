@@ -195,6 +195,8 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void updateUser(string idRL, string presetName, string lastDate, bool isUsed);
 	void getTotalUser();
 
+	ImU32 LerpColor(ImU32 startColor, ImU32 endColor, float t);
+
 public:
 	virtual void Render() override;
 
