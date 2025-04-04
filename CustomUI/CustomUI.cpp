@@ -37,11 +37,26 @@ void CustomUI::onLoad()
 
 	auto cvarOriginalUI = cvarManager->registerCvar("CustomUI_originalUI", "0", "Disable the original RL UI", true, true, 0, true, 1);
 	cvarOriginalUI.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
-		LOG("changecvar");
 		gameWrapper->Execute([&](GameWrapper* gw) {
 			appearUI();
 			});
 		
+		});
+
+	auto cvarHideFreeplay = cvarManager->registerCvar("CustomUI_hideFreeplay", "0", "Disable the original RL UI in freeplay", true, true, 0, true, 1);
+	cvarHideFreeplay.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
+		gameWrapper->Execute([&](GameWrapper* gw) {
+			appearUI();
+			});
+
+		});
+
+	auto cvarHideSpectator = cvarManager->registerCvar("CustomUI_hideSpectator", "0", "Disable the original RL UI when spectator", true, true, 0, true, 1);
+	cvarHideSpectator.addOnValueChanged([this](std::string cvarName, CVarWrapper newCvar) {
+		gameWrapper->Execute([&](GameWrapper* gw) {
+			appearUI();
+			});
+
 		});
 
 	auto cvarPresets = cvarManager->registerCvar("CustomUI_choosenPresets", "Karmine Corp", "preset choosen to show", true, true, 0, false);
@@ -607,14 +622,17 @@ void CustomUI::onCountdownEnd() {
 
 void CustomUI::disappearUI() {
 	LOG("DISAPPEAR");
-	if (hideOriginalUI) {
-		LOG("bool Hide : " + to_string(hideOriginalUI));
+	if (!hideOriginalUI) return;
+	if (isOnPause) return;
+
+	bool shouldHideUI = !isInFreeplay() || (isInFreeplay() && hideFreeplay) || (isSpectator && isInGame() && hideSpectator);// 
+
+	if (shouldHideUI) {
 		gameWrapper->Execute([&](GameWrapper* gw) {
 			gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
 				cvarManager->executeCommand("cl_rendering_scaleform_disabled 1");
-			}, 0.2);
-		});
-		
+				}, 0.2);
+			});
 	}
 }
 

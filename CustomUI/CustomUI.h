@@ -261,6 +261,8 @@ private:
 	bool pluginEnabled;
 
 	bool hideOriginalUI;
+	bool hideFreeplay;
+	bool hideSpectator;
 
 	bool colorTeamBool = true;
 	bool isSpectator = false;

@@ -50,7 +50,7 @@ void CustomUI::RenderMenu() {
 
 	style.Colors[ImGuiCol_WindowBg] = baseBlack;
 
-	ImVec2 minSize(720.0f, 650.0f);
+	ImVec2 minSize(800.0f, 700.0f);
 	ImVec2 maxSize(1920, 1080);
 
 	// Appliquer les contraintes avant de créer la fenêtre
@@ -87,6 +87,12 @@ void CustomUI::RenderMenu() {
 
 	CVarWrapper originalUICvar = cvarManager->getCvar("CustomUI_originalUI");
 	if (!originalUICvar) { return; }
+
+	CVarWrapper cvarHideFreeplay = cvarManager->getCvar("CustomUI_hideFreeplay");
+	if (!cvarHideFreeplay) { return; }
+
+	CVarWrapper cvarHideSpectator = cvarManager->getCvar("CustomUI_hideSpectator");
+	if (!cvarHideSpectator) { return; }
 
 	CVarWrapper boostFormCvar = cvarManager->getCvar("CustomUI_boostForm");
 	if (!boostFormCvar) { return; }
@@ -302,6 +308,23 @@ void CustomUI::RenderMenu() {
 
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Options"))
+				ImGui::OpenPopup("advanced_options_popup");
+			if (ImGui::BeginPopup("advanced_options_popup"))
+			{
+				hideFreeplay = getCvarBool("CustomUI_hideFreeplay");
+				if (ImGui::Checkbox("Hide UI in Freeplay", &hideFreeplay)) {
+					setCvarString(cvarHideFreeplay, to_string(hideFreeplay));
+				}
+
+				hideSpectator = getCvarBool("CustomUI_hideSpectator");
+				if (ImGui::Checkbox("Hide UI when Spectator", &hideSpectator)) {
+					setCvarString(cvarHideSpectator, to_string(hideSpectator));
+				}
+
+				ImGui::EndPopup();
 			}
 
 
