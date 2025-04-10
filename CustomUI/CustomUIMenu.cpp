@@ -1057,19 +1057,25 @@ Date: 30/01/2025
 
 New Features:
 
-- 
+- Added an option to automatically hide the original Rocket League UI. The UI is hidden when the game starts and reappears when a goal is scored or the pause menu is opened. You can enable/disable this feature separately for gameplay, freeplay, and spectating.
+- You can now customize the start and end positions of the Circle Boost.
+- Added the "RLCS 2024" preset.
+- Added multiple design for content creators (Kaydop, Feer, Mawkzy, Yota, RocketBaguette)z.
+- Introduced a support button to help fund the plugin's development and future features.
 
 -------------------
 
 Improvements and Changes:
 
-- 
+- The total number of active plugin users is now displayed and updated in real time.
+- Presets can now be grouped for better organization.
+- Increased the minimum window size for improved usability.
 
 -------------------
 
 Bug Fixes:
 
-- 
+- Fixed the bug where the boost would disappear if the game was paused and a replay ended.
 
 					)"
 				},
