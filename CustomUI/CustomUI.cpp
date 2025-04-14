@@ -370,7 +370,7 @@ void CustomUI::setCvarString(CVarWrapper cVarName, string cVarValue) {
 
 void CustomUI::UpdateVars()
 {
-	if (!isGameReplay) {
+	if (!isGameReplay && !isInReplay()) {
 
 		//LOG(" test + " + to_string(isSettingsOpen));
 		if (isInGame()) {
@@ -465,6 +465,13 @@ int CustomUI::getIntTeamSpectator() {
 	else {
 		return -1;
 	}
+}
+
+bool CustomUI::isInReplay() {
+	if (gameWrapper->IsInReplay()) {
+		return true;
+	}
+	return false;
 }
 
 bool CustomUI::isInGame() {

@@ -152,6 +152,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	bool isInPause();
 	bool isInFreeplay();
 	bool isInGame();
+	bool isInReplay();
 	void onGameStart();
 	void onGameEnd();
 	void onOvertime();

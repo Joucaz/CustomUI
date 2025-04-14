@@ -1075,6 +1075,7 @@ Improvements and Changes:
 
 Bug Fixes:
 
+- Fixed the bug where replay mode made the game crash with CustomUI plugin.
 - Fixed the bug where the boost would disappear if the game was paused and a replay ended.
 
 					)"

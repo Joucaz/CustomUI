@@ -199,7 +199,7 @@ void CustomUI::RenderWindow()
 		LOG("not font");
 	}
 
-	if (pluginEnabled) {
+	if (pluginEnabled && !isInReplay()) {
 		if (isInGame() && gameDisplay) {
 			if (!isOnPause && !zeroBoost(boost)) {
 				drawBoost(drawList);
