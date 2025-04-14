@@ -247,6 +247,7 @@ public:
 	static inline const ImVec4 kisuteColor = ImVec4{ 40 / 255.0f, 57 / 255.0f, 178.0f / 255.0f, 1.0f };
 	static inline const ImVec4 sucreDorgeColor = ImVec4{ 178 / 255.0f, 166 / 255.0f, 40 / 255.0f, 1.0f };
 	static inline const ImVec4 krogezoColor = ImVec4{ 1 / 255.0f, 130 / 255.0f, 129 / 255.0f, 1.0f };
+	static inline const ImVec4 joshColor = ImVec4{ 249 / 255.0f, 146 / 255.0f, 69 / 255.0f, 1.0f };
 	static inline const ImVec4 white = ImVec4{ 255 / 255.0f, 255 / 255.0f, 255 / 255.0f, 1.0f };
 	static inline const ImVec4 whiteGrey = ImVec4{ 202 / 255.0f, 201 / 255.0f, 200 / 255.0f, 1.0f };
 	static inline const ImVec4 kcColor = ImVec4{ 0 / 255.0f, 189 / 255.0f, 255 / 255.0f, 1.0f };

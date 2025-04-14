@@ -978,7 +978,7 @@ void CustomUI::RenderMenu() {
 			ImGui::Text(" | ");
 			ImGui::SameLine();
 
-			ImGui::TextColored(whiteGrey, "Jo$h");
+			ImGui::TextColored(joshColor, "Jo$h");
 			ImGui::SameLine();
 			if (auto renderImageLogoText = instagramLogo->GetImGuiTex()) {
 				auto size = instagramLogo->GetSizeF();
