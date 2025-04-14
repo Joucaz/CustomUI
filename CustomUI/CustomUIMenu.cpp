@@ -50,6 +50,8 @@ void CustomUI::RenderMenu() {
 
 	style.Colors[ImGuiCol_WindowBg] = baseBlack;
 
+	style.Colors[ImGuiCol_PopupBg] = baseBlackLight;
+
 	ImVec2 minSize(800.0f, 700.0f);
 	ImVec2 maxSize(1920, 1080);
 
@@ -286,6 +288,7 @@ void CustomUI::RenderMenu() {
 				setCvarString(originalUICvar, to_string(hideOriginalUI));
 			}
 			if (ImGui::IsItemHovered()) {
+
 				ImGui::BeginTooltip();
 				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 30);
 
@@ -308,6 +311,7 @@ void CustomUI::RenderMenu() {
 
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
+
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Options"))

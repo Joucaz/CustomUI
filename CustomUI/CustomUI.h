@@ -237,6 +237,7 @@ public:
 	static inline const ImVec4 baseYellowHovered = ImVec4(160 / 255.0f, 129 / 255.0f, 10 / 255.0f, 1.0f);
 	static inline const ImVec4 baseYellowActive = ImVec4(255 / 255.0f, 201 / 255.0f, 0 / 255.0f, 1.0f);
 	static inline const ImVec4 baseBlack = ImVec4(23 / 255.0f, 22 / 255.0f, 23 / 255.0f, 1.0f); // 171617
+	static inline const ImVec4 baseBlackLight = ImVec4(41 / 255.0f, 40 / 255.0f, 41 / 255.0f, 1.0f);
 	static inline const ImVec4 baseGrey = ImVec4(58 / 255.0f, 58 / 255.0f, 58 / 255.0f, 1.0f);
 	static inline const ImVec4 discordPurple = ImVec4(88 / 255.0f, 101 / 255.0f, 242 / 255.0f, 1.0f);
 	static inline const ImVec4 redCaution = ImVec4(1.0f, 51 / 255.0f, 51 / 255.0f, 1.0f);
