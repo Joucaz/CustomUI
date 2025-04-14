@@ -83,7 +83,7 @@ void CustomUI::onLoad()
 
 		
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.StartRound", std::bind(&CustomUI::disappearUI, this));
-	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::onReplayStart, this));
+	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventExploded", std::bind(&CustomUI::onGoalScore, this));
 
 
 	gameWrapper->HookEvent("Function GameEvent_TA.Countdown.BeginState", bind(&CustomUI::onGameStart, this));
@@ -93,7 +93,7 @@ void CustomUI::onLoad()
 	gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&CustomUI::onGameEnd, this));
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", std::bind(&CustomUI::onGameEnd, this));
 
-	//gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.BeginState", bind(&CustomUI::onReplayStart, this));
 	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.ReplayPlayback.EndState", bind(&CustomUI::onReplayEnd, this));
 
 	/*gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&CustomUI::onPauseOpen, this));
@@ -528,17 +528,21 @@ void CustomUI::onGameEnd() {
 	isOnPause = false;
 	isOnKickoff = false;
 	replayDisplay = false;
+	beforeReplay = false;
 
 }
 
 void CustomUI::onReplayStart() {
-	appearUI();
-	//isOnPause = false;
 	LOG("onReplayStart");
 	replayDisplay = true;
+	beforeReplay = false;
 	if (!isInFreeplay()) {
 		gameDisplay = false;
 	}
+}
+void CustomUI::onGoalScore() {
+	beforeReplay = true;
+	appearUI();
 }
 
 void CustomUI::onReplayEnd() {
@@ -603,7 +607,7 @@ void CustomUI::onPauseClose() {
 		LOG("midgamemenu");
 		isOnPause = false;
 
-		if (hideOriginalUI && !replayDisplay && !isOnKickoff) {
+		if (hideOriginalUI && !replayDisplay && !isOnKickoff && !beforeReplay) {
 			LOG("hide OUI");
 			disappearUI();
 		}

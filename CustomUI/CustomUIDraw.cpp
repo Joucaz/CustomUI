@@ -382,6 +382,7 @@ void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSiz
 			color, text.c_str());
 	}
 	else {
+
 		vx = vx * settingsItem.sizeX + floatToIntPosition(settingsItem.positionX, screenSize.X);
 		vy = vy * settingsItem.sizeY + floatToIntPosition(settingsItem.positionY, screenSize.Y);
 		drawList->AddText(myFont, fontSize * settingsItem.sizeX * floatChangeSizeX(settingsAll, "settingsScoreAllItems"),

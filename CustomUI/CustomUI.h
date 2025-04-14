@@ -156,6 +156,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void onGameEnd();
 	void onOvertime();
 
+	void onGoalScore();
 	void onReplayStart();
 	void onReplayEnd();
 
@@ -320,6 +321,7 @@ private:
 
 	bool gameDisplay = false;
 	bool replayDisplay = false;
+	bool beforeReplay = false;
 
 	string presetPath;
 
