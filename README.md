@@ -28,15 +28,17 @@ Join our [**Discord**](https://discord.gg/NQ8Qw4Mw2w) community to explore all a
 - [Step-by-step guide](https://github.com/Joucaz/CustomUI/wiki/CustomUI-Tutorial)
 
 #### Tutorial Videos:
-- [How to use CustomUI](https://youtu.be/-xOmT7EfpgA)  
-- [How to create your own preset](#)
+- [How to use CustomUI](https://youtu.be/-xOmT7EfpgA)
 
 ## ❓ FAQ  
-**Q: Can I use the plugin in all game modes within Rocket League?**  
-A: Yes, the plugin is compatible with all match types in Rocket League. 
+**Q: Is the plugin compatible with all game modes in Rocket League?**  
+**A:** Yes, the plugin is compatible in Casual, Ranked, Private Games, and Freeplay.
 
-**Q: Can I share my UI designs with friends?**  
-A: Yes, presets can be easily exported and imported.  
+**Q: Can I create custom designs for my esports team, myself, or any specific theme?**  
+**A:** Yes, creating your own preset is simple. Just follow the step-by-step tutorial to get started.
+
+**Q: Can I share my UI designs with others?**  
+**A:** Yes, presets can be easily exported and imported, making it simple to share your creations with friends or teammates. 
 
 ## ℹ️ Additional Information  
 This plugin collects usage statistics, including user IDs, to track the number of users and the presets used. This data helps improve the plugin and provide better insights.
@@ -44,7 +46,7 @@ This plugin collects usage statistics, including user IDs, to track the number o
 ## 🔗 Links
 
 ### Presets Artists:
-[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz)
+[Tanderiz](https://x.com/Tanderiz) | [Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Jo$h](https://www.instagram.com/j0sh.psd/)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
