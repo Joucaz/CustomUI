@@ -46,7 +46,7 @@ This plugin collects usage statistics, including user IDs, to track the number o
 ## 🔗 Links
 
 ### Presets Artists:
-[Tanderiz](https://x.com/Tanderiz) | [Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Jo$h](https://www.instagram.com/j0sh.psd/)
+[Kisute](https://x.com/Kisute3) | [SucreDorge](https://x.com/SucreDorgePSD) | [Emmy](https://x.com/CaptainArteis) | [Krogezo](https://x.com/Krogezo) | [Tanderiz](https://x.com/Tanderiz) | [Jo$h](https://www.instagram.com/j0sh.psd/)
 
 ### Thanks to:
 [Arubinu42](https://twitch.tv/Arubinu42) | Vync | SoulDaMeep |
