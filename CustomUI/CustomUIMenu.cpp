@@ -1064,7 +1064,7 @@ New Features:
 - Added an option to automatically hide the original Rocket League UI. The UI is hidden when the game starts and reappears when a goal is scored or the pause menu is opened. You can enable/disable this feature separately for gameplay, freeplay, and spectating.
 - You can now customize the start and end positions of the Circle Boost.
 - Added the "RLCS 2024" preset.
-- Added multiple design for content creators (Kaydop, Feer, Mawkzy, Yota, RocketBaguette)z.
+- Added multiple design for content creators (Kaydop, Mawkzy, Feer, Yota).
 - Introduced a support button to help fund the plugin's development and future features.
 
 -------------------
@@ -1079,6 +1079,7 @@ Improvements and Changes:
 
 Bug Fixes:
 
+- Fixed random crashes at the start of a game that could result in a loss.
 - Fixed the bug where replay mode made the game crash with CustomUI plugin.
 - Fixed the bug where the boost would disappear if the game was paused and a replay ended.
 
