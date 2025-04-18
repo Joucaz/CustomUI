@@ -1055,7 +1055,7 @@ void CustomUI::RenderMenu() {
 				{
 					"v1.2.0 (latest)", R"(
 Patch Notes v1.2.0 
-Date: 30/01/2025
+Date: 18/04/2025
 
 -------------------
 
