@@ -119,18 +119,26 @@ int CustomUI::changeCircleAngle(Angle angle, string which, string settingsName) 
 }
 
 void CustomUI::Render() {
-	
+	if (startRender) {
+		LOG("startRender");
+		RenderMenu();
+		startRender = false;
+	}
+	//LOG("Render");
+	/*gameWrapper->Execute([&](GameWrapper* gw) {
+		UpdateVars();
+	});*/
 
 	int idx = ImGui::GetKeyIndex(ImGuiKey_Escape);
 	if (ImGui::IsKeyDown(idx))
 		escape_state = true;
 	else if (ImGui::IsKeyReleased(idx))
 		escape_state = false;
-	if (isInFreeplay() || isInGame()) {
-		RenderWindow();
-	}
 	if (isSettingsOpen) {
 		RenderMenu();
+	}
+	if (pluginEnabled && (isInFreeplay() || isInGame())) {
+		RenderWindow();
 	}
 	else {
 		showPositionEditor = false;
@@ -199,7 +207,8 @@ void CustomUI::RenderWindow()
 		LOG("not font");
 	}
 
-	if (pluginEnabled && !isInReplay()) {
+	if (!isInReplay()) {
+
 		if (isInGame() && gameDisplay) {
 			if (!isOnPause && !zeroBoost(boost)) {
 				drawBoost(drawList);
@@ -221,7 +230,6 @@ void CustomUI::RenderWindow()
 		ImGui::PopFont();
 		//ImGui::Text("The custom font haven't been loaded yet");
 	}
-
 	ImGui::End();
 
 	//if (!isWindowOpen_)

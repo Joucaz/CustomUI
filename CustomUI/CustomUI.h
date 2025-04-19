@@ -282,6 +282,8 @@ private:
 
 	bool presetReload = true;
 
+	bool startRender = true;
+
 	int changePositionX = 0;
 	int changePositionY = 0;
 	float changeSizeX = 1;

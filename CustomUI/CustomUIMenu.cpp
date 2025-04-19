@@ -1055,7 +1055,7 @@ void CustomUI::RenderMenu() {
 				{
 					"v1.2.0 (latest)", R"(
 Patch Notes v1.2.0 
-Date: 18/04/2025
+Date: 19/04/2025
 
 -------------------
 
@@ -1080,6 +1080,7 @@ Improvements and Changes:
 Bug Fixes:
 
 - Fixed random crashes at the start of a game that could result in a loss.
+- Fixed the bug where the CustomUI did not display automatically on Rocket League launch and required manually toggling the menu.
 - Fixed the bug where replay mode made the game crash with CustomUI plugin.
 - Fixed the bug where the boost would disappear if the game was paused and a replay ended.
 
@@ -1140,6 +1141,8 @@ Known Issues:
 			for (int i = 0; i < patch_count; ++i) {
 				patch_titles[i] = patch_notes[i].title;
 			}
+
+
 			ImGui::SetNextItemWidth(400.0f);
 			if (ImGui::Combo("Select Patch Note", &selected_patch, patch_titles, patch_count)) {
 				

@@ -159,13 +159,25 @@ void CustomUI::onLoad()
 
 	cvarManager->setBind("F3", "CustomUI_openSettings");
 
+	//gameWrapper->RegisterDrawable(bind(&CustomUI::RenderMenu, this));
+	//gameWrapper->RegisterDrawable(bind(&CustomUI::UpdateVars, this));
 
 	gameWrapper->RegisterDrawable(bind(&CustomUI::UpdateVars, this));
 	gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+
+		//RenderMenu();
 		cvarManager->executeCommand("togglemenu " + GetMenuName());
 		}, 1);
+	/*gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+		cvarManager->executeCommand("CustomUI_openSettings");
+		cvarManager->executeCommand("togglemenu " + GetMenuName());
+		gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+			LOG("testSettings");
+			isSettingsOpen = false;
+			}, 0.01);
+		},1);*/
+	
 
-	LOG("testtt");
 }
 
 
