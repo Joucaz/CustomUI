@@ -40,8 +40,7 @@ void CustomUI::RenderSettings() {
 
     style.Colors[ImGuiCol_TextSelectedBg] = baseYellowHovered;
 
-    style.Colors[ImGuiCol_WindowBg] = baseBlack;
-      
+    style.Colors[ImGuiCol_WindowBg] = baseBlack;      
  
     ImGui::Indent(5.0f);
     ImGui::Text("Window");
@@ -53,9 +52,40 @@ void CustomUI::RenderSettings() {
     ImGui::Indent(-15.0f);
     ImGui::Text("Bind");
     ImGui::Indent(15.0f);
-    ImGui::Text("Set A Bind To Open The Customizable Window");
-    static char KeyBindInputBuf[200] = "F3";
+    ImGui::Text("Set A Bind To Open The CustomUI Window");
+
+    static bool initialized = false;
+    static char KeyBindInputBuf[128];
+    static std::string keyBindString;
+    CVarWrapper keyBindCvar = cvarManager->getCvar("CustomUI_keyBind");
+    if (!keyBindCvar) { 
+        return; 
+    }
+
+    if (!initialized) {
+        keyBindString = getCvarString("CustomUI_keyBind");
+        strncpy(KeyBindInputBuf, keyBindString.c_str(), sizeof(KeyBindInputBuf));
+        KeyBindInputBuf[sizeof(KeyBindInputBuf) - 1] = '\0';
+        initialized = true;
+    }
+
     ImGui::InputText("##KeyBindInput", KeyBindInputBuf, IM_ARRAYSIZE(KeyBindInputBuf));
+    //ImGui::InputText("##KeyBindInput", KeyBindInputBuf, IM_ARRAYSIZE(KeyBindInputBuf));
+
+
+    if (ImGui::Button("Set Bind"))
+    {
+        gameWrapper->Execute([&](GameWrapper* gw) {
+            cvarManager->removeBind(getCvarString("CustomUI_keyBind"));
+            cvarManager->setBind(KeyBindInputBuf, "CustomUI_openSettings");
+            cvarManager->log("New key bind set : " + string(KeyBindInputBuf) + " -> CustomUI_openSettings");
+            });
+        gameWrapper->SetTimeout([this, keyBindCvar](GameWrapper* gameWrapper) {
+            setCvarString(keyBindCvar, KeyBindInputBuf);
+            }, 0.5);
+
+        ImGui::OpenPopup("BindSet");
+    }
 
     ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowWidth() / 2, ImGui::GetWindowHeight() / 2), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("BindSet", NULL, ImGuiWindowFlags_AlwaysAutoResize))
@@ -66,19 +96,11 @@ void CustomUI::RenderSettings() {
         if (ImGui::Button("OK", ImVec2(100.f, 25.f)))
         {
             ImGui::CloseCurrentPopup();
+            initialized = false;
         }
         ImGui::EndPopup();
     }
 
-    if (ImGui::Button("Set Bind"))
-    {
-        gameWrapper->Execute([&](GameWrapper* gw) {
-            cvarManager->setBind(KeyBindInputBuf, "CustomUI_openSettings");
-            cvarManager->log("New key bind set : " + std::string(KeyBindInputBuf) + " -> CustomUI_openSettings");
-            });
-
-        ImGui::OpenPopup("BindSet");
-    }
     if (basicFont) {
         ImGui::PopFont();
     }
