@@ -215,7 +215,7 @@ void CustomUI::RenderWindow()
 			}
 			drawScore(drawList);
 		}
-		else if (isInGame() && replayDisplay && !gameDisplay) {
+		else if (isInGame() && replayDisplay && !gameDisplay && !isMainPlayerSpectator()) {
 			drawScore(drawList);
 		}
 		else if (isInFreeplay() && !zeroBoost(boost) && !isOnPause) {
