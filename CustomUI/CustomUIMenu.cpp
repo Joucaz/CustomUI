@@ -447,14 +447,16 @@ void CustomUI::RenderMenu() {
 			else {
 				if (isTexture) {
 					itemsPositionCombo = {
-					"",
-					"Background Image Boost",
-					"Texture Image Boost",
-					"Text Boost",
-					"Background Image Score",
-					"Text Score My Team",
-					"Text Score Opposite Team",
-					"Text Gametime"
+						"",
+						"Background Image Boost",
+						"Texture Image Boost",
+						"Text Boost",
+						"Background Image Score",
+						"Text Score My Team",
+						"Text Score Opposite Team",
+						"Text Gametime",
+						"Text Team Name 1",
+						"Text Team Name 2"
 					};
 					itemsPosition = {
 						"",
@@ -464,7 +466,9 @@ void CustomUI::RenderMenu() {
 						"settingsScoreDisplay",
 						"settingsScoreMyTeam",
 						"settingsScoreOppositeTeam",
-						"settingsGameTime"
+						"settingsGameTime",
+						"settingsScoreTeamName1",
+						"settingsScoreTeamName2"
 					};
 				}
 				else {
@@ -476,7 +480,9 @@ void CustomUI::RenderMenu() {
 						"Background Image Score",
 						"Text Score My Team",
 						"Text Score Opposite Team",
-						"Text Gametime"
+						"Text Gametime",
+						"Text Team Name 1",
+						"Text Team Name 2"
 					};
 					itemsPosition = {
 						"",
@@ -486,7 +492,9 @@ void CustomUI::RenderMenu() {
 						"settingsScoreDisplay",
 						"settingsScoreMyTeam",
 						"settingsScoreOppositeTeam",
-						"settingsGameTime"
+						"settingsGameTime",
+						"settingsScoreTeamName1",
+						"settingsScoreTeamName2"
 					};
 				}
 				
@@ -508,6 +516,8 @@ void CustomUI::RenderMenu() {
 			ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
+
+			static bool resetTeamNames = false;
 
 			if (ImGui::Button("Reset the preset")) {
 				for (size_t i = 1; i < itemsPosition.size(); ++i) {
@@ -539,6 +549,8 @@ void CustomUI::RenderMenu() {
 					changeColorB = 0;
 					changeColorA = 0;
 				}
+				updateJsonTeamNames(keyPreset, "My Team", "Opposite Team");
+				resetTeamNames = true;
 			}
 
 			ImGui::PopStyleColor(3);
@@ -551,7 +563,80 @@ void CustomUI::RenderMenu() {
 			}
 
 			
+		
+			//// Buffers séparés en haut de ta fonction ImGui
+			//static char teamName1Buf[64] = "";
+			//static char teamName2Buf[64] = "";
 
+			//// Initialiser une seule fois avec la valeur de currentPreset
+			//if (teamName1Buf[0] == '\0' && !currentPreset.teamName1.empty()) {
+			//	strncpy(teamName1Buf, currentPreset.teamName1.c_str(), sizeof(teamName1Buf) - 1);
+			//}
+			//if (teamName2Buf[0] == '\0' && !currentPreset.teamName2.empty()) {
+			//	strncpy(teamName2Buf, currentPreset.teamName2.c_str(), sizeof(teamName2Buf) - 1);
+			//}
+
+			// En haut de ta fonction
+			static char teamName1Buf[64] = "";
+			static char teamName2Buf[64] = "";
+			
+
+			// Dans ton affichage ImGui
+			if ((teamName1Buf[0] == '\0' && !currentPreset.teamName1.empty()) || resetTeamNames) {
+				strncpy(teamName1Buf, currentPreset.teamName1.c_str(), sizeof(teamName1Buf) - 1);
+				teamName1Buf[sizeof(teamName1Buf) - 1] = '\0';
+			}
+			if ((teamName2Buf[0] == '\0' && !currentPreset.teamName2.empty()) || resetTeamNames) {
+				strncpy(teamName2Buf, currentPreset.teamName2.c_str(), sizeof(teamName2Buf) - 1);
+				teamName2Buf[sizeof(teamName2Buf) - 1] = '\0';
+			}
+
+			resetTeamNames = false; // on consomme le flag
+
+
+			if (!currentPreset.teamName1.empty() || !currentPreset.teamName2.empty()) {
+				ImGui::Columns(3, "TeamsColumns", false); // 3 colonnes
+
+				// Colonne 1 : My team
+				if (!currentPreset.teamName1.empty()) {
+					ImGui::Text("My team :");
+					ImGui::SetNextItemWidth(200.0f);
+					ImGui::InputText("##TeamName1", teamName1Buf, IM_ARRAYSIZE(teamName1Buf));
+				}
+				ImGui::NextColumn();
+
+				// Colonne 2 : Opposite team
+				if (!currentPreset.teamName2.empty()) {
+					ImGui::Text("Opposite team :");
+					ImGui::SetNextItemWidth(200.0f);
+					ImGui::InputText("##TeamName2", teamName2Buf, IM_ARRAYSIZE(teamName2Buf));
+				}
+				ImGui::NextColumn();
+
+				// Colonne 3 : Save button
+				if (ImGui::Button("Save Teams Names")) {
+					updateJsonTeamNames(keyPreset, string(teamName1Buf), string(teamName2Buf));
+				}
+				if (ImGui::Button("Switch Teams Names")) {
+					char temp[64];
+					strncpy(temp, teamName1Buf, sizeof(temp));
+					temp[sizeof(temp) - 1] = '\0';
+
+					strncpy(teamName1Buf, teamName2Buf, sizeof(teamName1Buf));
+					teamName1Buf[sizeof(teamName1Buf) - 1] = '\0';
+
+					strncpy(teamName2Buf, temp, sizeof(teamName2Buf));
+					teamName2Buf[sizeof(teamName2Buf) - 1] = '\0';
+
+					updateJsonTeamNames(keyPreset, string(teamName1Buf), string(teamName2Buf));
+				}
+
+
+				ImGui::Columns(1); // reset
+			}
+
+
+			
 
 			ImGui::Text("Choose Items to move and resize");
 			ImGui::SetNextItemWidth(400.0f);
@@ -675,6 +760,7 @@ void CustomUI::RenderMenu() {
 					}
 				}
 			}
+
 			if (currentPreset.differentTeam) {
 				// Définir la couleur du bouton en fonction de colorTeamBool
 				if (!colorTeamBool) {
@@ -1252,7 +1338,9 @@ bool CustomUI::cvarIsText(CVarWrapper cvar) {
 		"settingsBoostTexture",
 		"settingsScoreMyTeam",
 		"settingsScoreOppositeTeam",
-		"settingsGameTime"
+		"settingsGameTime",
+		"settingsScoreTeamName1",
+		"settingsScoreTeamName2"
 	};
 
 	// Récupérer la chaîne du CVar
@@ -1611,7 +1699,7 @@ void CustomUI::showRenderEditColor() {
 		for (const auto& settingsItem : settingsItemsList) {
 			try {
 				string colorSettingsJson = getStringSettingsColor(settingsItem);
-				LOG(colorSettingsJson);
+				LOG("je veux ça : " + colorSettingsJson);
 				array<int, 4> colorValues = { changeColorR, changeColorG, changeColorB, changeColorA };
 				updateJsonColor(keyPreset, colorSettingsJson, colorValues);
 			}

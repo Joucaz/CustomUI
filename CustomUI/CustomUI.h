@@ -62,6 +62,12 @@ struct Preset {
 	bool differentTeam = false;
 	string group;
 	Angle circleAngle;
+	string teamName1;
+	string teamName2;
+	array<int, 4> colorScoreTeamName1;
+	SettingsItems settingsScoreTeamName1;
+	array<int, 4> colorScoreTeamName2;
+	SettingsItems settingsScoreTeamName2;
 };
 
 // Définir une structure pour les patch notes
@@ -95,6 +101,7 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
 	void updateJsonColor(string presetKey, const string& field, array<int, 4>& newValues);
 	void updateJsonCircleAngle(string presetKey, const string& field, int newValueStart, int newValueMax);
+	void updateJsonTeamNames(const string& presetKey, const string& teamName1, const string& teamName2);
 	void saveJsonToFile(const string jsonFilePath, const json& jsonData);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	array<int, 4>& getSettingsColor(Preset& preset, const std::string& fieldName);
