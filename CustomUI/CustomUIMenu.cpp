@@ -390,6 +390,7 @@ void CustomUI::RenderMenu() {
 											currentPreset = loadCurrentPreset(selectedPreset->first);
 											loadThemeFont();
 											appendFont();
+											resetTeamNames = true;
 										}
 									}
 								}
@@ -408,6 +409,7 @@ void CustomUI::RenderMenu() {
 							currentPreset = loadCurrentPreset(selectedPreset->first);
 							loadThemeFont();
 							appendFont();
+							resetTeamNames = true;
 						}
 					}
 				}
@@ -515,9 +517,7 @@ void CustomUI::RenderMenu() {
 
 			ImGui::PushStyleColor(ImGuiCol_Button, redCaution);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, redCautionHovered);
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive);
-
-			static bool resetTeamNames = false;
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, redCautionActive); 
 
 			if (ImGui::Button("Reset the preset")) {
 				for (size_t i = 1; i < itemsPosition.size(); ++i) {
@@ -591,8 +591,6 @@ void CustomUI::RenderMenu() {
 				teamName2Buf[sizeof(teamName2Buf) - 1] = '\0';
 			}
 
-			resetTeamNames = false; // on consomme le flag
-
 
 			if (!currentPreset.teamName1.empty() || !currentPreset.teamName2.empty()) {
 				ImGui::Columns(3, "TeamsColumns", false); // 3 colonnes
@@ -632,8 +630,11 @@ void CustomUI::RenderMenu() {
 				}
 
 
+
 				ImGui::Columns(1); // reset
 			}
+
+			resetTeamNames = false; // on consomme le flag
 
 
 			

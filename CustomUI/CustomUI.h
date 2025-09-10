@@ -269,6 +269,8 @@ public:
 private:
 	json jsonData;
 
+	bool resetTeamNames = false;
+
 	bool pluginEnabled;
 
 	bool hideOriginalUI;
