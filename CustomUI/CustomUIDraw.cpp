@@ -380,51 +380,98 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 	drawTextScore(drawList, PositionScoreB, 160, colorScoreOppositeTeam, settingsScoreAllItems, settingsScoreOppositeTeam, "settingsScoreOppositeTeam", to_string(scoreB).c_str());
 	drawTextScore(drawList, PositionGametime, 160, colorGameTime, settingsScoreAllItems, settingsGameTime, "settingsGameTime", gameTime);
 
-	if (currentPreset.teamName1 != "") {
-
-
+	if ((currentPreset.teamName1 == "BLUE" && currentPreset.teamName2 == "ORANGE")) {
 		auto& settingsScoreTeamName1 = currentPreset.settingsScoreTeamName1;
+		auto& settingsScoreTeamName2 = currentPreset.settingsScoreTeamName2;
+
+		string nameTeam1;
+		string nameTeam2;
+
+		if (getColorTeamInGame() == 0) {
+			nameTeam1 = currentPreset.teamName1;
+			nameTeam2 = currentPreset.teamName2;
+		}
+		else if (getColorTeamInGame() == 1) {
+			nameTeam1 = currentPreset.teamName2;
+			nameTeam2 = currentPreset.teamName1;
+		}
+		else {
+
+		}
 
 		Vector2 PositionTeamName1 = { 200, 50 };
+		Vector2 PositionTeamName2 = { 1200, 50 };
 
 		array<int, 4> choosenColorTeamName1 = currentPreset.colorScoreTeamName1;
 		auto renderColorTeamName1 = getSettingsColor(currentPreset, "colorScoreTeamName1");
 		auto basicRenderColorTeamName1 = currentPreset.colorScoreTeamName1;
-
-		if (isSpectator) {
-			choosenColorTeamName1 = basicRenderColorTeamName1;
-		}
-		else {
-			choosenColorTeamName1 = renderColorTeamName1;
-		}
-
-		ImU32 colorScoreTeamName1 = changeColorText(choosenColorTeamName1, "settingsScoreTeamName1");
-
-		drawTextScore(drawList, PositionTeamName1, 160, colorScoreTeamName1, settingsScoreAllItems, settingsScoreTeamName1, "settingsScoreTeamName1", currentPreset.teamName1);
-	}
-
-	if (currentPreset.teamName2 != "") {
-
-		auto& settingsScoreTeamName2 = currentPreset.settingsScoreTeamName2;
-
-		Vector2 PositionTeamName2 = { 1200, 50 };
-
 		array<int, 4> choosenColorTeamName2 = currentPreset.colorScoreTeamName2;
 		auto renderColorTeamName2 = getSettingsColor(currentPreset, "colorScoreTeamName2");
 		auto basicRenderColorTeamName2 = currentPreset.colorScoreTeamName2;
 
 		if (isSpectator) {
+			choosenColorTeamName1 = basicRenderColorTeamName1;
 			choosenColorTeamName2 = basicRenderColorTeamName2;
 		}
 		else {
+			choosenColorTeamName1 = renderColorTeamName1;
 			choosenColorTeamName2 = renderColorTeamName2;
 		}
 
+		ImU32 colorScoreTeamName1 = changeColorText(choosenColorTeamName1, "settingsScoreTeamName1");
 		ImU32 colorScoreTeamName2 = changeColorText(choosenColorTeamName2, "settingsScoreTeamName2");
 
-
-		drawTextScore(drawList, PositionTeamName2, 160, colorScoreTeamName2, settingsScoreAllItems, settingsScoreTeamName2, "settingsScoreTeamName2", currentPreset.teamName2);
+		drawTextScore(drawList, PositionTeamName1, 160, colorScoreTeamName1, settingsScoreAllItems, settingsScoreTeamName1, "settingsScoreTeamName1", nameTeam1);
+		drawTextScore(drawList, PositionTeamName2, 160, colorScoreTeamName2, settingsScoreAllItems, settingsScoreTeamName2, "settingsScoreTeamName2", nameTeam2);
 	}
+	else {
+		if (currentPreset.teamName1 != "") {
+
+
+			auto& settingsScoreTeamName1 = currentPreset.settingsScoreTeamName1;
+
+			Vector2 PositionTeamName1 = { 200, 50 };
+
+			array<int, 4> choosenColorTeamName1 = currentPreset.colorScoreTeamName1;
+			auto renderColorTeamName1 = getSettingsColor(currentPreset, "colorScoreTeamName1");
+			auto basicRenderColorTeamName1 = currentPreset.colorScoreTeamName1;
+
+			if (isSpectator) {
+				choosenColorTeamName1 = basicRenderColorTeamName1;
+			}
+			else {
+				choosenColorTeamName1 = renderColorTeamName1;
+			}
+
+			ImU32 colorScoreTeamName1 = changeColorText(choosenColorTeamName1, "settingsScoreTeamName1");
+
+			drawTextScore(drawList, PositionTeamName1, 160, colorScoreTeamName1, settingsScoreAllItems, settingsScoreTeamName1, "settingsScoreTeamName1", currentPreset.teamName1);
+		}
+
+		if (currentPreset.teamName2 != "") {
+
+			auto& settingsScoreTeamName2 = currentPreset.settingsScoreTeamName2;
+
+			Vector2 PositionTeamName2 = { 1200, 50 };
+
+			array<int, 4> choosenColorTeamName2 = currentPreset.colorScoreTeamName2;
+			auto renderColorTeamName2 = getSettingsColor(currentPreset, "colorScoreTeamName2");
+			auto basicRenderColorTeamName2 = currentPreset.colorScoreTeamName2;
+
+			if (isSpectator) {
+				choosenColorTeamName2 = basicRenderColorTeamName2;
+			}
+			else {
+				choosenColorTeamName2 = renderColorTeamName2;
+			}
+
+			ImU32 colorScoreTeamName2 = changeColorText(choosenColorTeamName2, "settingsScoreTeamName2");
+
+
+			drawTextScore(drawList, PositionTeamName2, 160, colorScoreTeamName2, settingsScoreAllItems, settingsScoreTeamName2, "settingsScoreTeamName2", currentPreset.teamName2);
+		}
+	}
+	
 }
 void CustomUI::drawTextScore(ImDrawList* drawList, Vector2 Position, int fontSize, ImU32 color, SettingsItems settingsAll, SettingsItems settingsItem, string textSettings, string text) {
 	string keyPreset = getCvarString("CustomUI_choosenPresets");
