@@ -549,7 +549,7 @@ void CustomUI::RenderMenu() {
 					changeColorB = 0;
 					changeColorA = 0;
 				}
-				updateJsonTeamNames(keyPreset, "My Team", "Opposite Team");
+				updateJsonTeamNames(keyPreset, "BLUE", "ORANGE");
 				resetTeamNames = true;
 			}
 

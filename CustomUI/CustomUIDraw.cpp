@@ -388,12 +388,12 @@ void CustomUI::drawScore(ImDrawList* drawList) {
 		string nameTeam2;
 
 		if (getColorTeamInGame() == 0) {
-			nameTeam1 = currentPreset.teamName1;
+			nameTeam1 = "  " + currentPreset.teamName1 + "  ";
 			nameTeam2 = currentPreset.teamName2;
 		}
 		else if (getColorTeamInGame() == 1) {
 			nameTeam1 = currentPreset.teamName2;
-			nameTeam2 = currentPreset.teamName1;
+			nameTeam2 = "  " + currentPreset.teamName1 + "  ";
 		}
 		else {
 
