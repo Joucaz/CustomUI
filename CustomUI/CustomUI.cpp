@@ -893,7 +893,7 @@ map<string, Preset> CustomUI::loadPresets() {
 	return presets;
 }
 
-Preset CustomUI::loadCurrentPreset(string keyPreset) {
+Preset& CustomUI::loadCurrentPreset(string keyPreset) {
 	return allPresets[keyPreset];
 }
 Angle CustomUI::loadAngleBoost(const json& value) {
@@ -1289,7 +1289,7 @@ void CustomUI::updateJsonCircleAngle(string presetKey, const string& field, int 
 	}
 }
 
-void CustomUI::updateJsonTeamNames(const std::string& presetKey, const std::string& teamName1, const std::string& teamName2) {
+void CustomUI::updateJsonTeamNames(const string& presetKey, const string teamName1, const string teamName2) {
 	auto basePath = fs::path(gameWrapper->GetDataFolder()) / "CustomUI" / "Presets";
 
 	// Chercher le fichier correspondant au preset
@@ -1310,6 +1310,7 @@ void CustomUI::updateJsonTeamNames(const std::string& presetKey, const std::stri
 
 		// Vérifier si le preset existe dans le fichier JSON
 		if (jsonData["presets"].contains(presetKey)) {
+
 			// Mise à jour du champ dans le JSON
 			json& preset = jsonData["presets"][presetKey];
 
@@ -1320,12 +1321,15 @@ void CustomUI::updateJsonTeamNames(const std::string& presetKey, const std::stri
 				+ teamName1 + " / " + teamName2);
 
 			try {
-				currentPreset.teamName1 = teamName1;
-				currentPreset.teamName2 = teamName2;
+				
+				allPresets[presetKey].teamName1 = teamName1;
+				allPresets[presetKey].teamName2 = teamName2;
+
 			}
 			catch (const std::invalid_argument& e) {
 				LOG(e.what());
 			}
+
 
 			// Sauvegarder les changements dans le fichier
 			saveJsonToFile(presetPath.string(), jsonData);

@@ -95,13 +95,13 @@ class CustomUI: public BakkesMod::Plugin::BakkesModPlugin,
 	void initImages();
 	void writeCvar();
 	map<string, Preset> loadPresets();
-	Preset loadCurrentPreset(string keyPreset);
+	Preset& loadCurrentPreset(string keyPreset);
 	void loadImageFromJson(const filesystem::path& basePath, const string& key, const string& relativePath, map<string, shared_ptr<ImageWrapper>>& imageMap,const string& imageType);
 	//void updateJsonFieldInt(string presetKey, const string& field, string positionScale, int newValue);
 	void updateJsonFieldFloat(string presetKey, const string& field, string positionScale, float newValue);
 	void updateJsonColor(string presetKey, const string& field, array<int, 4>& newValues);
 	void updateJsonCircleAngle(string presetKey, const string& field, int newValueStart, int newValueMax);
-	void updateJsonTeamNames(const string& presetKey, const string& teamName1, const string& teamName2);
+	void updateJsonTeamNames(const string& presetKey, const string teamName1, const string teamName2);
 	void saveJsonToFile(const string jsonFilePath, const json& jsonData);
 	SettingsItems& getSettings(Preset& preset, const std::string& fieldName);
 	array<int, 4>& getSettingsColor(Preset& preset, const std::string& fieldName);

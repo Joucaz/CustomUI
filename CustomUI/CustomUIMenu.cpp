@@ -387,6 +387,7 @@ void CustomUI::RenderMenu() {
 											currentPosition = 0;
 											setCvarString(presetChoosenCvar, selectedPreset->first);
 											setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+											//refreshFiles();
 											currentPreset = loadCurrentPreset(selectedPreset->first);
 											loadThemeFont();
 											appendFont();
@@ -406,6 +407,7 @@ void CustomUI::RenderMenu() {
 							currentPosition = 0;
 							setCvarString(presetChoosenCvar, selectedPreset->first);
 							setCvarString(boostFormCvar, selectedPreset->second.boostForm);
+							//refreshFiles();
 							currentPreset = loadCurrentPreset(selectedPreset->first);
 							loadThemeFont();
 							appendFont();
@@ -580,9 +582,10 @@ void CustomUI::RenderMenu() {
 			static char teamName1Buf[64] = "";
 			static char teamName2Buf[64] = "";
 			
-
+			LOG("teamName : " + currentPreset.teamName1);
 			// Dans ton affichage ImGui
 			if ((teamName1Buf[0] == '\0' && !currentPreset.teamName1.empty()) || resetTeamNames) {
+				LOG("resetTeamName1");
 				strncpy(teamName1Buf, currentPreset.teamName1.c_str(), sizeof(teamName1Buf) - 1);
 				teamName1Buf[sizeof(teamName1Buf) - 1] = '\0';
 			}
@@ -614,6 +617,8 @@ void CustomUI::RenderMenu() {
 				// Colonne 3 : Save button
 				if (ImGui::Button("Save Teams Names")) {
 					updateJsonTeamNames(keyPreset, string(teamName1Buf), string(teamName2Buf));
+					LOG("save");
+					resetTeamNames = true;
 				}
 				if (ImGui::Button("Switch Teams Names")) {
 					char temp[64];
@@ -627,6 +632,7 @@ void CustomUI::RenderMenu() {
 					teamName2Buf[sizeof(teamName2Buf) - 1] = '\0';
 
 					updateJsonTeamNames(keyPreset, string(teamName1Buf), string(teamName2Buf));
+					resetTeamNames = true;
 				}
 
 
@@ -1140,7 +1146,41 @@ void CustomUI::RenderMenu() {
 			// Tableau des patch notes (titre et contenu)
 			PatchNote patch_notes[] = {
 				{
-					"v1.2.0 (latest)", R"(
+					"v1.3.0 (latest)", R"(
+Patch Notes v1.3.0 
+Date: 18/09/2025
+
+-------------------
+
+New Features:
+
+- Added an option to automatically hide the original Rocket League UI. The UI is hidden when the game starts and reappears when a goal is scored or the pause menu is opened. You can enable/disable this feature separately for gameplay, freeplay, and spectating.
+- You can now customize the start and end positions of the Circle Boost.
+- Added the "RLCS 2024" preset.
+- Added multiple design for content creators (Kaydop, Mawkzy, Feer, Yota).
+- Introduced a support button to help fund the plugin's development and future features.
+
+-------------------
+
+Improvements and Changes:
+
+- The total number of active plugin users is now displayed and updated in real time.
+- Presets can now be grouped for better organization.
+- Increased the minimum window size for improved usability.
+
+-------------------
+
+Bug Fixes:
+
+- Fixed random crashes at the start of a game that could result in a loss.
+- Fixed the bug where the CustomUI did not display automatically on Rocket League launch and required manually toggling the menu.
+- Fixed the bug where replay mode made the game crash with CustomUI plugin.
+- Fixed the bug where the boost would disappear if the game was paused and a replay ended.
+
+					)"
+				},
+				{
+					"v1.2.0", R"(
 Patch Notes v1.2.0 
 Date: 20/04/2025
 
