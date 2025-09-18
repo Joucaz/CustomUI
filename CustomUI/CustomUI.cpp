@@ -71,6 +71,8 @@ void CustomUI::onLoad()
 
 	auto cvarKeyBind = cvarManager->registerCvar("CustomUI_keyBind", "F3", "Key bind of CustomUI Menu", true, true, 0, false);
 
+	
+
 	cvarManager->registerNotifier("CustomUI_openSettings", [this](std::vector<std::string> args) {
 		isSettingsOpen = true;
 		}, "", PERMISSION_ALL);
@@ -159,7 +161,13 @@ void CustomUI::onLoad()
 	// You could also use std::bind here
 	//gameWrapper->HookEvent("Function TAGame.Ball_TA.Explode", std::bind(&CustomUI::startGame, this));
 
-	cvarManager->setBind(getCvarString("CustomUI_keyBind"), "CustomUI_openSettings");
+	
+
+	gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
+		LOG(getCvarString("CustomUI_choosenPresets"));
+		LOG(getCvarString("CustomUI_keyBind"));
+		cvarManager->setBind(getCvarString("CustomUI_keyBind"), "CustomUI_openSettings");
+		}, 1);
 
 	//gameWrapper->RegisterDrawable(bind(&CustomUI::RenderMenu, this));
 	//gameWrapper->RegisterDrawable(bind(&CustomUI::UpdateVars, this));

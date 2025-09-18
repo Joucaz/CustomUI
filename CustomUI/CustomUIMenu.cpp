@@ -582,7 +582,6 @@ void CustomUI::RenderMenu() {
 			static char teamName1Buf[64] = "";
 			static char teamName2Buf[64] = "";
 			
-			LOG("teamName : " + currentPreset.teamName1);
 			// Dans ton affichage ImGui
 			if ((teamName1Buf[0] == '\0' && !currentPreset.teamName1.empty()) || resetTeamNames) {
 				LOG("resetTeamName1");
@@ -1154,11 +1153,9 @@ Date: 18/09/2025
 
 New Features:
 
-- Added an option to automatically hide the original Rocket League UI. The UI is hidden when the game starts and reappears when a goal is scored or the pause menu is opened. You can enable/disable this feature separately for gameplay, freeplay, and spectating.
-- You can now customize the start and end positions of the Circle Boost.
-- Added the "RLCS 2024" preset.
-- Added multiple design for content creators (Kaydop, Mawkzy, Feer, Yota).
-- Introduced a support button to help fund the plugin's development and future features.
+- Added an option to change team name directly in game via input
+- Added multiple design for football competition (Champions League, Ligue 1, Bundesliga, FIFA World Cup Russia 2018, FIFA World Cup Qatar 2022)
+- Added the option to rename "RLCS 2024" & "RLCS 2025" team name
 
 -------------------
 
@@ -1172,10 +1169,7 @@ Improvements and Changes:
 
 Bug Fixes:
 
-- Fixed random crashes at the start of a game that could result in a loss.
-- Fixed the bug where the CustomUI did not display automatically on Rocket League launch and required manually toggling the menu.
-- Fixed the bug where replay mode made the game crash with CustomUI plugin.
-- Fixed the bug where the boost would disappear if the game was paused and a replay ended.
+- Fixed the bug where the boost disappear on a goal replay when player is spectating.
 
 					)"
 				},
