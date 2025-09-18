@@ -1153,24 +1153,20 @@ Date: 18/09/2025
 
 New Features:
 
-- Added an option to change team name directly in game via input
-- Added multiple design for football competition (Champions League, Ligue 1, Bundesliga, FIFA World Cup Russia 2018, FIFA World Cup Qatar 2022)
-- Added the option to rename "RLCS 2024" & "RLCS 2025" team name
+- Added an option to change a team's name directly in-game via input.
+- Introduced multiple designs for football competition (Champions League, Ligue 1, Bundesliga, FIFA World Cup Russia 2018, FIFA World Cup Qatar 2022).
+- Added the option to rename "RLCS 2024" and "RLCS 2025" team names. Typing BLUE or ORANGE in the input will automatically switch the text to the correct side, depending on your team.
 
 -------------------
 
 Improvements and Changes:
 
-- The total number of active plugin users is now displayed and updated in real time.
-- Presets can now be grouped for better organization.
-- Increased the minimum window size for improved usability.
-
+- The custom UI window bind key is now saved and persists even after relaunching the game.
 -------------------
 
 Bug Fixes:
 
-- Fixed the bug where the boost disappear on a goal replay when player is spectating.
-
+- Fixed an issue where boost would disappear during goal replays when a player was spectating.
 					)"
 				},
 				{
