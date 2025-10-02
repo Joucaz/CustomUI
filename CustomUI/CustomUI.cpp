@@ -1332,6 +1332,8 @@ void CustomUI::updateJsonTeamNames(const string& presetKey, const string teamNam
 				
 				allPresets[presetKey].teamName1 = teamName1;
 				allPresets[presetKey].teamName2 = teamName2;
+				currentPreset.teamName1 = teamName1;
+				currentPreset.teamName2 = teamName2;
 
 			}
 			catch (const std::invalid_argument& e) {
